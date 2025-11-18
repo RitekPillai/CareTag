@@ -4,6 +4,7 @@ import com.example.CareTag.DTOs.LoginRequestDTO;
 import com.example.CareTag.DTOs.LoginResponseDTO;
 import com.example.CareTag.DTOs.SignUpRequestDTO;
 import com.example.CareTag.DTOs.SignUpResponseDTO;
+import com.example.CareTag.Models.RefreshToken;
 import com.example.CareTag.Models.User;
 import com.example.CareTag.Repos.UserRepo;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,7 @@ public class UserService {
         private final PasswordEncoder passwordEncoder;
         private final JwtService jwtService;
         private final AuthenticationManager authenticationManager;
+        private final RefereshTokenService refereshTokenService;
 
     public ResponseEntity<SignUpResponseDTO> signUp(SignUpRequestDTO req) throws Exception {
         /// for checking if the user is Already exsists
@@ -53,6 +55,7 @@ log.info("User Created: Username:{} ",user.getUsername());
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(req.getEmail(),req.getPassword()));
             User user = (User) authentication.getPrincipal();
             String token = jwtService.generateToken(user);
-            return new  ResponseEntity<>(new LoginResponseDTO(token, user.getUsername()),HttpStatus.ACCEPTED);
+        RefreshToken refreshToken =refereshTokenService.generateToken(user.getEmail());
+            return new  ResponseEntity<>(new LoginResponseDTO(token, user.getUsername(),refreshToken.getToken()),HttpStatus.ACCEPTED);
     }
 }
