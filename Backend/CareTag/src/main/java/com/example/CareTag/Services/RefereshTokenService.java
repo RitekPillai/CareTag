@@ -18,12 +18,14 @@ import java.util.UUID;
 public class RefereshTokenService {
     private final RefreshTokenRepo refreshTokenRepo;
     private final UserRepo userRepo;
-    private final JwtService jwtService;
+    private final AuthUtil authUtil;
+    private final DatabaseSeqService databaseSeqService;
 
         public RefreshToken generateToken(String email){
 RefreshToken refreshToken = new RefreshToken();
 refreshToken.setToken(UUID.randomUUID().toString());
 refreshToken.setEmail(email);
+refreshToken.setId(databaseSeqService.generateSequence(RefreshToken.SEQUENCE_NAME));
 long refreshTokenDurationMils =30 *24 *60*60*1000L;
 refreshToken.setExpiryTime(Instant.now().plusMillis(refreshTokenDurationMils));
 return refreshTokenRepo.save(refreshToken);
@@ -43,10 +45,10 @@ return refreshTokenRepo.save(refreshToken);
 public ResponseEntity<RefreshTokenResponseDTO> refreshToken(String Token) throws Exception{
 return findToken(Token)
         .map( this::verifyExpiration)
-        .map(refreshToken -> refreshToken.getEmail())
+        .map(RefreshToken::getEmail)
         .map(email->{
             User user = userRepo.findByEmail(email);
-            String newJWT = jwtService.generateToken(user);
+            String newJWT = authUtil.generateToken(user);
             Long id = user.getId();
             return ResponseEntity.ok(new RefreshTokenResponseDTO(Token, email,newJWT));
         }).orElseThrow(() -> new RuntimeException("Refresh token is not in database!"));

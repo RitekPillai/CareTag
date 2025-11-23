@@ -2,7 +2,7 @@ package com.example.CareTag.Filters;
 
 import com.example.CareTag.Models.User;
 import com.example.CareTag.Repos.UserRepo;
-import com.example.CareTag.Services.JwtService;
+import com.example.CareTag.Services.AuthUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,7 +19,7 @@ import java.io.IOException;
 @Component
 @RequiredArgsConstructor
 public class JWTfilter extends OncePerRequestFilter {
-   private final JwtService jwtService;
+   private final AuthUtil authUtil;
   private final  UserRepo userRepo;
 
 
@@ -40,7 +40,7 @@ public class JWTfilter extends OncePerRequestFilter {
         }
 
         String token =requestHeader.split("Bearer ")[1];
-        String email =           jwtService.getUsernameFromToken(token);
+        String email =           authUtil.getUsernameFromToken(token);
         log.info("Acess Token:{}",token);
         log.info("Authenticated Email: {}", email);
 

@@ -6,56 +6,57 @@ import com.example.CareTag.DTOs.SignUpRequestDTO;
 import com.example.CareTag.DTOs.SignUpResponseDTO;
 import com.example.CareTag.Models.RefreshToken;
 import com.example.CareTag.Models.User;
+import com.example.CareTag.Models.type.AuthProvider;
 import com.example.CareTag.Repos.UserRepo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
 
 @RequiredArgsConstructor
-public class UserService {
+public class AuthService {
         private final UserRepo userRepo;
-        private final DatabaseSeqService databaseSeqService;
-        private final PasswordEncoder passwordEncoder;
-        private final JwtService jwtService;
-        private final AuthenticationManager authenticationManager;
+
+
+        private final AuthUtil authUtil;
+@Lazy
+       private final  AuthenticationManager authenticationManager;
         private final RefereshTokenService refereshTokenService;
 
-    public ResponseEntity<SignUpResponseDTO> signUp(SignUpRequestDTO req) throws Exception {
-        /// for checking if the user is Already exsists
-    User exUser  = userRepo.findByEmail(req.getEmail());
-    if(exUser!=null){
-        throw new Exception("Username Already Exsist");
-    }
-    long id = databaseSeqService.generateSequence(User.SEQUENCE_NAME);
-   String encodePassword =  passwordEncoder.encode(req.getPassword());
 
-    User user = User.builder()
-            .id(id)
-            .email(req.getEmail())
-            .password(encodePassword)
-            .username(req.getUsername()).build();
 
-    userRepo.save(user);
+
+
+
+            public ResponseEntity<SignUpResponseDTO> signUp(SignUpRequestDTO req) throws Exception {
+        User user = authUtil.getuser(req,AuthProvider.EMAIL,null);
 log.info("User Created: Username:{} ",user.getUsername());
-    return new ResponseEntity<>(new SignUpResponseDTO(user.getUsername(), user.getEmail()), HttpStatus.CREATED);
+
+String token = authUtil.generateToken(user);
+        RefreshToken refreshToken =refereshTokenService.generateToken(user.getEmail());
+    return new ResponseEntity<>(new SignUpResponseDTO(user.getUsername(), user.getEmail(),token), HttpStatus.CREATED);
 
 
     }
-
+    /// loginController(typical email password)
     public ResponseEntity<LoginResponseDTO> login(LoginRequestDTO req)throws  Exception{
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(req.getEmail(),req.getPassword()));
             User user = (User) authentication.getPrincipal();
-            String token = jwtService.generateToken(user);
+            String token = authUtil.generateToken(user);
         RefreshToken refreshToken =refereshTokenService.generateToken(user.getEmail());
             return new  ResponseEntity<>(new LoginResponseDTO(token, user.getUsername(),refreshToken.getToken()),HttpStatus.ACCEPTED);
     }
+
 }

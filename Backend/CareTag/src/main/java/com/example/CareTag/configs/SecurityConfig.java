@@ -2,9 +2,12 @@ package com.example.CareTag.configs;
 
 import com.example.CareTag.Filters.JWTfilter;
 import com.example.CareTag.Services.CustomUserDeatilsService;
+import com.example.CareTag.Services.OAuthSuccessHandaler;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -22,9 +25,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @RequiredArgsConstructor
-public class SecurityConfig {
+@Slf4j
+public class  SecurityConfig {
     private final  JWTfilter jwTfilter;
 private final CustomUserDeatilsService customUserDeatilsService;
+    private final @Lazy OAuthSuccessHandaler oAuthSuccessHandaler; //
+    private final PasswordEncoder passwordEncoder;
 @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http)throws Exception{
         return http.csrf(AbstractHttpConfigurer::disable)
@@ -48,24 +54,23 @@ private final CustomUserDeatilsService customUserDeatilsService;
                 .authenticationProvider(authenticationProvider())
 
                 .addFilterBefore(jwTfilter, UsernamePasswordAuthenticationFilter.class)
+                .oauth2Login(oauth2 ->oauth2.failureHandler((request, response, exception) -> log.info("oauth error:{}",exception.getMessage())
+
+                )
+                                .successHandler(oAuthSuccessHandaler)
+                )
+
                 .build();
     }
 @Bean
 public AuthenticationProvider authenticationProvider(){
         DaoAuthenticationProvider daoAuthenticationProvider = new  DaoAuthenticationProvider(customUserDeatilsService);
-        daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
+        daoAuthenticationProvider.setPasswordEncoder(passwordEncoder);
         return daoAuthenticationProvider;
 
 }
-    @Bean
-    public PasswordEncoder passwordEncoder(){
-        return new BCryptPasswordEncoder(12);
-    }
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
-        return authConfig.getAuthenticationManager();
 
-    }
+
 
 
 

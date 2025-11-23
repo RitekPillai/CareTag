@@ -1,5 +1,6 @@
 package com.example.CareTag.Models;
 
+import com.example.CareTag.Models.type.AuthProvider;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -25,9 +26,11 @@ public class User implements UserDetails {
     @Id
     private long id;
     @Indexed(unique = true)
-    String email;
-    String password;
-    String username;
+    private String email;
+    private String password;
+   private String username;
+   private String providerId;
+   private AuthProvider authProvider;
 
 
 

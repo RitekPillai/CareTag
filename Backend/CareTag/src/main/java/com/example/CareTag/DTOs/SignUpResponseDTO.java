@@ -11,5 +11,6 @@ public class SignUpResponseDTO {
 
     String username;
     String email;
+    String JWT_Token;
 
 }
