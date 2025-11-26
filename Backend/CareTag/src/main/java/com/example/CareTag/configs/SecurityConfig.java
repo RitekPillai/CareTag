@@ -38,6 +38,8 @@ private final CustomUserDeatilsService customUserDeatilsService;
                 .authorizeHttpRequests(req -> req
 
                         .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/auth/forgot-password/**").permitAll() // Covers request-otp and verify-otp
+                        .requestMatchers("/auth/reset-password").permitAll()
 
 
 

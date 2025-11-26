@@ -4,14 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data
 @AllArgsConstructor
+@Data
 @NoArgsConstructor
-public class SignUpResponseDTO {
+public class VerifyResponse {
 
+
+      String token;
     String username;
-    String email;
-
-
-
+    String RefreshToken;
 }

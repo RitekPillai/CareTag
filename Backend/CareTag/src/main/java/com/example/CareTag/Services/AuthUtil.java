@@ -100,5 +100,30 @@ public String getProperProviderId(OAuth2User oAuth2User,String registrationId){
         return userRepo.save(user);
     }
 
+    public String getHtmlSuccessMessage() {
+        return "<html>"
+                + "<head><title>Verification Successful</title>"
+                + "<style>body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; } .success { color: green; font-size: 24px; }</style>"
+                + "</head>"
+                + "<body>"
+                + "<div class='success'>✅ Email Verified Successfully!</div>"
+                + "<p>Your account is now active. You can close this window and proceed to login.</p>"
+                + "</body>"
+                + "</html>";
+    }
+
+    public String getHtmlErrorMessage(String error) {
+        return "<html>"
+                + "<head><title>Verification Failed</title>"
+                + "<style>body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; } .error { color: red; font-size: 24px; }</style>"
+                + "</head>"
+                + "<body>"
+                + "<div class='error'>❌ Verification Failed!</div>"
+                + "<p>Reason: " + error + "</p>"
+                + "<p>Please contact support or request a new verification link.</p>"
+                + "</body>"
+                + "</html>";
+    }
+
 
 }

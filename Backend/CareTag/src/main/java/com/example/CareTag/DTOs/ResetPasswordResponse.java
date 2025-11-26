@@ -7,11 +7,6 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class SignUpResponseDTO {
-
-    String username;
-    String email;
-
-
-
+public class ResetPasswordResponse {
+    String token;
 }

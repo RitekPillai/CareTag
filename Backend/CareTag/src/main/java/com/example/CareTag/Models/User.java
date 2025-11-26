@@ -12,6 +12,7 @@ import org.springframework.data.mongodb.core.mapping.MongoId;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 @Data
@@ -31,6 +32,15 @@ public class User implements UserDetails {
    private String username;
    private String providerId;
    private AuthProvider authProvider;
+///  for password reset
+
+
+   private String passwordResetToken;
+   private LocalDateTime passwordRestExpiery;
+
+   private boolean isVerified = false;
+
+
 
 
 
@@ -40,6 +50,12 @@ public class User implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of();
     }
+
+
+///  SignUp verification process
+    /// is verified  = false
+    /// signup->email password->save->randomUUID->sent to the email->user click the link->verify its -> and then sign up happy:)
+
 
 
 }
