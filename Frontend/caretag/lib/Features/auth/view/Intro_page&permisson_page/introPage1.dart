@@ -1,4 +1,5 @@
 import 'package:caretag/Features/auth/model/intro/ImageModel.dart';
+import 'package:caretag/Features/auth/model_view/utils/animatedRoute.dart';
 import 'package:caretag/Features/auth/view/Intro_page&permisson_page/permission_page.dart';
 import 'package:caretag/constants/app_color.dart';
 import 'package:flutter/material.dart';
@@ -334,14 +335,4 @@ class _Intropage1State extends State<Intropage1> {
       ),
     );
   }
-}
-
-Route customRoute(Widget page) {
-  return PageRouteBuilder(
-    pageBuilder: (context, animation, secondaryAnimation) => page,
-    transitionsBuilder: (context, animation, secondaryAnimation, child) {
-      return FadeTransition(opacity: animation, child: child);
-    },
-    transitionDuration: const Duration(milliseconds: 400),
-  );
 }

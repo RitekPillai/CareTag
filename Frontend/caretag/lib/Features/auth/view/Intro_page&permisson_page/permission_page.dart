@@ -1,4 +1,5 @@
-import 'package:caretag/Features/auth/view/Intro_page&permisson_page/introPage1.dart';
+import 'package:caretag/Features/auth/model_view/utils/animatedRoute.dart';
+import 'package:caretag/Features/auth/view/auth_pages/oauthPage.dart';
 import 'package:caretag/constants/app_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -30,10 +31,11 @@ class _PermissionPageState extends State<PermissionPage> {
 
   void _onPressAccept() {
     setState(() {
-      if (index == 0) {
-        index = 1;
-        acceptFontSize = 18;
-        backFontSize = 20;
+      index++;
+      acceptFontSize = 18;
+      backFontSize = 20;
+      if (index == 2) {
+        Navigator.push(context, customRoute(Oauthpage()));
       }
 
       debugPrint("CurrentIndex:$index");
@@ -51,6 +53,7 @@ class _PermissionPageState extends State<PermissionPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -96,7 +99,7 @@ class _PermissionPageState extends State<PermissionPage> {
               child: Center(
                 child: Text.rich(
                   TextSpan(
-                    text: "${index + 1}",
+                    text: "${index == 2 ? 2 : index + 1}",
                     style: GoogleFonts.poppins(
                       color: Colors.black,
                       fontWeight: FontWeight.w700,

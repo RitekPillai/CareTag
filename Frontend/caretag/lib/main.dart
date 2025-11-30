@@ -1,5 +1,6 @@
 import 'package:caretag/Features/auth/view/Intro_page&permisson_page/introPage1.dart';
-import 'package:caretag/Features/auth/view/Intro_page&permisson_page/permission_page.dart';
+import 'package:caretag/Features/auth/view/auth_pages/oauthPage.dart';
+import 'package:caretag/Features/auth/view/auth_pages/signup.dart';
 import 'package:device_preview/device_preview.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -24,7 +25,7 @@ class MyApp extends StatelessWidget {
 
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: const Intropage1(),
+      home: const Signup(),
     );
   }
 }
