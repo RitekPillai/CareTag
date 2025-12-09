@@ -1,8 +1,7 @@
-import 'dart:math' as math;
-
+import 'package:caretag/Features/auth/view/auth_pages/Auth.dart';
 import 'package:caretag/constants/app_color.dart';
+import 'package:caretag/widgets/custombutton.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:video_player/video_player.dart';
 
@@ -89,43 +88,52 @@ class _OauthpageState extends State<Oauthpage> {
             ],
           ),
 
-          const SizedBox(height: 20),
-          Container(
-            height: 50,
+          const SizedBox(height: 15),
 
-            decoration: BoxDecoration(
-              gradient: LinearGradient(colors: AppColor.gradientButtonColor),
-              borderRadius: BorderRadius.circular(33),
-            ),
-            child: ElevatedButton(
-              onPressed: () {},
-              style: ButtonStyle(
-                shadowColor: WidgetStatePropertyAll(Colors.transparent),
-                backgroundColor: WidgetStatePropertyAll(Colors.transparent),
-              ),
-              child: Text(
-                textAlign: TextAlign.center,
-                "Log In with your password",
-                style: GoogleFonts.poppins(
-                  fontWeight: FontWeight.w700,
-                  fontSize: 20,
-                  color: Colors.white,
-                ),
+          Hero(
+            tag: 'auth',
+            child: Padding(
+              padding: const EdgeInsets.only(left: 20, right: 20),
+              child: customElevatedButton(
+                50,
+                double.infinity,
+                "Log In with your Password",
+                20,
+                FontWeight.w700,
+                () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => AuthPage(login: true),
+                    ),
+                  );
+                },
               ),
             ),
           ),
-          const SizedBox(height: 15),
-          Text.rich(
-            TextSpan(
-              text: "Don’t have an account? ",
-              style: GoogleFonts.poppins(
-                color: Colors.black,
-                fontWeight: FontWeight.w600,
-                fontSize: 14,
+
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                "Don’t have an account? ",
+                style: GoogleFonts.poppins(
+                  color: Colors.black,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14,
+                ),
               ),
-              children: [
-                TextSpan(
-                  text: "Sign Up",
+              TextButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => AuthPage(login: false),
+                    ),
+                  );
+                },
+                child: Text(
+                  "Sign Up",
                   style: GoogleFonts.poppins(
                     color: AppColor.lightBlueTextColor,
                     fontSize: 15,
@@ -135,8 +143,8 @@ class _OauthpageState extends State<Oauthpage> {
                     decorationColor: AppColor.lightBlueTextColor,
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ],
       ),
@@ -155,7 +163,7 @@ Widget oauthRegTile(String path, String title) {
     child: Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        SvgPicture.asset(path, height: 32, width: 32),
+        //   SizedBox(height: 50, width: 50, child: SvgPicture.asset(path)),
         Text(
           title,
           style: GoogleFonts.poppins(
