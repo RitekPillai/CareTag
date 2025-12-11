@@ -1,7 +1,9 @@
-import 'package:caretag/Features/auth/model_view/utils/animatedRoute.dart';
-import 'package:caretag/Features/auth/view/auth_pages/oauthPage.dart';
+import 'package:caretag/Modules/auth/model_view/bloc/auth_bloc.dart';
+import 'package:caretag/widgets/animatedRoute.dart';
+import 'package:caretag/Modules/auth/view/auth_pages/oauthPage.dart';
 import 'package:caretag/constants/app_color.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart' show ReadContext;
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -30,12 +32,13 @@ class _PermissionPageState extends State<PermissionPage> {
   }
 
   void _onPressAccept() {
+    final authBloc = context.read<AuthBloc>();
     setState(() {
       index++;
       acceptFontSize = 18;
       backFontSize = 20;
       if (index == 2) {
-        Navigator.push(context, customRoute(Oauthpage()));
+        Navigator.push(context, customRoute(Oauthpage(), authBloc));
       }
 
       debugPrint("CurrentIndex:$index");

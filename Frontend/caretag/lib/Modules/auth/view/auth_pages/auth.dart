@@ -1,8 +1,11 @@
+import 'package:caretag/Modules/auth/data/auth/login_request.dart';
+import 'package:caretag/Modules/auth/model_view/bloc/auth_bloc.dart';
 import 'package:caretag/constants/appConstants.dart';
 import 'package:caretag/widgets/customController.dart';
 import 'package:caretag/constants/app_color.dart';
 import 'package:caretag/widgets/custombutton.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -198,7 +201,26 @@ class _AuthPageState extends State<AuthPage> {
                 !isLogin ? "Create" : "Continue",
                 24,
                 FontWeight.w700,
-                () {},
+                () {
+                  if (!isLogin) {
+                    context.read<AuthBloc>().add(
+                      AuthSignUpRequest(
+                        email: emailController.text,
+                        phone: phoneController.text,
+                        password: passwordController.text,
+                      ),
+                    );
+                  } else {
+                    context.read<AuthBloc>().add(
+                      AuthLoginRequest(
+                        loginRequest: LoginRequest(
+                          email: emailController.text,
+                          password: passwordController.text,
+                        ),
+                      ),
+                    );
+                  }
+                },
               ),
             ),
 

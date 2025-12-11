@@ -1,10 +1,13 @@
-import 'package:caretag/Features/auth/model/intro/ImageModel.dart';
-import 'package:caretag/Features/auth/model_view/utils/animatedRoute.dart';
-import 'package:caretag/Features/auth/view/Intro_page&permisson_page/permission_page.dart';
+import 'package:caretag/Modules/auth/data/intro/ImageModel.dart';
+import 'package:caretag/widgets/animatedRoute.dart';
+import 'package:caretag/Modules/auth/view/Intro_page&permisson_page/permission_page.dart';
 import 'package:caretag/constants/app_color.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart' show ReadContext;
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+
+import '../../model_view/bloc/auth_bloc.dart' show AuthBloc;
 
 class Intropage1 extends StatefulWidget {
   const Intropage1({super.key});
@@ -22,6 +25,7 @@ class _Intropage1State extends State<Intropage1> {
 
   @override
   Widget build(BuildContext context) {
+    final authBloc = context.read<AuthBloc>();
     List<Imagemodel> images = [
       Imagemodel(
         path: "assets/images/intro/Image1.png",
@@ -87,7 +91,7 @@ class _Intropage1State extends State<Intropage1> {
         }
         if (index == 6) {
           index = index - 1;
-          Navigator.push(context, customRoute(PermissionPage()));
+          Navigator.push(context, customRoute(PermissionPage(), authBloc));
         }
         debugPrint(index.toString());
       });

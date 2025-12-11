@@ -40,6 +40,9 @@ dependencies:
   smooth_page_indicator: ^1.2.1
   flutter_svg: ^2.2.3
   video_player: ^2.10.1
+  http: ^1.6.0
+  flutter_bloc: ^9.1.1
+  flutter_secure_storage: ^10.0.0
 
 dev_dependencies:
   flutter_test:

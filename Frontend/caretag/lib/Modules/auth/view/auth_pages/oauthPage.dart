@@ -1,8 +1,11 @@
-import 'package:caretag/Features/auth/view/auth_pages/Auth.dart';
+import 'package:caretag/Modules/auth/model_view/bloc/auth_bloc.dart';
+import 'package:caretag/Modules/auth/view/auth_pages/auth.dart';
 import 'package:caretag/constants/app_color.dart';
 import 'package:caretag/widgets/custombutton.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart' show ReadContext, BlocProvider;
 import 'package:google_fonts/google_fonts.dart';
+
 import 'package:video_player/video_player.dart';
 
 class Oauthpage extends StatefulWidget {
@@ -27,6 +30,7 @@ class _OauthpageState extends State<Oauthpage> {
 
   @override
   Widget build(BuildContext context) {
+    final authBloc = context.read<AuthBloc>();
     return Scaffold(
       backgroundColor: Colors.white,
       body: Column(
@@ -104,7 +108,11 @@ class _OauthpageState extends State<Oauthpage> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => AuthPage(login: true),
+                      builder: (newRouteContext) =>
+                          BlocProvider<AuthBloc>.value(
+                            value: authBloc,
+                            child: const AuthPage(login: true),
+                          ),
                     ),
                   );
                 },
