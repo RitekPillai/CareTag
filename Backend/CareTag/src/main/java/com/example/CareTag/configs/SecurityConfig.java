@@ -21,6 +21,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.List;
+
 @EnableWebSecurity
 
 @Configuration
@@ -34,7 +40,7 @@ private final CustomUserDeatilsService customUserDeatilsService;
 @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http)throws Exception{
         return http.csrf(AbstractHttpConfigurer::disable)
-                .cors(Customizer.withDefaults())
+                    .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(req -> req
 
                         .requestMatchers("/auth/**").permitAll()
@@ -63,6 +69,27 @@ private final CustomUserDeatilsService customUserDeatilsService;
                 )
 
                 .build();
+
+    }
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        // 1. Allow all origins for development (e.g., your Flutter app, emulator, browser)
+        configuration.setAllowedOrigins(List.of("*"));
+
+        // 2. Allow common methods
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+
+        // 3. Allow all headers
+        configuration.setAllowedHeaders(List.of("*"));
+
+        // Important for JWT and session cookies
+        configuration.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        // Apply this configuration to all paths
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 @Bean
 public AuthenticationProvider authenticationProvider(){

@@ -118,7 +118,7 @@ emailService.sendVerificationEmail(user.getEmail(), verificationToken.getToken()
             throw new RuntimeException("OTP has been Expired");
         }
         log.info("OTP ====:{}",otp.getOtp());
-        log.info("Context otp:{}",otpRequest.getOtpCode());
+        log.info("form input otp:{}",otpRequest.getOtpCode());
         if (otpRequest.getOtpCode() == null || otpRequest.getOtpCode().isEmpty()) {
             throw new RuntimeException("OTP code cannot be empty.");
         }
