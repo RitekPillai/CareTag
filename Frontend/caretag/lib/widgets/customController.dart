@@ -9,6 +9,7 @@ Widget customTextFiled(
   bool isPassword = false,
   String? HintText,
   TextInputType textInputType = TextInputType.text,
+  String? Function(String?)? validator,
 }) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
@@ -22,21 +23,37 @@ Widget customTextFiled(
         ),
       ),
       SizedBox(
-        height: 45,
         width: 316,
-        child: TextField(
+        child: TextFormField(
+          validator: validator,
           keyboardType: textInputType,
 
           controller: controller,
           obscureText: isPassword ? true : false,
+
           decoration: InputDecoration(
+            contentPadding: const EdgeInsets.symmetric(
+              vertical: 12,
+              horizontal: 16,
+            ),
+            errorMaxLines: 5,
+            errorStyle: GoogleFonts.poppins(
+              height: 1.7,
+              color: Colors.red,
+              fontWeight: FontWeight.w500,
+              fontSize: 13,
+            ),
+
             hintText: helperText,
             hintStyle: GoogleFonts.poppins(
               color: AppColor.textHelperLightGrey,
               fontSize: 16,
               fontWeight: FontWeight.w300,
             ),
-
+            errorBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.red),
+              borderRadius: BorderRadius.circular(12),
+            ),
             focusedBorder: OutlineInputBorder(
               borderSide: BorderSide(color: AppColor.textFieldBorderColor),
               borderRadius: BorderRadius.circular(12),

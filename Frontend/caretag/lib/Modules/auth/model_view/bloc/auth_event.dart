@@ -15,8 +15,23 @@ class AuthSignUpRequest extends AuthEvent {
   });
 }
 
+class AuthEmailVerification extends AuthEvent {}
+
+class AuthoauthLogin extends AuthEvent {}
+
 class AuthLoginRequest extends AuthEvent {
   final LoginRequest loginRequest;
 
   AuthLoginRequest({required this.loginRequest});
+}
+
+class AuthForgotPassword extends AuthEvent {
+  final ForgotPasswordRequest req;
+  AuthForgotPassword({required this.req});
+}
+
+class AuthLoginOtpVerify extends AuthEvent {
+  final OtpVerifyModel req;
+
+  AuthLoginOtpVerify({required this.req});
 }

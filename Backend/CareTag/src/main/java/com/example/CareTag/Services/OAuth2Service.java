@@ -25,6 +25,8 @@ public class OAuth2Service {
     private final RefereshTokenService refereshTokenService;
 
 
+
+
     @Transactional
     public ResponseEntity<LoginResponseDTO> Oauth2Login(OAuth2User oAuth2User, String registrationid) throws Exception {
         AuthProvider authProvider = authUtil.getProviderFromRegID(registrationid);
@@ -33,10 +35,13 @@ public class OAuth2Service {
         User user = userRepo.findByProviderIdAndAuthProvider(providerid,authProvider).orElse(null);
         String emaill  = oAuth2User.getAttribute("email");
         User emailUser = userRepo.findByEmail(emaill);
+
+        boolean isNew = false;
         if(user==null && emailUser==null){
             /// signUp
             String email = oAuth2User.getAttribute("email");
             String username = oAuth2User.getAttribute("name");
+            isNew = true;
             user = authUtil.getuser(new SignUpRequestDTO(username,email,null),authProvider,providerid);
 
 
@@ -54,7 +59,7 @@ public class OAuth2Service {
         String token = authUtil.generateToken(user);
         RefreshToken refreshToken =refereshTokenService.generateToken(user.getEmail());
 
-        LoginResponseDTO loginResponseDTO = new   LoginResponseDTO(token, user.getUsername(), refreshToken.getToken());
+        LoginResponseDTO loginResponseDTO = new   LoginResponseDTO(token, user.getUsername(), refreshToken.getToken(),isNew);
         return ResponseEntity.ok(loginResponseDTO);
 
     }

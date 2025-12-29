@@ -1,15 +1,14 @@
 package com.example.CareTag.controllers;
 
 import com.example.CareTag.DTOs.*;
-import com.example.CareTag.Services.AuthUtil;
-import com.example.CareTag.Services.PasswordResetService;
-import com.example.CareTag.Services.RefereshTokenService;
-import com.example.CareTag.Services.AuthService;
+import com.example.CareTag.Services.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -17,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/auth")
 public class AuthController {
 private final AuthService authService;
+private final TokenExchangeService tokenExchangeService;
 private final RefereshTokenService refereshTokenService;
 private final PasswordResetService passwordResetService;
 private final AuthUtil authUtil;
@@ -24,7 +24,21 @@ private final AuthUtil authUtil;
     public ResponseEntity<SignUpResponseDTO> signUp(
             @RequestBody SignUpRequestDTO signUpRequestDTO
             ) throws Exception {
+        log.info("signUp request received.");
         return authService.signUp(signUpRequestDTO);
+    }
+
+    @PostMapping("/exchange")
+    public ResponseEntity<LoginResponseDTO> exchangeCode(
+            @RequestBody Map<String,String> body
+    ){
+String code = body.get("code");
+LoginResponseDTO responseDTO = tokenExchangeService.consumeCode(code);
+        if (responseDTO == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        return ResponseEntity.ok(responseDTO);
     }
     @PostMapping("/login")
     public ResponseEntity<String> login(
@@ -72,6 +86,16 @@ private final AuthUtil authUtil;
             return  authUtil.getHtmlErrorMessage(e.toString());
         }
     }
+
+        @PostMapping("/isValid")
+    public ResponseEntity<VerifyResponse> isValid(
+            @RequestBody EmailVeriDTO token
+    ) throws Exception {
+
+       return authService.isMyEmailVerified(token.getToken());
+    }
+
+
     @PostMapping("/login-verify")
     public ResponseEntity<LoginResponseDTO> verifyLogin(
             @RequestBody OtpRequest otpRequest

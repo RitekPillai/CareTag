@@ -9,4 +9,5 @@ public class LoginResponseDTO {
     String token;
     String username;
     String RefreshToken;
+    boolean isNew;
 }

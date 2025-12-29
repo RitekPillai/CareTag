@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
       ),
       home: BlocProvider<AuthBloc>(
         create: (context) => AuthBloc(repo, storeageService),
-        child: const AuthPage(login: true),
+        child: const AuthPage(login: false),
       ),
     );
   }

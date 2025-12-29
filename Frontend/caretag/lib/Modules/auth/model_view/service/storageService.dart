@@ -4,6 +4,11 @@ class Storageservice {
   final storage = const FlutterSecureStorage();
   final String _acessToken = "acessToken";
   final String _refreshToken = "refreshToken";
+  final String _emailToken = "emailToken";
+
+  Future<void> saveEmailToken(String emailToken) async {
+    await storage.write(key: _emailToken, value: emailToken);
+  }
 
   Future<void> saveToken(String acessToken, String refreshToken) async {
     await storage.write(key: _acessToken, value: acessToken);
@@ -14,8 +19,16 @@ class Storageservice {
     return storage.read(key: _acessToken);
   }
 
+  Future<String?> getEmailToken() async {
+    return storage.read(key: _emailToken);
+  }
+
   Future<String?> getRefreshToken() async {
     return storage.read(key: _refreshToken);
+  }
+
+  Future<void> clearEmailToken() async {
+    await storage.delete(key: _emailToken);
   }
 
   Future<void> clearAll() async {

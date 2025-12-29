@@ -39,8 +39,10 @@ public class GolbalExceptionHandaler {
     }
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiError> handleException(Exception e){
-        ApiError apierror  = new ApiError("An Unexcepted Error Occured: "+e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
+        ApiError apierror  = new ApiError(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
         return new ResponseEntity<>(apierror,apierror.getStatusCode());
     }
+
+
 
 }

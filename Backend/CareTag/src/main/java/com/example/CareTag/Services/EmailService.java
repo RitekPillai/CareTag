@@ -40,7 +40,7 @@ public class EmailService {
 
     public void sendVerificationEmail(String email, String token) throws MessagingException {
 
-        String emailVerificationLink = "http://localhost:8080/auth/verify?token=" + token;
+        String emailVerificationLink = "https://uncatastrophic-nonobserving-marylyn.ngrok-free.dev/auth/verify?token=" + token;
         User user = userRepo.findByEmail(email);
         String username =user.getUsername();
         String personalizedGreeting = "<p>Hello " + username + ", Thank you for signing up! Please click the button below to verify your email address:</p>";

@@ -20,9 +20,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 @Service
@@ -49,17 +51,20 @@ public class AuthService {
 log.info("User Created: Username:{} ",user.getUsername());
 String token = UUID.randomUUID().toString();
 
+
 VerificationToken verificationToken = new  VerificationToken(token,user);
-verificationTokenRepo.save(verificationToken);
+VerificationToken verificationToken1 =   verificationTokenRepo.save(verificationToken);
+log.info("Token Created: Token:{} ",verificationToken1.getToken());
 emailService.sendVerificationEmail(user.getEmail(), verificationToken.getToken());
 
 
 
 
-    return new ResponseEntity<>(new SignUpResponseDTO(user.getUsername(), user.getEmail()), HttpStatus.CREATED);
+    return new ResponseEntity<>(new SignUpResponseDTO(token), HttpStatus.CREATED);
 
 
     }
+
     /// loginController(typical email password)
     public ResponseEntity<String> login(LoginRequestDTO req)throws  Exception{
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(req.getEmail(),req.getPassword()));
@@ -79,7 +84,9 @@ emailService.sendVerificationEmail(user.getEmail(), verificationToken.getToken()
             return new  ResponseEntity<>("The Otp Has Been Sent to your Email Please Check It:)",HttpStatus.ACCEPTED);
     }
 
-    public ResponseEntity<VerifyResponse> verification(String token) {
+
+
+    public void  verification(String token) {
         Optional<VerificationToken> tokenOptional = verificationTokenRepo.findByToken(token);
         if(tokenOptional.isEmpty()){
             throw new RuntimeException("Invalid verification token.");        }
@@ -91,17 +98,14 @@ emailService.sendVerificationEmail(user.getEmail(), verificationToken.getToken()
         if(user.isVerified()){
           throw new RuntimeException("Email already verified. You can now log in.");
         }
-        String jwtToken = authUtil.generateToken(user);
-        RefreshToken refreshToken =refereshTokenService.generateToken(user.getEmail());
-        log.info("JWT TOKEN:{}",jwtToken);
-        log.info("REFRESH TOKEN:{}",refreshToken);
+//
         user.setVerified(true);
         userRepo.save(user);
 
 
-        verificationTokenRepo.delete(verificationToken);
 
-        return new ResponseEntity<>(new VerifyResponse(jwtToken, user.getUsername(), refreshToken.getToken()),HttpStatus.OK);
+
+
 
     }
 
@@ -130,12 +134,46 @@ emailService.sendVerificationEmail(user.getEmail(), verificationToken.getToken()
         User user = userRepo.findByEmail(otp.getEmail());
         String jwtToken = authUtil.generateToken(user);
         RefreshToken refreshToken = refereshTokenService.generateToken(user.getEmail());
-        return ResponseEntity.ok(new LoginResponseDTO(jwtToken, user.getUsername(), refreshToken.getToken()));
+        return ResponseEntity.ok(new LoginResponseDTO(jwtToken, user.getUsername(), refreshToken.getToken(),false));
 
 
 
     }
 
 
+    public ResponseEntity<VerifyResponse> isMyEmailVerified(String token) throws Exception {
+        Optional<VerificationToken> tokenOptional = verificationTokenRepo.findByToken(token);
+
+
+        if(tokenOptional.isEmpty()){
+            throw new RuntimeException("Invalid verification token is empty.");
+        }
+        log.info("token ====:{}",tokenOptional.get().getToken());
+
+        VerificationToken verificationToken  = tokenOptional.get();
+
+
+
+        User user = verificationToken.getUser();
+        if(user.isVerified()){
+            String jwtToken = authUtil.generateToken(user);
+            RefreshToken refreshToken =refereshTokenService.generateToken(user.getEmail());
+            log.info("JWT TOKEN:{}",jwtToken);
+            log.info("REFRESH TOKEN:{}",refreshToken);
+            verificationTokenRepo.delete(verificationToken);
+
+            return new ResponseEntity<>(new VerifyResponse(jwtToken, user.getUsername(), refreshToken.getToken()),HttpStatus.OK);
+
+        } else if (!user.isVerified()) {
+            log.info("user is not verified.");
+                throw  new Exception("user is not verified.");
+        }
+        else{
+            log.info("something went wrong.");
+            throw new Exception("something went wrong.");
+        }
+
+
+    }
 }
 

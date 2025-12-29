@@ -1,8 +1,15 @@
+import 'dart:async';
+
 import 'package:bloc/bloc.dart';
+import 'package:caretag/Modules/auth/data/auth/forgot_password_request.dart';
 import 'package:caretag/Modules/auth/data/auth/login_request.dart';
 import 'package:caretag/Modules/auth/data/auth/signup_request.dart';
+import 'package:caretag/Modules/auth/data/model/authException.dart';
+import 'package:caretag/Modules/auth/data/model/otpVerifyRequest.dart';
+import 'package:caretag/Modules/auth/data/model/tokenModel.dart';
 import 'package:caretag/Modules/auth/data/repo/auth_repo.dart';
 import 'package:caretag/Modules/auth/model_view/service/storageService.dart';
+import 'package:equatable/equatable.dart';
 import 'package:flutter/rendering.dart';
 import 'package:meta/meta.dart';
 
@@ -19,7 +26,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     on<AuthSignUpRequest>(_onSignUpRequest);
     on<AuthLoginRequest>(_onLoginRequest);
+    on<AuthForgotPassword>(_onForgotPasswordRequest);
+    on<AuthEmailVerification>(_onEmailVerification);
+    on<AuthLoginOtpVerify>(_onLoginOtpVerify);
+    on<AuthoauthLogin>(_onOauthLogin);
   }
+
   Future<void> _onSignUpRequest(
     AuthSignUpRequest event,
     Emitter<AuthState> emit,
@@ -31,9 +43,29 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         password: event.password,
         username: event.phone,
       );
-      String resposne = await _authRepo.signUp(req);
-      debugPrint("Response :- $resposne");
+      await _authRepo.signUp(req);
       emit(AuthCompleted());
+    } catch (e) {
+      if (e is AuthException) {
+        emit(AuthFailed(message: e.errorMessage));
+      }
+    }
+  }
+
+  Future<void> _onLoginOtpVerify(
+    AuthLoginOtpVerify event,
+    Emitter<AuthState> emit,
+  ) async {
+    try {
+      emit(AuthLoading());
+      OtpVerifyModel req = OtpVerifyModel(
+        email: event.req.email,
+        otpCode: event.req.otpCode,
+      );
+      debugPrint(req.email);
+      Tokenmodel tokenmodel = await _authRepo.loginOtpVerify(req);
+      debugPrint(tokenmodel.refreshToken);
+      emit(Authenticated());
     } catch (e) {
       debugPrint(e.toString());
       emit(AuthFailed(message: e.toString()));
@@ -43,20 +75,67 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   Future<void> _onLoginRequest(AuthLoginRequest event, Emitter emit) async {
     emit(AuthLoading());
     try {
-      String response = await _authRepo.login(event.loginRequest);
-      debugPrint("Reponse Login from Bloc -----$response");
-      AuthCompleted();
+      String message = await _authRepo.login(event.loginRequest);
+      debugPrint("from block---$message");
+      emit(LoginCompleted(message: message));
+    } catch (e) {
+      if (e is AuthException) {
+        emit(AuthFailed(message: e.errorMessage));
+      }
+    }
+  }
+
+  Future<void> _onEmailVerification(
+    AuthEmailVerification event,
+    Emitter emit,
+  ) async {
+    try {
+      emit(AuthLoading());
+      await _authRepo.emailVerification();
+      emit(SignUpCOmpleted());
     } catch (e) {
       debugPrint(e.toString());
-      AuthFailed(message: e.toString());
+      //  emit(AuthFailed(message: e.toString()));
     }
   }
 
   @override
   void onChange(Change<AuthState> change) {
-    // TODO: implement onChange
     debugPrint("Current State: ${change.currentState}");
     debugPrint("Next State:${change.nextState}");
     super.onChange(change);
+  }
+
+  FutureOr<void> _onForgotPasswordRequest(
+    AuthForgotPassword event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(AuthLoading());
+    try {
+      await _authRepo.forgotPasswordOTPRequest(event.req);
+      emit(AuthCompleted());
+    } catch (e) {
+      emit(AuthFailed(message: e.toString()));
+    }
+  }
+
+  FutureOr<void> _onOauthLogin(
+    AuthoauthLogin event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(AuthLoading());
+    try {
+      Tokenmodel tokenmodel = await _authRepo.GoogleOauthSignUp();
+      if (tokenmodel.isNew) {
+        emit(SignUpCOmpleted());
+      } else {
+        emit(Authenticated());
+      }
+    } catch (e) {
+      if (e is AuthException) {
+        debugPrint(e.errorMessage);
+        emit(AuthFailed(message: e.errorMessage));
+      }
+    }
   }
 }
