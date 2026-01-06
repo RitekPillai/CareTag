@@ -1,13 +1,16 @@
 package com.example.CareTag.controllers;
 
-import com.example.CareTag.DTOs.*;
-import com.example.CareTag.Services.*;
+import com.example.CareTag.DTOs.authDTOs.*;
+import com.example.CareTag.Models.User;
+import com.example.CareTag.Services.AuthServices.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.Map;
 
 @Slf4j
@@ -20,13 +23,6 @@ private final TokenExchangeService tokenExchangeService;
 private final RefereshTokenService refereshTokenService;
 private final PasswordResetService passwordResetService;
 private final AuthUtil authUtil;
-    @PostMapping("/signup")
-    public ResponseEntity<SignUpResponseDTO> signUp(
-            @RequestBody SignUpRequestDTO signUpRequestDTO
-            ) throws Exception {
-        log.info("signUp request received.");
-        return authService.signUp(signUpRequestDTO);
-    }
 
     @PostMapping("/exchange")
     public ResponseEntity<LoginResponseDTO> exchangeCode(
@@ -40,12 +36,31 @@ LoginResponseDTO responseDTO = tokenExchangeService.consumeCode(code);
 
         return ResponseEntity.ok(responseDTO);
     }
-    @PostMapping("/login")
-    public ResponseEntity<String> login(
-            @RequestBody LoginRequestDTO loginRequestDTO
-            )throws  Exception{
-        return  authService.login(loginRequestDTO);
+
+//
+//    @PostMapping("/doctor/signup")
+//    public ResponseEntity<String> doctorSignUp(
+//            @RequestBody SignUpRequestDTO signUpRequestDTO
+//    ) throws Exception {
+//        return  authService.doctorSignUp(signUpRequestDTO);
+//    }
+
+    @PostMapping("/paitent/signup")
+    public ResponseEntity<String>  paietentSignUp(
+            @RequestBody SignUpRequestDTO signUpRequestDTO
+    ) throws Exception {
+        log.info("Paitent Sign Up Request Received"+signUpRequestDTO);
+return authService.patientSignUp(signUpRequestDTO);
     }
+
+    @PostMapping("/paitent/login")
+    public  ResponseEntity<String> paittentLogin(
+            @RequestBody LoginRequestDTO loginRequestDTO
+    ) throws Exception {
+        return authService.login(loginRequestDTO);
+    }
+
+
 
     @PostMapping("/refresh")
     public ResponseEntity<RefreshTokenResponseDTO> refreshToken(
@@ -53,21 +68,21 @@ LoginResponseDTO responseDTO = tokenExchangeService.consumeCode(code);
     ) throws Exception {
         return  refereshTokenService.refreshToken(token);
     }
-    @PostMapping("/forgot-password/request-otp")
-    public ResponseEntity<Void> requestOtp(@RequestBody ForgotPasswordRequest forgotPasswordRequest){
-        passwordResetService.sendOtp(forgotPasswordRequest);
-        return ResponseEntity.ok().build();
-
-    }
-    @PostMapping("/forgot-password/verify-otp")
-    public ResponseEntity<ResetPasswordResponse> verfiyOtp(
-            @RequestBody VerfiyOtpRequest verfiyOtpRequest
-    ){
-      ResetPasswordResponse token  =  passwordResetService.verfiyOTPAndGenerateToken(verfiyOtpRequest);
-      return new ResponseEntity<>(token, HttpStatus.OK);
-
-
-    }
+//    @PostMapping("/forgot-password/request-otp")
+//    public ResponseEntity<Void> requestOtp(@RequestBody ForgotPasswordRequest forgotPasswordRequest){
+//        passwordResetService.sendOtp(forgotPasswordRequest);
+//        return ResponseEntity.ok().build();
+//
+//    }
+//    @PostMapping("/forgot-password/verify-otp")
+//    public ResponseEntity<ResetPasswordResponse> verfiyOtp(
+//            @RequestBody VerfiyOtpRequest verfiyOtpRequest
+//    ){
+//      ResetPasswordResponse token  =  passwordResetService.verfiyOTPAndGenerateToken(verfiyOtpRequest);
+//      return new ResponseEntity<>(token, HttpStatus.OK);
+//
+//
+//    }
 
     @PostMapping("/reset-password")
     public ResponseEntity<Void> resetPassword(
@@ -78,9 +93,9 @@ LoginResponseDTO responseDTO = tokenExchangeService.consumeCode(code);
     }
 
     @GetMapping("/verify")
-    public String confirmAccount (@RequestParam String token){
+    public String confirmAccount (@RequestParam String email,@RequestParam String token){
         try{
-            authService.verification(token);
+            authService.verification(email,token);
             return authUtil.getHtmlSuccessMessage();
         } catch (Exception e) {
             return  authUtil.getHtmlErrorMessage(e.toString());
@@ -89,10 +104,10 @@ LoginResponseDTO responseDTO = tokenExchangeService.consumeCode(code);
 
         @PostMapping("/isValid")
     public ResponseEntity<VerifyResponse> isValid(
-            @RequestBody EmailVeriDTO token
+            @RequestBody String email
     ) throws Exception {
 
-       return authService.isMyEmailVerified(token.getToken());
+      return  authService.isMyEmailVerified(email);
     }
 
 
@@ -101,7 +116,14 @@ LoginResponseDTO responseDTO = tokenExchangeService.consumeCode(code);
             @RequestBody OtpRequest otpRequest
     ){
         log.info("CONTROLLER OTP REQUEST"+otpRequest.getOtpCode());
-        return authService.verifyLogin(otpRequest);
+        return authService.verifyLogin(otpRequest.getEmail(), otpRequest.getOtpCode());
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<?> getCurrentUser(Principal principal){
+        return authService.getCurrentUser(principal);
+
+
     }
 
 

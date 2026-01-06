@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:caretag/Modules/auth/data/model/authException.dart';
 import 'package:caretag/Modules/auth/data/model/tokenModel.dart';
-import 'package:caretag/Modules/auth/model_view/service/storageService.dart';
+import 'package:caretag/utils/storageService.dart';
 import 'package:flutter/material.dart';
 
 import 'package:http/http.dart' as http;
@@ -45,10 +45,11 @@ class Authenticationservice extends http.BaseClient {
   }
 
   Future<void> tokenRequest() async {
-    String baseUrl = "http://localhost:8080/auth";
+    String baseUrl =
+        "https://uncatastrophic-nonobserving-marylyn.ngrok-free.dev/auth";
     try {
       final refreshToken = await storage.getRefreshToken();
-      debugPrint(refreshToken);
+      debugPrint("response token : $refreshToken");
       if (refreshToken == null) {
         throw Exception("REFRESH TOKEN IS NULL");
       }
@@ -58,14 +59,17 @@ class Authenticationservice extends http.BaseClient {
         body: refreshToken,
       );
       if (response.statusCode == 200) {
-        debugPrint(response.body);
+        debugPrint("Response  ${response.body}");
         debugPrint("Done.");
         final newToken = Tokenmodel.fromJson(jsonDecode(response.body));
         await storage.saveToken(newToken.accessToken, newToken.refreshToken);
+      } else if (response.statusCode == 500 || response.statusCode == 501) {
+        debugPrint(response.body);
       } else {
         AuthException authException = AuthException.fromJson(
           jsonDecode(response.body),
         );
+
         throw authException;
       }
     } catch (e) {

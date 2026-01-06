@@ -1,6 +1,7 @@
 package com.example.CareTag.Models;
 
 import com.example.CareTag.Models.type.AuthProvider;
+import com.example.CareTag.Models.type.RoleType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,11 +11,17 @@ import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.MongoId;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import javax.management.relation.Role;
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -32,13 +39,16 @@ public class User implements UserDetails {
    private String username;
    private String providerId;
    private AuthProvider authProvider;
-///  for password reset
+   private boolean isVerified = false;
+
+   private Set<RoleType> role = new HashSet<>();
+   ///  for password reset
 
 
    private String passwordResetToken;
    private LocalDateTime passwordRestExpiery;
 
-   private boolean isVerified = false;
+
 
 
 
@@ -48,11 +58,18 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
+        return role.stream().map(roleType -> new SimpleGrantedAuthority("ROLE_"+roleType.name())).collect(Collectors.toSet());
+
+
+
+
     }
 
 
 ///  SignUp verification process
+
+
+
     /// is verified  = false
     /// signup->email password->save->randomUUID->sent to the email->user click the link->verify its -> and then sign up happy:)
 

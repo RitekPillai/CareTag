@@ -8,7 +8,7 @@ import 'package:caretag/Modules/auth/data/model/authException.dart';
 import 'package:caretag/Modules/auth/data/model/otpVerifyRequest.dart';
 import 'package:caretag/Modules/auth/data/model/tokenModel.dart';
 import 'package:caretag/Modules/auth/data/repo/auth_repo.dart';
-import 'package:caretag/Modules/auth/model_view/service/storageService.dart';
+import 'package:caretag/utils/storageService.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/rendering.dart';
 import 'package:meta/meta.dart';
@@ -30,6 +30,37 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<AuthEmailVerification>(_onEmailVerification);
     on<AuthLoginOtpVerify>(_onLoginOtpVerify);
     on<AuthoauthLogin>(_onOauthLogin);
+    on<OnAppStart>(_onAppStart);
+  }
+  Future<void> _onAppStart(OnAppStart event, Emitter emit) async {
+    emit(AuthLoading());
+    try {
+      final String message = await _authRepo.isAuthenticated();
+      final String result = message.toLowerCase().trim();
+
+      debugPrint("Auth State Check: $result");
+
+      if (result == "homepage") {
+        return emit(Authenticated());
+      }
+
+      if (result == "newuser") {
+        return emit(NewUser());
+      }
+
+      if (result == "loginscreen") {
+        return emit(LoginScreen());
+      }
+
+      if (result == "registration needed") {
+        return emit(SignUpCOmpleted());
+      }
+
+      emit(LoginScreen());
+    } catch (e) {
+      debugPrint("Auth Error: $e");
+      emit(AuthFailed(message: e.toString()));
+    }
   }
 
   Future<void> _onSignUpRequest(
@@ -43,7 +74,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         password: event.password,
         username: event.phone,
       );
+
       await _authRepo.signUp(req);
+      debugPrint("done");
       emit(AuthCompleted());
     } catch (e) {
       if (e is AuthException) {
@@ -62,10 +95,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         email: event.req.email,
         otpCode: event.req.otpCode,
       );
-      debugPrint(req.email);
+
       Tokenmodel tokenmodel = await _authRepo.loginOtpVerify(req);
-      debugPrint(tokenmodel.refreshToken);
-      emit(Authenticated());
+      debugPrint("isRegister:${tokenmodel.isRegister.toString()}");
+      if (tokenmodel.isRegister == true) {
+        emit(Authenticated());
+      } else {
+        emit(SignUpCOmpleted());
+      }
     } catch (e) {
       debugPrint(e.toString());
       emit(AuthFailed(message: e.toString()));
@@ -91,11 +128,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   ) async {
     try {
       emit(AuthLoading());
-      await _authRepo.emailVerification();
+      await _authRepo.emailVerification(event.email);
       emit(SignUpCOmpleted());
     } catch (e) {
       debugPrint(e.toString());
-      //  emit(AuthFailed(message: e.toString()));
+      emit(AuthFailed(message: e.toString()));
     }
   }
 
@@ -137,5 +174,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         emit(AuthFailed(message: e.errorMessage));
       }
     }
+  }
+
+  @override
+  void onTransition(Transition<AuthEvent, AuthState> transition) {
+    debugPrint("Current State:${transition.currentState}");
+    debugPrint("next State:${transition.nextState}");
+    super.onTransition(transition);
   }
 }

@@ -2,7 +2,7 @@ package com.example.CareTag.Filters;
 
 import com.example.CareTag.Models.User;
 import com.example.CareTag.Repos.UserRepo;
-import com.example.CareTag.Services.AuthUtil;
+import com.example.CareTag.Services.AuthServices.AuthUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -28,6 +28,11 @@ public class JWTfilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
     try {
         final String requestHeader =   request.getHeader("Authorization");
+        String path = request.getServletPath();
+        if (path.startsWith("/oauth2/") || path.startsWith("/login/oauth2/")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
 
         if(requestHeader==null || !requestHeader.startsWith("Bearer ")){

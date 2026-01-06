@@ -2,13 +2,16 @@ import 'package:caretag/Modules/auth/data/auth/login_request.dart';
 import 'package:caretag/Modules/auth/model_view/bloc/auth_bloc.dart';
 import 'package:caretag/Modules/auth/view/auth_pages/emailVerification.dart';
 import 'package:caretag/Modules/auth/view/auth_pages/otpPage.dart';
-import 'package:caretag/Modules/card_registration/view/Registration_page.dart';
+import 'package:caretag/Modules/card_registration/model_view/bloc/patient_bloc_bloc.dart';
+import 'package:caretag/Modules/card_registration/view/registration_intro_page.dart';
 import 'package:caretag/Modules/home/view.dart/homePage.dart';
 import 'package:caretag/constants/appConstants.dart';
 import 'package:caretag/widgets/animatedRoute.dart';
 import 'package:caretag/widgets/customController.dart';
 import 'package:caretag/constants/app_color.dart';
+import 'package:caretag/widgets/custom_divider.dart';
 import 'package:caretag/widgets/custombutton.dart';
+import 'package:caretag/widgets/helpPage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -48,7 +51,6 @@ class _AuthPageState extends State<AuthPage> {
 
   @override
   Widget build(BuildContext context) {
-    final authBloc = context.read<AuthBloc>();
     return Scaffold(
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
@@ -57,23 +59,7 @@ class _AuthPageState extends State<AuthPage> {
           key: _formKey,
           child: Column(
             children: [
-              Padding(
-                padding: const EdgeInsets.only(top: 20, right: 20),
-                child: Align(
-                  alignment: Alignment.topRight,
-                  child: TextButton(
-                    onPressed: () {},
-                    child: Text(
-                      "Help?",
-                      style: GoogleFonts.poppins(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 15,
-                        color: Colors.black,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+              help(),
               const SizedBox(height: 30),
               AnimatedSwitcher(
                 duration: Appconstants.duration,
@@ -261,10 +247,13 @@ class _AuthPageState extends State<AuthPage> {
 
               BlocListener<AuthBloc, AuthState>(
                 listener: (context, state) {
+                  final authBloc = context.read<AuthBloc>();
+
                   if (state is SignUpCOmpleted) {
-                    Navigator.push(
+                    final paitentBloc = context.read<PatientBloc>();
+                    Navigator.pushReplacement(
                       context,
-                      customRoute(RegistrationPage(), authBloc),
+                      customRoute(RegistrationIntroPage(), paitentBloc),
                     );
                   }
                   if (state is Authenticated) {
@@ -288,7 +277,10 @@ class _AuthPageState extends State<AuthPage> {
                   if (state is AuthCompleted) {
                     Navigator.push(
                       context,
-                      customRoute(Emailverification(), authBloc),
+                      customRoute(
+                        Emailverification(email: emailController.text),
+                        authBloc,
+                      ),
                     );
                   }
 
@@ -371,30 +363,7 @@ class _AuthPageState extends State<AuthPage> {
                 ],
               ),
               const SizedBox(height: 15),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SizedBox(
-                    width: 64,
-                    child: Divider(color: Colors.black, thickness: 0.5),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 20, right: 20),
-                    child: Text(
-                      "or continue with",
-                      style: GoogleFonts.poppins(
-                        fontSize: 15,
-                        color: Colors.black,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    width: 64,
-                    child: Divider(color: Colors.black, thickness: 0.5),
-                  ),
-                ],
-              ),
+              customDivider("or continue with", 64),
               const SizedBox(height: 15),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,

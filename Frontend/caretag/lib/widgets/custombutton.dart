@@ -8,14 +8,15 @@ Widget customElevatedButton(
   String title,
   double fontSize,
   FontWeight fontWeight,
-  VoidCallback onPressed,
-) {
+  VoidCallback onPressed, [
+  List<Color> color = AppColor.gradientButtonColor,
+]) {
   return Container(
     width: width,
     height: height,
     decoration: BoxDecoration(
       borderRadius: BorderRadius.circular(33),
-      gradient: LinearGradient(colors: AppColor.gradientButtonColor),
+      gradient: LinearGradient(colors: color),
     ),
     child: ElevatedButton(
       style: ButtonStyle(

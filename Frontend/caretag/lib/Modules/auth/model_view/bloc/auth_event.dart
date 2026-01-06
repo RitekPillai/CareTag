@@ -15,7 +15,11 @@ class AuthSignUpRequest extends AuthEvent {
   });
 }
 
-class AuthEmailVerification extends AuthEvent {}
+class AuthEmailVerification extends AuthEvent {
+  final String email;
+
+  AuthEmailVerification({required this.email});
+}
 
 class AuthoauthLogin extends AuthEvent {}
 
@@ -35,3 +39,5 @@ class AuthLoginOtpVerify extends AuthEvent {
 
   AuthLoginOtpVerify({required this.req});
 }
+
+class OnAppStart extends AuthEvent {}

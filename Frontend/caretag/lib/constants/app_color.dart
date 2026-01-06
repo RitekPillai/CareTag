@@ -16,7 +16,7 @@ class AppColor {
 
   static const Color darkishBlue2 = Color(0xff004186); //
 
-  static List<Color> gradientButtonColor = [
+  static const List<Color> gradientButtonColor = [
     Color(0xff5B8DEF),
     Color(0xff0063F7),
   ];

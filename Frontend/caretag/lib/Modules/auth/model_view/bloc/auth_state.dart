@@ -10,9 +10,11 @@ final class AuthInitial extends AuthState {}
 
 final class AuthLoading extends AuthState {}
 
-final class AuthCompleted extends AuthState {}
-
 final class Authenticated extends AuthState {}
+
+final class NewUser extends AuthState {}
+
+final class LoginScreen extends AuthState {}
 
 final class LoginCompleted extends AuthState {
   final String message;
@@ -20,10 +22,20 @@ final class LoginCompleted extends AuthState {
   LoginCompleted({required this.message});
 
   @override
-  List<Object?> get props => [message, DateTime.now()]; // DateTime forces a unique state
+  List<Object?> get props => [message, DateTime.now()];
 }
 
-final class SignUpCOmpleted extends AuthState {}
+final class AuthCompleted extends AuthState {
+  final DateTime time = DateTime.now();
+  @override
+  List<Object?> get props => [time];
+}
+
+final class SignUpCOmpleted extends AuthState {
+  final DateTime time = DateTime.now();
+  @override
+  List<Object?> get props => [time];
+}
 
 final class AuthFailed extends AuthState {
   final String message;

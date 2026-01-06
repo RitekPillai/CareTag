@@ -1,11 +1,13 @@
-import 'package:caretag/Modules/auth/model_view/bloc/auth_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-Route customRoute(Widget page, AuthBloc authblock) {
+Route customRoute<T extends StateStreamableSource<Object?>>(
+  Widget page,
+  T blocInstance,
+) {
   return PageRouteBuilder(
     pageBuilder: (context, animation, secondaryAnimation) =>
-        BlocProvider.value(value: authblock, child: page),
+        BlocProvider<T>.value(value: blocInstance, child: page),
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
       return FadeTransition(opacity: animation, child: child);
     },

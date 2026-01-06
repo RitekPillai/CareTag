@@ -1,0 +1,44 @@
+import 'package:caretag/Modules/auth/model_view/bloc/auth_bloc.dart';
+import 'package:caretag/Modules/auth/view/Intro_page&permisson_page/introPage1.dart';
+import 'package:caretag/Modules/auth/view/auth_pages/oauthPage.dart';
+import 'package:caretag/Modules/card_registration/view/registration_intro_page.dart';
+import 'package:caretag/Modules/home/view.dart/homePage.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+class Authgate extends StatelessWidget {
+  const Authgate({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocConsumer<AuthBloc, AuthState>(
+      listener: (context, state) {
+        if (state is AuthFailed) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(state.message), backgroundColor: Colors.red),
+          );
+        }
+      },
+      builder: (BuildContext context, AuthState state) {
+        if (state is Authenticated) return const Homepage();
+        if (state is SignUpCOmpleted) return const RegistrationIntroPage();
+        if (state is NewUser) return const Intropage1();
+        if (state is LoginScreen) return const Oauthpage();
+
+        return const Scaffold(
+          body: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // You could put your Medical Logo here
+                CircularProgressIndicator(),
+                SizedBox(height: 20),
+                Text("CareTag: Securing your Health..."),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+}

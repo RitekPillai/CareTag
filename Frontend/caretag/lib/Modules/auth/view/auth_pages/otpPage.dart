@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:caretag/Modules/auth/data/model/otpVerifyRequest.dart';
 import 'package:caretag/Modules/auth/model_view/bloc/auth_bloc.dart';
+import 'package:caretag/Modules/card_registration/model_view/bloc/patient_bloc_bloc.dart';
+import 'package:caretag/Modules/card_registration/view/registration_intro_page.dart';
 import 'package:caretag/Modules/home/view.dart/homePage.dart';
 import 'package:caretag/constants/app_color.dart';
 import 'package:caretag/widgets/animatedRoute.dart';
@@ -65,8 +67,6 @@ class _OtpPageState extends State<OtpPage> {
 
   @override
   Widget build(BuildContext context) {
-    final authBloc = context.read<AuthBloc>();
-
     return Scaffold(
       backgroundColor: Colors.white,
       body: Column(
@@ -167,7 +167,21 @@ class _OtpPageState extends State<OtpPage> {
           BlocListener<AuthBloc, AuthState>(
             listener: (context, state) {
               if (state is Authenticated) {
-                Navigator.push(context, customRoute(Homepage(), authBloc));
+                Navigator.pushReplacement(
+                  context,
+                  customRoute(Homepage(), context.read<AuthBloc>()),
+                );
+              }
+              if (state is SignUpCOmpleted) {
+                debugPrint("going to sighnup page");
+
+                Navigator.pushReplacement(
+                  context,
+                  customRoute(
+                    RegistrationIntroPage(),
+                    context.read<PatientBloc>(),
+                  ),
+                );
               }
             },
             child: customElevatedButton(

@@ -1,0 +1,29 @@
+part of 'patient_bloc_bloc.dart';
+
+sealed class PatientBlocState extends Equatable {
+  const PatientBlocState();
+
+  @override
+  List<Object> get props => [];
+}
+
+final class PatientBlocInitial extends PatientBlocState {}
+
+final class Loading extends PatientBlocState {}
+
+final class Failed extends PatientBlocState {
+  final String message;
+
+  const Failed({required this.message});
+}
+
+final class RecordFetched extends PatientBlocState {
+  final Medicarecordmodel medicalRecord;
+  const RecordFetched(this.medicalRecord);
+}
+
+final class Success extends PatientBlocState {
+  final String careTagId;
+
+  const Success({required this.careTagId});
+}

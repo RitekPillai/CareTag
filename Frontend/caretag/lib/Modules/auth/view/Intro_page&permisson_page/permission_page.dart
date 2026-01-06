@@ -38,7 +38,7 @@ class _PermissionPageState extends State<PermissionPage> {
       acceptFontSize = 18;
       backFontSize = 20;
       if (index == 2) {
-        Navigator.push(context, customRoute(Oauthpage(), authBloc));
+        Navigator.pushReplacement(context, customRoute(Oauthpage(), authBloc));
       }
 
       debugPrint("CurrentIndex:$index");

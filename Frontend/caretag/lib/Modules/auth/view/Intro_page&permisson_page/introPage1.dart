@@ -1,4 +1,5 @@
 import 'package:caretag/Modules/auth/data/intro/ImageModel.dart';
+import 'package:caretag/utils/storageService.dart';
 import 'package:caretag/widgets/animatedRoute.dart';
 import 'package:caretag/Modules/auth/view/Intro_page&permisson_page/permission_page.dart';
 import 'package:caretag/constants/app_color.dart';
@@ -79,7 +80,10 @@ class _Intropage1State extends State<Intropage1> {
     ];
 
     /// -----------------------------------on pressed Button
-    void onPressed() {
+    void onPressed() async {
+      Storageservice storageservice = Storageservice();
+      await storageservice.setTrueNewUser();
+
       setState(() {
         index++;
         if (index > 0) {
