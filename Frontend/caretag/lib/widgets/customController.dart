@@ -10,6 +10,7 @@ Widget customTextFiled(
   String? HintText,
   TextInputType textInputType = TextInputType.text,
   String? Function(String?)? validator,
+  double width = 316,
 }) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
@@ -23,7 +24,7 @@ Widget customTextFiled(
         ),
       ),
       SizedBox(
-        width: 316,
+        width: width,
         child: TextFormField(
           validator: validator,
           keyboardType: textInputType,

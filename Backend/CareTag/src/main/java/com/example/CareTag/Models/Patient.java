@@ -34,4 +34,5 @@ public class Patient {
     private String rsaPublickey;
 @Builder.Default
     private String status = "ACTIVE";
+private  boolean isSubscribed=false;
 }

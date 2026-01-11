@@ -7,7 +7,7 @@ Widget customDivider(String title, double width) {
     children: [
       SizedBox(
         width: width,
-        child: Divider(color: Colors.black, thickness: 0.5),
+        child: Divider(color: Colors.black, thickness: 1),
       ),
       Padding(
         padding: const EdgeInsets.only(left: 20, right: 20),
@@ -16,13 +16,13 @@ Widget customDivider(String title, double width) {
           style: GoogleFonts.poppins(
             fontSize: 15,
             color: Colors.black,
-            fontWeight: FontWeight.w400,
+            fontWeight: FontWeight.w600,
           ),
         ),
       ),
       SizedBox(
         width: width,
-        child: Divider(color: Colors.black, thickness: 0.5),
+        child: Divider(color: Colors.black, thickness: 1),
       ),
     ],
   );

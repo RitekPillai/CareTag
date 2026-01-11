@@ -1,7 +1,7 @@
 import 'package:caretag/Modules/card_registration/data/model/medicarecordmodel.dart';
 import 'package:caretag/Modules/card_registration/model_view/bloc/patient_bloc_bloc.dart';
-import 'package:caretag/Modules/card_registration/view/registration_intro_page.dart';
-import 'package:caretag/Modules/card_registration/view/registration_loading_screen.dart';
+import 'package:caretag/Modules/card_registration/view/registration/registration_intro_page.dart';
+import 'package:caretag/Modules/card_registration/view/registration/registration_loading_screen.dart';
 import 'package:caretag/constants/app_color.dart';
 import 'package:caretag/widgets/animatedRoute.dart';
 import 'package:caretag/widgets/customController.dart';
@@ -201,6 +201,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                     customRoute(RegistrationIntroPage(), bloc),
                   );
                 },
+                33,
                 [Color(0xff254799), Color(0xff1F2937)],
               ),
               customElevatedButton(37, 96, "Next", 20, FontWeight.w700, () {

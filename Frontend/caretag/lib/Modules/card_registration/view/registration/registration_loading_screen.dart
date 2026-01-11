@@ -2,8 +2,7 @@
 import 'dart:async';
 
 import 'package:caretag/Modules/card_registration/data/model/medicarecordmodel.dart';
-import 'package:caretag/Modules/card_registration/data/repos/paitent_repo.dart';
-import 'package:caretag/Modules/card_registration/view/successpage.dart';
+import 'package:caretag/Modules/card_registration/view/registration/successpage.dart';
 import 'package:caretag/widgets/animatedRoute.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -37,12 +36,12 @@ class _RegistrationLoadingScreenState extends State<RegistrationLoadingScreen> {
   }
 
   void startrequest() {
-    var timer_count = 3;
-    Timer.periodic(Duration(seconds: timer_count), (timer) {
-      debugPrint(timer_count.toString());
-      timer_count--;
+    var timerCount = 3;
+    Timer.periodic(Duration(seconds: timerCount), (timer) {
+      debugPrint(timerCount.toString());
+      timerCount--;
 
-      if (timer_count == 0) {
+      if (timerCount == 0) {
         context.read<PatientBloc>().add(
           PatientRegistration(medicalRecord: widget.medicalDetails),
         );

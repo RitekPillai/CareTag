@@ -1,6 +1,7 @@
 package com.example.CareTag.controllers;
 
 import com.example.CareTag.DTOs.PatientDTOs.RegistrationRequestDTO;
+import com.example.CareTag.DTOs.PatientDTOs.SubscriberRequestDTO;
 import com.example.CareTag.Services.PaitentServices.PatientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +25,13 @@ public class PaitentController {
             @RequestBody String careTagId
     ){
         return paitentService.getMedicalRecord(careTagId);
+    }
+
+    @PostMapping("/subscripiton")
+    public void setSubscriber(
+            @RequestBody SubscriberRequestDTO subscriber
+            ){
+         paitentService.setSubscriber(subscriber);
     }
 
 }

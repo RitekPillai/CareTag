@@ -22,6 +22,8 @@ final class RecordFetched extends PatientBlocState {
   const RecordFetched(this.medicalRecord);
 }
 
+final class Subscribed extends PatientBlocState {}
+
 final class Success extends PatientBlocState {
   final String careTagId;
 

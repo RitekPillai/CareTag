@@ -1,7 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:caretag/Modules/card_registration/model_view/bloc/patient_bloc_bloc.dart';
-import 'package:caretag/Modules/card_registration/view/view_careTagCard_page.dart';
-import 'package:caretag/Modules/card_registration/view/watchRegitrationPage.dart';
+import 'package:caretag/Modules/card_registration/view/registration/view_careTagCard_page.dart';
+import 'package:caretag/Modules/card_registration/view/watch/watchRegitrationPage.dart';
 import 'package:caretag/constants/app_color.dart';
 import 'package:caretag/widgets/animatedRoute.dart';
 import 'package:caretag/widgets/custombutton.dart';
@@ -12,7 +12,7 @@ import 'package:lottie/lottie.dart';
 
 class Successpage extends StatelessWidget {
   String careTagId;
-  Successpage({Key? key, required this.careTagId}) : super(key: key);
+  Successpage({super.key, required this.careTagId});
 
   @override
   Widget build(BuildContext context) {

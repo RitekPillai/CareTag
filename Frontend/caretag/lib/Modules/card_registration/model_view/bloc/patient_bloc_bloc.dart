@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:caretag/Modules/card_registration/data/model/medicarecordmodel.dart';
+import 'package:caretag/Modules/card_registration/data/model/shippingRegistration.dart';
 import 'package:caretag/Modules/card_registration/data/repos/paitent_repo.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/widgets.dart';
@@ -16,6 +17,7 @@ class PatientBloc extends Bloc<PatientBlocEvent, PatientBlocState> {
     });
     on<PatientRegistration>(_onPatientRegistration);
     on<GetPatientRecord>(_onGetPaitentRecord);
+    on<SubscriptionEvent>(_onSubscription);
   }
   Future<void> _onPatientRegistration(
     PatientRegistration event,
@@ -42,6 +44,16 @@ class PatientBloc extends Bloc<PatientBlocEvent, PatientBlocState> {
         "Medical recod \n\n ${record.basicPersonalDetails.bloodgroup} ${record.lifeStyleDetails.excercise}",
       );
       emit(RecordFetched(record));
+    } catch (e) {
+      emit(Failed(message: e.toString()));
+    }
+  }
+
+  Future<void> _onSubscription(SubscriptionEvent event, Emitter emit) async {
+    emit(Loading());
+    try {
+      await _paitentRepo.subscription(event.shippingRegistration);
+      emit(Subscribed());
     } catch (e) {
       emit(Failed(message: e.toString()));
     }

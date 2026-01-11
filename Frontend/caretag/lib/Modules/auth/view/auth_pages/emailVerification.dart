@@ -7,7 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'package:caretag/Modules/auth/model_view/bloc/auth_bloc.dart';
 import 'package:caretag/Modules/card_registration/model_view/bloc/patient_bloc_bloc.dart';
-import 'package:caretag/Modules/card_registration/view/registration_intro_page.dart';
+import 'package:caretag/Modules/card_registration/view/registration/registration_intro_page.dart';
 import 'package:caretag/constants/app_color.dart';
 import 'package:caretag/widgets/animatedRoute.dart';
 

@@ -16,3 +16,9 @@ class PatientRegistration extends PatientBlocEvent {
 class GetPatientRecord extends PatientBlocEvent {
   const GetPatientRecord();
 }
+
+class SubscriptionEvent extends PatientBlocEvent {
+  final Shippingregistration shippingRegistration;
+
+  const SubscriptionEvent({required this.shippingRegistration});
+}

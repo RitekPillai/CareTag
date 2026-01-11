@@ -1,10 +1,10 @@
+import 'package:caretag/AuthGate.dart';
 import 'package:caretag/Modules/auth/data/repo/auth_repo.dart';
 import 'package:caretag/Modules/auth/model_view/bloc/auth_bloc.dart';
 import 'package:caretag/Modules/card_registration/data/repos/paitent_repo.dart';
 import 'package:caretag/Modules/card_registration/model_view/bloc/patient_bloc_bloc.dart';
-import 'package:caretag/Modules/card_registration/view/registration_page.dart';
+import 'package:caretag/Modules/card_registration/view/subscription/subscription_page.dart';
 
-import 'package:caretag/Modules/card_registration/view/successpage.dart';
 import 'package:caretag/utils/storageService.dart';
 
 import 'package:flutter/material.dart';
@@ -37,7 +37,7 @@ class MyApp extends StatelessWidget {
           textTheme: GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme),
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         ),
-        home: Successpage(careTagId: "CTG-8359-2047-1638"),
+        home: Authgate(),
       ),
     );
   }

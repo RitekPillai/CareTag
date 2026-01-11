@@ -1,8 +1,10 @@
 import 'dart:convert';
 
+import 'package:caretag/Modules/auth/data/model/authException.dart';
 import 'package:caretag/Modules/auth/model_view/service/AuthenticationService.dart';
 import 'package:caretag/Modules/card_registration/data/model/medicarecordmodel.dart';
 import 'package:caretag/Modules/card_registration/data/model/registrationresponsemodel.dart';
+import 'package:caretag/Modules/card_registration/data/model/shippingRegistration.dart';
 import 'package:caretag/Modules/card_registration/model_view/service/cryptographyservice.dart';
 import 'package:caretag/utils/storageService.dart';
 import 'package:flutter/material.dart';
@@ -61,6 +63,27 @@ class PaitientRepo {
       }
     } catch (e) {
       debugPrint(e.toString());
+      rethrow;
+    }
+  }
+
+  Future<void> subscription(Shippingregistration req) async {
+    Map<String, dynamic> payload = req.toJson();
+    final respoonse = await authenticationService.post(
+      Uri.parse("$baseUrl/subscripiton"),
+      body: jsonEncode(payload),
+    );
+    try {
+      if (respoonse.statusCode == 200) {
+        debugPrint("Saved Success fully");
+      } else {
+        throw AuthException(
+          StatusCode: "",
+          errorMessage: respoonse.body,
+          timeStamp: "",
+        );
+      }
+    } catch (e) {
       rethrow;
     }
   }

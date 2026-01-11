@@ -1,5 +1,5 @@
 import 'package:caretag/Modules/card_registration/model_view/bloc/patient_bloc_bloc.dart';
-import 'package:caretag/Modules/card_registration/view/registration_page.dart';
+import 'package:caretag/Modules/card_registration/view/registration/registration_page.dart';
 import 'package:caretag/constants/app_color.dart';
 import 'package:caretag/widgets/animatedRoute.dart';
 import 'package:caretag/widgets/custom_divider.dart';
@@ -129,6 +129,7 @@ class _RegistrationIntroPageState extends State<RegistrationIntroPage> {
                     24,
                     FontWeight.w700,
                     () {},
+                    33,
                     [Color(0xff254799), Color(0xff1F2937)],
                   ),
                 ],
