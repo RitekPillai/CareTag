@@ -1,7 +1,6 @@
 import 'package:caretag/Modules/card_registration/model_view/bloc/patient_bloc_bloc.dart';
 import 'package:caretag/Modules/card_registration/model_view/service/bluetoothService.dart';
 import 'package:caretag/constants/app_color.dart';
-import 'package:caretag/widgets/animatedRoute.dart';
 import 'package:caretag/widgets/custom_divider.dart';
 import 'package:caretag/widgets/custombutton.dart';
 import 'package:caretag/widgets/helpPage.dart';

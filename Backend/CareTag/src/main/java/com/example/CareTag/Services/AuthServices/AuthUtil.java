@@ -19,7 +19,9 @@ import org.springframework.stereotype.Service;
 import javax.crypto.SecretKey;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -37,11 +39,16 @@ return Keys.hmacShaKeyFor(keyBytes);
     }
 
 public String generateToken(User user){
+    List<String> roles = user.getRole().stream()
+            .map(Enum::name)
+            .toList();
         return Jwts.builder()
                 .signWith(getSecretkey())
 
                 .subject(user.getEmail())
                 .claim("userId",user.getId())
+                .claim("roles",roles)
+
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis()+1000*60*10))
                 .compact();

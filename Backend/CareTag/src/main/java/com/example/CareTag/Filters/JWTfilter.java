@@ -53,6 +53,7 @@ public class JWTfilter extends OncePerRequestFilter {
         if(email!=null && SecurityContextHolder.getContext().getAuthentication()==null){
             User user = userRepo.findByEmail(email);
             UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(user,null,user.getAuthorities());
+            
             SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
             log.info("User {} successfully authenticated via JWT.", email);
 

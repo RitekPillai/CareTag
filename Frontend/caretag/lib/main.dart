@@ -1,9 +1,8 @@
-import 'package:caretag/AuthGate.dart';
 import 'package:caretag/Modules/auth/data/repo/auth_repo.dart';
 import 'package:caretag/Modules/auth/model_view/bloc/auth_bloc.dart';
 import 'package:caretag/Modules/card_registration/data/repos/paitent_repo.dart';
 import 'package:caretag/Modules/card_registration/model_view/bloc/patient_bloc_bloc.dart';
-import 'package:caretag/Modules/card_registration/view/subscription/subscription_page.dart';
+import 'package:caretag/Modules/home/view.dart/caretag_homepage.dart';
 
 import 'package:caretag/utils/storageService.dart';
 
@@ -37,7 +36,7 @@ class MyApp extends StatelessWidget {
           textTheme: GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme),
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         ),
-        home: Authgate(),
+        home: CaretagHomepage(),
       ),
     );
   }
