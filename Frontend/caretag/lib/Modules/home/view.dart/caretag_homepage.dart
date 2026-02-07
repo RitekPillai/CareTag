@@ -1,4 +1,5 @@
 import 'package:caretag/Modules/home/modelview/homePageService.dart';
+import 'package:caretag/Modules/home/view.dart/sectionPages/careTagPage.dart';
 import 'package:caretag/constants/app_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -12,12 +13,11 @@ class CaretagHomepage extends StatefulWidget {
 }
 
 String selectedTab = "Home";
+List<Color> gradientColor = [Color(0xff5EACFF), Colors.white];
 
 class _CaretagHomepageState extends State<CaretagHomepage> {
   @override
   Widget build(BuildContext context) {
-    List<Color> gradientColor = [Color(0xff5EACFF), Colors.white];
-
     return Scaffold(
       backgroundColor: Colors.white,
       body: Column(
@@ -75,17 +75,34 @@ class _CaretagHomepageState extends State<CaretagHomepage> {
                           ],
                         ),
 
-                        Row(
-                          children: [
-                            SvgPicture.asset("assets/images/home/bell.svg"),
+                        SizedBox(
+                          width: 100, // Total width of the icon area
+                          height: 60,
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Stack(
+                              alignment: Alignment.centerRight,
+                              children: [
+                                AnimatedOpacity(
+                                  duration: const Duration(milliseconds: 300),
+                                  opacity: selectedTab == "Home" ? 1.0 : 0.0,
+                                  child: SvgPicture.asset(
+                                    "assets/images/home/heart.svg",
+                                  ),
+                                ),
 
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: SvgPicture.asset(
-                                "assets/images/home/heart.svg",
-                              ),
+                                AnimatedPositioned(
+                                  duration: const Duration(milliseconds: 350),
+                                  curve: Curves.easeInOut,
+
+                                  right: selectedTab == "Home" ? 40 : 0,
+                                  child: SvgPicture.asset(
+                                    "assets/images/home/bell.svg",
+                                  ),
+                                ),
+                              ],
                             ),
-                          ],
+                          ),
                         ),
                       ],
                     ),
@@ -102,13 +119,25 @@ class _CaretagHomepageState extends State<CaretagHomepage> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          pageSelectorTile("Home", Colors.blue),
-                          pageSelectorTile("Meds", Colors.green),
-                          pageSelectorTile("Journey", Colors.orange),
+                          pageSelectorTile(
+                            "Home",
+                            Colors.blue,
+                            AppColor.gradientButtonColor,
+                            Color(0xff5EACFF),
+                          ),
+                          pageSelectorTile("Meds", Colors.green, [
+                            Color(0xff00e36f),
+                            Color(0xff00bb4c),
+                          ], Color(0xff00c469)),
+                          pageSelectorTile("Journey", Colors.orange, [
+                            Color(0xffffb059),
+                            Color(0xffff7100),
+                          ], Color(0xffff7a00)),
                         ],
                       ),
                     ),
                   ),
+                  if (selectedTab == "Home") Caretagpage(),
                 ],
               ),
             ],
@@ -118,12 +147,18 @@ class _CaretagHomepageState extends State<CaretagHomepage> {
     );
   }
 
-  Widget pageSelectorTile(String title, Color color) {
+  Widget pageSelectorTile(
+    String title,
+    Color color,
+    List<Color> gradientcolor,
+    Color backgroundColor,
+  ) {
     bool isSelected = title == selectedTab;
     return GestureDetector(
       onTap: () {
         setState(() {
           selectedTab = title;
+          gradientColor = [backgroundColor, Colors.white];
         });
       },
       child: Container(
@@ -132,9 +167,7 @@ class _CaretagHomepageState extends State<CaretagHomepage> {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(52),
           gradient: LinearGradient(
-            colors: isSelected
-                ? AppColor.gradientButtonColor
-                : [Colors.white, Colors.white],
+            colors: isSelected ? gradientcolor : [Colors.white, Colors.white],
           ),
         ),
         child: Center(

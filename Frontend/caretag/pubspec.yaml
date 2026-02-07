@@ -104,6 +104,7 @@ flutter:
     - assets/images/watch/
     - assets/images/subscription/
     - assets/images/home/
+    - assets/images/profilePage/
 
 
   # An image asset can refer to one or more resolution-specific "variants", see
