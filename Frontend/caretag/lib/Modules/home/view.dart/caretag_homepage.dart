@@ -13,133 +13,129 @@ class CaretagHomepage extends StatefulWidget {
 }
 
 String selectedTab = "Home";
-List<Color> gradientColor = [Color(0xff5EACFF), Colors.white];
+List<Color> gradientColor = [Color(0xff3B81F6), Colors.white];
 
 class _CaretagHomepageState extends State<CaretagHomepage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Column(
+      body: Stack(
         children: [
-          Stack(
-            children: [
-              Container(
-                width: 393,
-                height: 446,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: gradientColor,
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                  ),
-                ),
+          Container(
+            width: 393,
+            height: 446,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: gradientColor,
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
               ),
-              Column(
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(left: 10.0, top: 30),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            ),
+          ),
+          Column(
+            children: [
+              Padding(
+                padding: EdgeInsets.only(left: 10.0, top: 35),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
                       children: [
-                        Row(
-                          children: [
-                            CircleAvatar(
-                              maxRadius: 25,
-                              backgroundImage: NetworkImage(
-                                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjduXBTnBVs-4N-tCmYSl1Z8O95GAlK_ZnUg&s",
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    "${Homepageservice().getTime()}👋",
-                                    style: GoogleFonts.poppins(
-                                      fontWeight: FontWeight.w300,
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                  Text(
-                                    "Steve harrington",
-                                    style: GoogleFonts.poppins(
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 18,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
+                        CircleAvatar(
+                          maxRadius: 25,
+                          backgroundImage: NetworkImage(
+                            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjduXBTnBVs-4N-tCmYSl1Z8O95GAlK_ZnUg&s",
+                          ),
                         ),
-
-                        SizedBox(
-                          width: 100, // Total width of the icon area
-                          height: 60,
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Stack(
-                              alignment: Alignment.centerRight,
-                              children: [
-                                AnimatedOpacity(
-                                  duration: const Duration(milliseconds: 300),
-                                  opacity: selectedTab == "Home" ? 1.0 : 0.0,
-                                  child: SvgPicture.asset(
-                                    "assets/images/home/heart.svg",
-                                  ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "${Homepageservice().getTime()}👋",
+                                style: GoogleFonts.poppins(
+                                  fontWeight: FontWeight.w300,
+                                  fontSize: 14,
                                 ),
-
-                                AnimatedPositioned(
-                                  duration: const Duration(milliseconds: 350),
-                                  curve: Curves.easeInOut,
-
-                                  right: selectedTab == "Home" ? 40 : 0,
-                                  child: SvgPicture.asset(
-                                    "assets/images/home/bell.svg",
-                                  ),
+                              ),
+                              Text(
+                                "Steve harrington",
+                                style: GoogleFonts.poppins(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 18,
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
                         ),
                       ],
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Container(
-                      width: 296,
-                      height: 50,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(40),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          pageSelectorTile(
-                            "Home",
-                            Colors.blue,
-                            AppColor.gradientButtonColor,
-                            Color(0xff5EACFF),
-                          ),
-                          pageSelectorTile("Meds", Colors.green, [
-                            Color(0xff00e36f),
-                            Color(0xff00bb4c),
-                          ], Color(0xff00c469)),
-                          pageSelectorTile("Journey", Colors.orange, [
-                            Color(0xffffb059),
-                            Color(0xffff7100),
-                          ], Color(0xffff7a00)),
-                        ],
+
+                    SizedBox(
+                      width: 100, // Total width of the icon area
+                      height: 60,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Stack(
+                          alignment: Alignment.centerRight,
+                          children: [
+                            AnimatedOpacity(
+                              duration: const Duration(milliseconds: 300),
+                              opacity: selectedTab == "Home" ? 1.0 : 0.0,
+                              child: SvgPicture.asset(
+                                "assets/images/home/heart.svg",
+                              ),
+                            ),
+
+                            AnimatedPositioned(
+                              duration: const Duration(milliseconds: 350),
+                              curve: Curves.easeInOut,
+
+                              right: selectedTab == "Home" ? 40 : 0,
+                              child: SvgPicture.asset(
+                                "assets/images/home/bell.svg",
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                  if (selectedTab == "Home") Caretagpage(),
-                ],
+                  ],
+                ),
               ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Container(
+                  width: 296,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(40),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      pageSelectorTile(
+                        "Home",
+                        Colors.blue,
+                        AppColor.gradientButtonColor,
+                        Color(0xff5EACFF),
+                      ),
+                      pageSelectorTile("Meds", Colors.green, [
+                        Color(0xff00e36f),
+                        Color(0xff00bb4c),
+                      ], Color(0xff00c469)),
+                      pageSelectorTile("Journey", Colors.orange, [
+                        Color(0xffffb059),
+                        Color(0xffff7100),
+                      ], Color(0xffff7a00)),
+                    ],
+                  ),
+                ),
+              ),
+              if (selectedTab == "Home") Expanded(child: Caretagpage()),
             ],
           ),
         ],
