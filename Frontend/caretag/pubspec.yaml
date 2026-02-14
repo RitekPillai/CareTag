@@ -60,6 +60,8 @@ dependencies:
   flutter_blue_plus: ^2.1.0
   permission_handler: ^12.0.1
   flutter_switch: ^0.3.2
+  fl_chart: ^1.1.1
+  intl: ^0.20.2
 
 
 
@@ -105,6 +107,7 @@ flutter:
     - assets/images/subscription/
     - assets/images/home/
     - assets/images/profilePage/
+    - assets/images/home/emergency/
 
 
   # An image asset can refer to one or more resolution-specific "variants", see
