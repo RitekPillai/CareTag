@@ -70,12 +70,15 @@ class AuthRepo {
 
   Future<String> login(LoginRequest req) async {
     Map<String, dynamic> payload = req.toJson();
+    debugPrint("Loging payload:${payload}");
     try {
       final response = await http.post(
         Uri.parse("$paitentUrl/login"),
         body: jsonEncode(payload),
         headers: {'Content-Type': 'application/json'},
       );
+
+      debugPrint("Reposee  ; ${response}");
 
       if (response.statusCode == 202) {
         return response.body;

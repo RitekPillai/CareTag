@@ -3,10 +3,12 @@ package com.example.CareTag.controllers;
 import com.example.CareTag.DTOs.PatientDTOs.RegistrationRequestDTO;
 import com.example.CareTag.DTOs.PatientDTOs.SubscriberRequestDTO;
 import com.example.CareTag.Services.PaitentServices.PatientService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequestMapping("/paitent")
 public class PaitentController {
@@ -24,6 +26,7 @@ public class PaitentController {
     public ResponseEntity< RegistrationRequestDTO> getMedicalRecord(
             @RequestBody String careTagId
     ){
+        log.info("CareTag id :{}", careTagId);
         return paitentService.getMedicalRecord(careTagId);
     }
 

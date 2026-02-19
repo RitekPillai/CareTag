@@ -1,4 +1,6 @@
+import 'package:caretag/Modules/card_registration/model_view/service/bluetoothService.dart';
 import 'package:caretag/Modules/home/widgets/careTagHome/currentdate.dart';
+import 'package:caretag/utils/storageService.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -14,10 +16,16 @@ class Heartbeatcard extends StatefulWidget {
 
 class _HeartbeatcardState extends State<Heartbeatcard>
     with SingleTickerProviderStateMixin {
+  Storageservice storageservice = Storageservice();
+  Bluetooothservice bluetoothService = Bluetooothservice();
   late AnimationController animatationController;
   late Animation<double> _opactiyAnimation;
+  String? savedId;
+
   @override
   void initState() {
+    super.initState();
+    _connectToBluetoothId();
     animatationController = AnimationController(
       duration: const Duration(milliseconds: 500),
       vsync: this,
@@ -28,8 +36,19 @@ class _HeartbeatcardState extends State<Heartbeatcard>
     );
 
     animatationController.repeat(reverse: true);
+  }
 
-    super.initState();
+  Future<void> _connectToBluetoothId() async {
+    debugPrint("Inside the Function");
+    String? id = await storageservice.getBid();
+    if (mounted) {
+      setState(() {
+        savedId = id;
+        debugPrint("Watch ID:$savedId");
+      });
+    } else {
+      debugPrint("No watch ID saved in storage.");
+    }
   }
 
   @override
@@ -38,7 +57,6 @@ class _HeartbeatcardState extends State<Heartbeatcard>
     Color boderColor = Color.fromRGBO(229, 32, 48, 0.6);
     Color circleContatinerColor = Color.fromRGBO(229, 32, 48, 0.2);
     Color greyColor = Color.fromRGBO(0, 0, 0, 0.4);
-    double _opactiy = 1.0;
 
     return Container(
       width: 180,
@@ -93,13 +111,7 @@ class _HeartbeatcardState extends State<Heartbeatcard>
             children: [
               Padding(
                 padding: const EdgeInsets.only(left: 10.0, right: 10),
-                child: Text(
-                  "75",
-                  style: GoogleFonts.poppins(
-                    fontWeight: FontWeight.w700,
-                    fontSize: 32,
-                  ),
-                ),
+                child: _buildHeartRateValue(),
               ),
               Text(
                 "BPM",
@@ -127,7 +139,7 @@ class _HeartbeatcardState extends State<Heartbeatcard>
             child: LottieBuilder.asset(
               "assets/images/home/beat2.json",
               height: 100,
-              width: 300,
+              width: 160,
             ),
           ),
           const SizedBox(height: 10),
@@ -151,6 +163,44 @@ class _HeartbeatcardState extends State<Heartbeatcard>
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildHeartRateValue() {
+    if (savedId == null) {
+      return Text(
+        "...",
+        style: GoogleFonts.poppins(fontWeight: FontWeight.w700, fontSize: 32),
+      );
+    }
+
+    if (savedId!.isEmpty) {
+      debugPrint(savedId);
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            "Empty",
+            style: GoogleFonts.poppins(
+              fontWeight: FontWeight.w700,
+              fontSize: 32,
+            ),
+          ),
+        ],
+      );
+    }
+
+    return StreamBuilder(
+      stream: bluetoothService.connectAndStreamHR(savedId!),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Text("...", style: GoogleFonts.poppins(fontSize: 32));
+        }
+        return Text(
+          snapshot.hasData ? snapshot.data.toString() : "N/A",
+          style: GoogleFonts.poppins(fontWeight: FontWeight.w700, fontSize: 32),
+        );
+      },
     );
   }
 }

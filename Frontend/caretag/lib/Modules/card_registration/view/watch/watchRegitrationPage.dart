@@ -39,7 +39,7 @@ class _WatchregitrationpageState extends State<Watchregitrationpage> {
 
   @override
   Widget build(BuildContext context) {
-    Bluetoothservice bluetoothService = Bluetoothservice();
+    Bluetooothservice bluetoothService = Bluetooothservice();
 
     return Scaffold(
       backgroundColor: Colors.white,

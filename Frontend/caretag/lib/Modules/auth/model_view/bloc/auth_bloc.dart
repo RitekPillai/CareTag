@@ -110,6 +110,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   Future<void> _onLoginRequest(AuthLoginRequest event, Emitter emit) async {
+    debugPrint("Inside the Login bloc function");
     emit(AuthLoading());
     try {
       String message = await _authRepo.login(event.loginRequest);

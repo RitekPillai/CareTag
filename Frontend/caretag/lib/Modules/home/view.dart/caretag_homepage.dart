@@ -74,7 +74,7 @@ class _CaretagHomepageState extends State<CaretagHomepage> {
                     ),
 
                     SizedBox(
-                      width: 100, // Total width of the icon area
+                      width: 100,
                       height: 60,
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),

@@ -50,7 +50,7 @@ class PaitientRepo {
       Uri.parse("$baseUrl/record"),
       body: careTagId,
     );
-    debugPrint("resposne${response.body}");
+    debugPrint("response:${response.body}");
     try {
       if (response.statusCode == 200) {
         Registrationmodel data = Registrationmodel.fromJson(

@@ -1,3 +1,5 @@
+import 'package:caretag/Modules/card_registration/model_view/bloc/patient_bloc_bloc.dart';
+import 'package:caretag/Modules/home/view.dart/emergencypage.dart';
 import 'package:caretag/Modules/home/widgets/careTagHome/careTagCard.dart';
 import 'package:caretag/Modules/home/widgets/careTagHome/heartbeatcard.dart';
 import 'package:caretag/Modules/home/widgets/careTagHome/medinceremindertile.dart';
@@ -6,6 +8,7 @@ import 'package:caretag/Modules/home/widgets/caretag_homepage_helpers.dart';
 import 'package:caretag/constants/app_color.dart';
 import 'package:caretag/widgets/custom_search_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -99,7 +102,17 @@ class Caretagpage extends StatelessWidget {
               ),
               const SizedBox(height: 20),
               GestureDetector(
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) {
+                        context.read<PatientBloc>().add(GetPatientRecord());
+                        return Emergencypage();
+                      },
+                    ),
+                  );
+                },
                 child: Container(
                   width: 291,
                   height: 37,

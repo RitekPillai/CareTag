@@ -190,7 +190,7 @@ class _AuthPageState extends State<AuthPage> {
                             "Create your own Password",
                             passwordController,
                             isPassword: true,
-                            HintText:
+                            hintText:
                                 "We recommend using complex passwords \n with a minimum length of 15 characters.",
                             validator: (value) {
                               if (value == null || value.isEmpty) {
@@ -312,6 +312,7 @@ class _AuthPageState extends State<AuthPage> {
                             ),
                           );
                         } else {
+                          debugPrint("Button Pressedd");
                           context.read<AuthBloc>().add(
                             AuthLoginRequest(
                               loginRequest: LoginRequest(

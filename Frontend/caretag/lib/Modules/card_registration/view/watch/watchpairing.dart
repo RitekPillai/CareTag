@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:caretag/Modules/card_registration/model_view/bloc/patient_bloc_bloc.dart';
 import 'package:caretag/Modules/card_registration/view/subscription/subscription_page.dart';
 import 'package:caretag/constants/app_color.dart';
+import 'package:caretag/utils/storageService.dart';
 import 'package:caretag/widgets/animatedRoute.dart';
 import 'package:caretag/widgets/custombutton.dart';
 import 'package:caretag/widgets/helpPage.dart';
@@ -27,6 +28,8 @@ class _WatchpairingState extends State<Watchpairing> {
   StreamSubscription? scanSubscription;
   StreamSubscription? isScanningSubscription;
 
+  Storageservice storageservice = Storageservice();
+
   void _startScanProcces() async {
     setState(() {
       scanResults = [];
@@ -39,7 +42,6 @@ class _WatchpairingState extends State<Watchpairing> {
       ]);
 
       await FlutterBluePlus.startScan(
-        //  withServices: [Guid("180d"), Guid("180f")],
         timeout: const Duration(seconds: 15),
         androidUsesFineLocation: true,
       );
@@ -67,7 +69,8 @@ class _WatchpairingState extends State<Watchpairing> {
       );
       await device.discoverServices();
 
-      // TODO: save id in flutter storage (e.g. SharedPreferences)
+      debugPrint("Watch Id:${device.remoteId.str}");
+      storageservice.saveBId(device.remoteId.str);
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(

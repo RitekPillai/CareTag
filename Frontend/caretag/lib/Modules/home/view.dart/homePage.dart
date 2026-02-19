@@ -1,4 +1,5 @@
 import 'package:caretag/Modules/home/modelview/homePageService.dart';
+import 'package:caretag/Modules/home/view.dart/caretag_homepage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -66,6 +67,12 @@ class Homepage extends StatelessWidget {
                 "CareTag\nHome",
                 "Your Health Hub – Always Connected, Always Protected.",
                 "assets/images/home/careTag.png",
+                () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => CaretagHomepage()),
+                  );
+                },
                 blueGradient,
               ),
               const SizedBox(width: 20),
@@ -73,6 +80,7 @@ class Homepage extends StatelessWidget {
                 "CareTag\nPharmacy",
                 "Medicines Delivered Fast,\nWhen You Need Them Most.",
                 "assets/images/home/pharmacy.png",
+                () {},
                 greenGradient,
                 20,
               ),
@@ -162,58 +170,62 @@ Widget selectionTile(
   String title,
   String description,
   String image,
+  VoidCallback onTap,
   List<Color> color, [
   double height = 5,
 ]) {
-  return Container(
-    decoration: BoxDecoration(
-      gradient: LinearGradient(
-        colors: color,
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
+  return GestureDetector(
+    onTap: onTap,
+    child: Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: color,
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+        ),
+        borderRadius: BorderRadius.circular(12),
       ),
-      borderRadius: BorderRadius.circular(12),
-    ),
 
-    width: 164,
-    height: 255,
-    child: Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(top: 30.0, bottom: 10),
-          child: Text(
+      width: 164,
+      height: 255,
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 30.0, bottom: 10),
+            child: Text(
+              textAlign: TextAlign.center,
+              title,
+              style: GoogleFonts.poppins(
+                color: Colors.white,
+                fontWeight: FontWeight.w900,
+                fontSize: 17,
+              ),
+            ),
+          ),
+          Text(
+            description,
             textAlign: TextAlign.center,
-            title,
             style: GoogleFonts.poppins(
+              fontWeight: FontWeight.w600,
               color: Colors.white,
-              fontWeight: FontWeight.w900,
-              fontSize: 17,
+              fontSize: 11,
             ),
           ),
-        ),
-        Text(
-          description,
-          textAlign: TextAlign.center,
-          style: GoogleFonts.poppins(
-            fontWeight: FontWeight.w600,
-            color: Colors.white,
-            fontSize: 11,
+          SizedBox(height: height),
+          Stack(
+            alignment: Alignment.bottomCenter,
+            children: [
+              SvgPicture.asset("assets/images/home/Ellipse 78.svg"),
+              Image.asset(
+                image,
+                filterQuality: FilterQuality.high,
+                width: 150,
+                height: 114,
+              ),
+            ],
           ),
-        ),
-        SizedBox(height: height),
-        Stack(
-          alignment: Alignment.bottomCenter,
-          children: [
-            SvgPicture.asset("assets/images/home/Ellipse 78.svg"),
-            Image.asset(
-              image,
-              filterQuality: FilterQuality.high,
-              width: 150,
-              height: 114,
-            ),
-          ],
-        ),
-      ],
+        ],
+      ),
     ),
   );
 }

@@ -8,6 +8,7 @@ import com.example.CareTag.Repos.UserRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.Optional;
@@ -33,12 +34,14 @@ return refreshTokenRepo.save(refreshToken);
     public Optional<RefreshToken> findToken(String token){
         return refreshTokenRepo.findByToken(token);
     }
-
+@Transactional
     public RefreshToken verifyExpiration(RefreshToken token)  {
             if(token.getExpiryTime().isBefore(Instant.now())){
+                refreshTokenRepo.delete(token);
                 throw new RuntimeException("Refresh Token Has been Expirey");
+
             }
-            refreshTokenRepo.delete(token);
+
             return token;
 }
 

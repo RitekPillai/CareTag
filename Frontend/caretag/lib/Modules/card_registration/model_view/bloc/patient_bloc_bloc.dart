@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:bloc/bloc.dart';
 import 'package:caretag/Modules/card_registration/data/model/medicarecordmodel.dart';
 import 'package:caretag/Modules/card_registration/data/model/shippingRegistration.dart';
@@ -18,6 +20,7 @@ class PatientBloc extends Bloc<PatientBlocEvent, PatientBlocState> {
     on<PatientRegistration>(_onPatientRegistration);
     on<GetPatientRecord>(_onGetPaitentRecord);
     on<SubscriptionEvent>(_onSubscription);
+    on<BluetoothData>(_onBluetoohData);
   }
   Future<void> _onPatientRegistration(
     PatientRegistration event,
@@ -57,5 +60,17 @@ class PatientBloc extends Bloc<PatientBlocEvent, PatientBlocState> {
     } catch (e) {
       emit(Failed(message: e.toString()));
     }
+  }
+
+  @override
+  void onChange(Change<PatientBlocState> change) {
+    debugPrint("State change hoagaa:$change");
+
+    super.onChange(change);
+  }
+
+  FutureOr<void> _onBluetoohData(BluetoothData event, Emitter emit) {
+    emit(Loading());
+    try {} catch (e) {}
   }
 }

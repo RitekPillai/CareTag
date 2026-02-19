@@ -22,3 +22,10 @@ class SubscriptionEvent extends PatientBlocEvent {
 
   const SubscriptionEvent({required this.shippingRegistration});
 }
+
+class BluetoothData extends PatientBlocEvent {
+  final String heartrate;
+  final String stepCount;
+
+  const BluetoothData({required this.heartrate, required this.stepCount});
+}

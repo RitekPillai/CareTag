@@ -7,7 +7,7 @@ Widget customTextFiled(
   String helperText,
   TextEditingController controller, {
   bool isPassword = false,
-  String? HintText,
+  String? hintText,
   TextInputType textInputType = TextInputType.text,
   String? Function(String?)? validator,
   double width = 316,
@@ -70,10 +70,10 @@ Widget customTextFiled(
           ),
         ),
       ),
-      if (HintText != null)
+      if (hintText != null)
         Text(
           textAlign: TextAlign.start,
-          HintText,
+          hintText,
           style: GoogleFonts.poppins(
             color: AppColor.textHintColor,
             fontWeight: FontWeight.w300,

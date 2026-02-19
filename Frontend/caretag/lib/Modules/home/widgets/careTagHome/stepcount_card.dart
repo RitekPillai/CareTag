@@ -1,19 +1,48 @@
+import 'package:caretag/Modules/card_registration/model_view/service/bluetoothService.dart';
 import 'package:caretag/Modules/home/widgets/careTagHome/barchart.dart';
 import 'package:caretag/Modules/home/widgets/careTagHome/currentdate.dart';
+import 'package:caretag/utils/storageService.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
-class StepcountCard extends StatelessWidget {
+class StepcountCard extends StatefulWidget {
   const StepcountCard({super.key});
 
   @override
+  State<StepcountCard> createState() => _StepcountCardState();
+}
+
+class _StepcountCardState extends State<StepcountCard> {
+  Storageservice storageservice = Storageservice();
+  Bluetooothservice bluetoothService = Bluetooothservice();
+
+  String? savedId;
+  @override
+  void initState() {
+    super.initState();
+    _connectToBluetoothId();
+  }
+
+  Future<void> _connectToBluetoothId() async {
+    debugPrint("Inside the Function");
+    String? id = await storageservice.getBid();
+    if (mounted) {
+      setState(() {
+        savedId = id;
+        debugPrint("Watch ID:$savedId");
+      });
+    } else {
+      debugPrint("No watch ID saved in storage.");
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    Color bgColor = Color.fromRGBO(250, 164, 128, 0.05);
-    Color boderColor = Color.fromRGBO(250, 164, 128, 0.6);
-    Color containerColor = Color(0xffFFEDD5);
-    Color greenColor = Color(0xff009E2D);
+    const Color bgColor = Color.fromRGBO(250, 164, 128, 0.05);
+    const Color boderColor = Color.fromRGBO(250, 164, 128, 0.6);
+
     return Container(
       width: 180,
       decoration: BoxDecoration(
@@ -27,68 +56,39 @@ class StepcountCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.only(
-              top: 10.0,
-              bottom: 10,
-              left: 10,
-              right: 10,
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Container(
-                  height: 34,
-                  width: 34,
-                  decoration: BoxDecoration(
-                    color: containerColor,
-                    shape: BoxShape.circle,
-                  ),
-                  child: SizedBox(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: SvgPicture.asset(
-                        "assets/images/home/step.svg",
-                        height: 18,
-                        width: 17.5,
-                      ),
-                    ),
-                  ),
-                ),
-                Container(
-                  width: 54,
-                  height: 16,
-                  decoration: BoxDecoration(
-                    color: Color(0xffD7FEE3),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.arrow_upward, color: greenColor, size: 18),
-                      Text(
-                        "12%",
-                        style: GoogleFonts.poppins(
-                          color: greenColor,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Padding(
             padding: const EdgeInsets.only(left: 8.0),
-            child: Text(
-              "6,200",
-              style: GoogleFonts.poppins(
-                fontWeight: FontWeight.w700,
-                fontSize: 32,
-              ),
-            ),
+            child: (savedId == null || savedId!.isEmpty)
+                ? Text(
+                    "0",
+                    style: GoogleFonts.poppins(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 32,
+                    ),
+                  )
+                : FutureBuilder<int>(
+                    future: bluetoothService.getSteps(savedId!),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Text(
+                          "...",
+                          style: GoogleFonts.poppins(fontSize: 32),
+                        );
+                      }
+                      // Fallback to "0" if data is null
+                      String displaySteps = NumberFormat(
+                        '#,###',
+                      ).format(snapshot.data ?? 0);
+                      return Text(
+                        displaySteps,
+                        style: GoogleFonts.poppins(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 32,
+                        ),
+                      );
+                    },
+                  ),
           ),
+
           Padding(
             padding: const EdgeInsets.only(left: 8.0),
             child: Text(

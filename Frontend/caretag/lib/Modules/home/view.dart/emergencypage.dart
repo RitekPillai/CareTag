@@ -1,5 +1,7 @@
+import 'package:caretag/Modules/card_registration/model_view/bloc/patient_bloc_bloc.dart';
 import 'package:caretag/constants/app_color.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -21,7 +23,9 @@ class Emergencypage extends StatelessWidget {
                 const SizedBox(height: 50),
 
                 IconButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
                   icon: Icon(Icons.arrow_back, color: Colors.white, size: 30),
                 ),
                 Center(
@@ -170,67 +174,99 @@ Widget containerTile(
 }
 
 Widget detailsTile(String title) {
-  switch (title) {
-    case "Personal Details":
-      return Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          dataTile("Name:", "Rylan Chettiar"),
-          dataTile("Date of Birth:", "16/06/2005"),
-          dataTile(
-            "Permanent Home Address:",
-            "B-102 Asmi,intage, Archana CHS, Industrial Colony, Behind Vipul Jewellers M.G. Road, Goregaon West, Mumbai.",
-          ),
-        ],
-      );
-    case "Basic Medical Info":
-      return Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          dataTile("Blood Group:", "O +ve"),
-          dataTile("Allergies:", "Peanuts, Oranges"),
-          dataTile("Chronic Conditions:", "Diabetes "),
-          dataTile("Past Surgeries:", "Heart, Stone "),
-          dataTile("Drug Reactions or Intolerances:", "Crocin"),
-          dataTile("Special Conditions:", "No"),
-          dataTile("Genetic Health Conditions:", "No"),
-        ],
-      );
-    case "Emergency Contact Details":
-      return Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          dataTile("Name:", " Abhishek Pillai"),
-          dataTile("Contact Number: ", "+91 97692 83125"),
-        ],
-      );
-    case "Insurance Details":
-      return Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          dataTile("Provider:", "Star Health"),
-          dataTile("Insurance\nNumber:", "P/1234567/01/2025 /001"),
-          dataTile("Insurance Type:", "Life "),
-          dataTile("Expiry Date:", "29/12/2034"),
-        ],
-      );
+  return BlocBuilder<PatientBloc, PatientBlocState>(
+    builder: (context, state) {
+      if (state is Loading) {
+        return Center(child: CircularProgressIndicator());
+      } else if (state is RecordFetched) {
+        final record = state.medicalRecord;
+        switch (title) {
+          case "Personal Details":
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                dataTile("Name: ", record.basicPersonalDetails.fullname),
+                dataTile("Date of Birth:", record.basicPersonalDetails.dob),
+                dataTile(
+                  "Permanent Home Address:",
+                  record.basicPersonalDetails.address,
+                ),
+              ],
+            );
+          case "Basic Medical Info":
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                dataTile(
+                  "Blood Group:",
+                  record.basicPersonalDetails.bloodgroup,
+                ),
+                dataTile("Allergies:", record.medicalDetails.allegries),
+                dataTile(
+                  "Chronic Conditions:",
+                  record.medicalDetails.chronicConditions,
+                ),
+                dataTile(
+                  "Past Surgeries:",
+                  record.medicalDetails.pastSurgeries,
+                ),
+                dataTile(
+                  "Drug Reactions or Intolerances:",
+                  record.medicalDetails.drugReactions,
+                ),
+                dataTile(
+                  "Special Conditions:",
+                  record.medicalDetails.diagonoses,
+                ),
+                dataTile(
+                  "Genetic Health Conditions:",
+                  record.medicalDetails.hereditaryGenetic,
+                ),
+              ],
+            );
+          case "Emergency Contact Details":
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                dataTile("Name:", record.emergencyDetails.name),
+                dataTile("Contact Number: ", record.emergencyDetails.contact),
+              ],
+            );
+          case "Insurance Details":
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                dataTile("Provider:", record.insuranceDetails.provider),
+                dataTile(
+                  "Insurance\nNumber:",
+                  record.insuranceDetails.policyNumber,
+                ),
+                dataTile("Insurance Type:", "Life "),
+                dataTile("Expiry Date:", "29/12/2034"),
+              ],
+            );
 
-    case "Preferences":
-      return Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          dataTile("Doctor:", "Dr. J.R.D. Shukla"),
-          dataTile("Hospital:", "Hospital:"),
-        ],
-      );
-    default:
-      return Container();
-  }
+          case "Preferences":
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                dataTile("Doctor:", record.medicalDetails.prefferedDoctor),
+                dataTile("Hospital:", "Hospital:"),
+              ],
+            );
+          default:
+            return Container();
+        }
+      } else {
+        return Container();
+      }
+    },
+  );
 }
 
 Widget dataTile(String heading, String value) {

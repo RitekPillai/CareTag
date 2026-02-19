@@ -46,7 +46,7 @@ public class JWTfilter extends OncePerRequestFilter {
         }
 
         String token =requestHeader.split("Bearer ")[1];
-        String email =           authUtil.getUsernameFromToken(token);
+        String email =authUtil.getUsernameFromToken(token);
         log.info("Acess Token:{}",token);
         log.info("Authenticated Email: {}", email);
 

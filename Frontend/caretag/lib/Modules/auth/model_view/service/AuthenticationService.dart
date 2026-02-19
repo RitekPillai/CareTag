@@ -49,7 +49,8 @@ class Authenticationservice extends http.BaseClient {
         "https://uncatastrophic-nonobserving-marylyn.ngrok-free.dev/auth";
     try {
       final refreshToken = await storage.getRefreshToken();
-      debugPrint("response token : $refreshToken");
+
+      debugPrint("Current User Refresh  token : $refreshToken");
       if (refreshToken == null) {
         throw Exception("REFRESH TOKEN IS NULL");
       }
@@ -57,6 +58,9 @@ class Authenticationservice extends http.BaseClient {
       final response = await http.post(
         Uri.parse("$baseUrl/refresh"),
         body: refreshToken,
+      );
+      debugPrint(
+        "Resposne of the Refresh token Request :${response.toString()}",
       );
       if (response.statusCode == 200) {
         debugPrint("Response  ${response.body}");

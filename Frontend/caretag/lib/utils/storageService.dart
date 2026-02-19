@@ -13,6 +13,8 @@ class Storageservice {
 
   final String careTagId = "careTagId";
 
+  final String bluetoothId = "bid";
+
   ///RSA
   Future<void> saveRsaKeys(KeyPair keys) async {
     await storage.write(key: _rsaPublicKey, value: keys.publicKey);
@@ -62,5 +64,13 @@ class Storageservice {
   Future<void> clearAll() async {
     await storage.delete(key: _acessToken);
     await storage.delete(key: _refreshToken);
+  }
+
+  Future<void> saveBId(String bid) async {
+    await storage.write(key: bluetoothId, value: bid);
+  }
+
+  Future<String?> getBid() async {
+    return storage.read(key: bluetoothId);
   }
 }
