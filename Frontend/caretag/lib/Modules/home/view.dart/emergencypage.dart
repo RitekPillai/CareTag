@@ -1,9 +1,17 @@
+import 'dart:convert';
+import 'dart:developer';
+
+import 'package:caretag/Modules/card_registration/data/model/medicarecordmodel.dart';
+import 'package:caretag/Modules/card_registration/data/model/profileModel.dart';
 import 'package:caretag/Modules/card_registration/model_view/bloc/patient_bloc_bloc.dart';
 import 'package:caretag/constants/app_color.dart';
+import 'package:caretag/utils/hiveService.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 class Emergencypage extends StatelessWidget {
   const Emergencypage({super.key});
@@ -108,184 +116,218 @@ Widget containerTile(
 ) {
   final String imagePath = "assets/images/home/emergency";
 
-  return Padding(
-    padding: const EdgeInsets.only(bottom: 10),
-    child: Center(
-      child: Container(
-        width: 341,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 20.0, top: 10, bottom: 5),
-              child: Row(
-                children: [
-                  Container(
-                    width: 35,
-                    height: 35,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: conaitnercolor,
-                    ),
-                    child: Center(
-                      child: SvgPicture.asset("$imagePath/$imagename"),
-                    ),
+  return ValueListenableBuilder(
+    valueListenable: Hive.box('decrypted_records').listenable(),
+    builder: (context, value, child) {
+      return Padding(
+        padding: const EdgeInsets.only(bottom: 10),
+        child: Center(
+          child: Container(
+            width: 341,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(
+                    left: 20.0,
+                    top: 10,
+                    bottom: 5,
                   ),
-                  const SizedBox(width: 7),
-                  Text.rich(
-                    TextSpan(
-                      text: "$title\n",
-                      style: GoogleFonts.poppins(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 14,
-                      ),
-                      children: [
-                        TextSpan(
-                          text: description,
-                          style: GoogleFonts.poppins(
-                            fontWeight: FontWeight.w300,
-                            fontSize: 10,
-                          ),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 35,
+                        height: 35,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: conaitnercolor,
                         ),
-                      ],
+                        child: Center(
+                          child: SvgPicture.asset("$imagePath/$imagename"),
+                        ),
+                      ),
+                      const SizedBox(width: 7),
+                      Text.rich(
+                        TextSpan(
+                          text: "$title\n",
+                          style: GoogleFonts.poppins(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14,
+                          ),
+                          children: [
+                            TextSpan(
+                              text: description,
+                              style: GoogleFonts.poppins(
+                                fontWeight: FontWeight.w300,
+                                fontSize: 10,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Center(
+                  child: SizedBox(
+                    width: 299.w,
+                    child: Divider(
+                      thickness: 0.3,
+                      color: Color.fromRGBO(0, 0, 0, 0.7),
                     ),
                   ),
-                ],
-              ),
-            ),
-            SizedBox(
-              width: 299,
-              child: Divider(
-                thickness: 0.3,
-                color: Color.fromRGBO(0, 0, 0, 0.7),
-              ),
-            ),
+                ),
 
-            detailsTile(title),
-          ],
+                detailsTile(title),
+              ],
+            ),
+          ),
         ),
-      ),
-    ),
-  );
-}
-
-Widget detailsTile(String title) {
-  return BlocBuilder<PatientBloc, PatientBlocState>(
-    builder: (context, state) {
-      if (state is Loading) {
-        return Center(child: CircularProgressIndicator());
-      } else if (state is RecordFetched) {
-        final record = state.medicalRecord;
-        switch (title) {
-          case "Personal Details":
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                dataTile("Name: ", record.basicPersonalDetails.fullname),
-                dataTile("Date of Birth:", record.basicPersonalDetails.dob),
-                dataTile(
-                  "Permanent Home Address:",
-                  record.basicPersonalDetails.address,
-                ),
-              ],
-            );
-          case "Basic Medical Info":
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                dataTile(
-                  "Blood Group:",
-                  record.basicPersonalDetails.bloodgroup,
-                ),
-                dataTile("Allergies:", record.medicalDetails.allegries),
-                dataTile(
-                  "Chronic Conditions:",
-                  record.medicalDetails.chronicConditions,
-                ),
-                dataTile(
-                  "Past Surgeries:",
-                  record.medicalDetails.pastSurgeries,
-                ),
-                dataTile(
-                  "Drug Reactions or Intolerances:",
-                  record.medicalDetails.drugReactions,
-                ),
-                dataTile(
-                  "Special Conditions:",
-                  record.medicalDetails.diagonoses,
-                ),
-                dataTile(
-                  "Genetic Health Conditions:",
-                  record.medicalDetails.hereditaryGenetic,
-                ),
-              ],
-            );
-          case "Emergency Contact Details":
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                dataTile("Name:", record.emergencyDetails.name),
-                dataTile("Contact Number: ", record.emergencyDetails.contact),
-              ],
-            );
-          case "Insurance Details":
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                dataTile("Provider:", record.insuranceDetails.provider),
-                dataTile(
-                  "Insurance\nNumber:",
-                  record.insuranceDetails.policyNumber,
-                ),
-                dataTile("Insurance Type:", "Life "),
-                dataTile("Expiry Date:", "29/12/2034"),
-              ],
-            );
-
-          case "Preferences":
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                dataTile("Doctor:", record.medicalDetails.prefferedDoctor),
-                dataTile("Hospital:", "Hospital:"),
-              ],
-            );
-          default:
-            return Container();
-        }
-      } else {
-        return Container();
-      }
+      );
     },
   );
 }
 
-Widget dataTile(String heading, String value) {
-  return Padding(
-    padding: EdgeInsetsGeometry.symmetric(horizontal: 15, vertical: 3),
-    child: Text.rich(
-      TextSpan(
-        text: heading,
-        style: GoogleFonts.poppins(fontWeight: FontWeight.w300, fontSize: 16),
+Widget detailsTile(String title) {
+  final hivebox = Hive.box('decrypted_records');
+  final encrptedData = hivebox.get('latest_emergency_profile');
+  log("Encrpted data:$encrptedData");
+  if (encrptedData == null) {
+    return BlocBuilder<PatientBloc, PatientBlocState>(
+      builder: (context, state) {
+        if (state is Loading) {
+          return Center(child: CircularProgressIndicator());
+        } else if (state is RecordFetched) {
+          final record = state.medicalRecord;
+          return dataUI(title, record);
+        } else {
+          return const SizedBox.shrink();
+        }
+      },
+    );
+  } else {
+    try {
+      final Map<String, dynamic> recordMap = jsonDecode(encrptedData as String);
+      final record = Medicarecordmodel.fromJson(recordMap);
+      return dataUI(title, record);
+    } catch (e) {
+      log("Hive Data Parsing Error: $e");
+      return const SizedBox.shrink();
+    }
+  }
+}
+
+Widget dataUI(String title, Medicarecordmodel record) {
+  Profilemodel? profilemodel = Hiveservice().getProfileData();
+  String fullName = "";
+  String bloodGroup = "";
+  String dob = "";
+  String address = "";
+
+  if (profilemodel != null) {
+    fullName = profilemodel.fullName;
+    bloodGroup = profilemodel.bloodGroup;
+    dob = profilemodel.dob;
+    address = profilemodel.address;
+  }
+  switch (title) {
+    case "Personal Details":
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          TextSpan(
-            text: value,
-            style: GoogleFonts.poppins(
-              fontWeight: FontWeight.w300,
-              fontSize: 16,
-              color: AppColor.lightBlueTextColor2,
-            ),
+          dataTile("Name: ", fullName),
+          dataTile("Date of Birth:", dob),
+          dataTile("Permanent Home Address:", address),
+          dataTile("Blood Group:", bloodGroup),
+        ],
+      );
+    case "Basic Medical Info":
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          dataTile("Allergies:", record.medicalDetails.allegries),
+          dataTile(
+            "Chronic Conditions:",
+            record.medicalDetails.chronicConditions,
+          ),
+          dataTile("Past Surgeries:", record.medicalDetails.pastSurgeries),
+          dataTile(
+            "Drug Reactions or Intolerances:",
+            record.medicalDetails.drugReactions,
+          ),
+          dataTile("Special Conditions:", record.medicalDetails.diagonoses),
+          dataTile(
+            "Genetic Health Conditions:",
+            record.medicalDetails.hereditaryGenetic,
           ),
         ],
+      );
+    case "Emergency Contact Details":
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          dataTile("Name:", record.emergencyDetails.name),
+          dataTile("Contact Number: ", record.emergencyDetails.contact),
+        ],
+      );
+    case "Insurance Details":
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          dataTile("Provider:", record.insuranceDetails.provider),
+          dataTile("Insurance\nNumber:", record.insuranceDetails.policyNumber),
+          dataTile("Insurance Type:", "Life "),
+          dataTile("Expiry Date:", "29/12/2034"),
+        ],
+      );
+
+    case "Preferences":
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          dataTile("Doctor:", record.medicalDetails.prefferedDoctor),
+          dataTile("Hospital:", "Hospital:"),
+        ],
+      );
+    default:
+      return Container();
+  }
+}
+
+Widget dataTile(String heading, String value) {
+  return Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 3),
+    child: SizedBox(
+      width: double.infinity,
+      child: Text.rich(
+        TextSpan(
+          text: "$heading ",
+          style: GoogleFonts.poppins(
+            fontWeight: FontWeight.w300,
+            fontSize: 16.sp,
+            color: Colors.black,
+          ),
+
+          children: [
+            TextSpan(
+              text: value,
+              style: GoogleFonts.poppins(
+                fontWeight: FontWeight.w300,
+                fontSize: 16.sp,
+                color: AppColor.lightBlueTextColor2,
+              ),
+            ),
+          ],
+        ),
       ),
     ),
   );

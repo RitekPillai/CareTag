@@ -1,4 +1,4 @@
-package com.example.CareTag.Models;
+package com.example.CareTag.Models.Paitent;
 
 import lombok.Builder;
 import lombok.Data;

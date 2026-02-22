@@ -50,10 +50,31 @@ public class User implements UserDetails {
 
 
 
+    @Override
+    public boolean isAccountNonExpired() {
+        return true; // Set to true so users don't get blocked
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return this.isVerified; // This is great! Users can't login until they verify email.
+    }
 
 
-
-
+    @Override
+    public String getUsername() {
+        return this.email;
+    }
 
 
     @Override

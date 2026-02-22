@@ -2,8 +2,10 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:caretag/Modules/card_registration/data/model/medicarecordmodel.dart';
+import 'package:caretag/Modules/card_registration/data/model/profileModel.dart';
 import 'package:caretag/Modules/card_registration/data/model/shippingRegistration.dart';
 import 'package:caretag/Modules/card_registration/data/repos/paitent_repo.dart';
+import 'package:caretag/utils/hiveService.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/widgets.dart';
 
@@ -21,6 +23,7 @@ class PatientBloc extends Bloc<PatientBlocEvent, PatientBlocState> {
     on<GetPatientRecord>(_onGetPaitentRecord);
     on<SubscriptionEvent>(_onSubscription);
     on<BluetoothData>(_onBluetoohData);
+    on<GetProfileData>(_onGetProfileData);
   }
   Future<void> _onPatientRegistration(
     PatientRegistration event,
@@ -42,11 +45,9 @@ class PatientBloc extends Bloc<PatientBlocEvent, PatientBlocState> {
   Future<void> _onGetPaitentRecord(GetPatientRecord event, Emitter emit) async {
     emit(Loading());
     try {
-      Medicarecordmodel record = await _paitentRepo.getRecord();
-      debugPrint(
-        "Medical recod \n\n ${record.basicPersonalDetails.bloodgroup} ${record.lifeStyleDetails.excercise}",
-      );
-      emit(RecordFetched(record));
+      await _paitentRepo.getRecord();
+
+      //  emit(RecordFetched(record));
     } catch (e) {
       emit(Failed(message: e.toString()));
     }
@@ -72,5 +73,20 @@ class PatientBloc extends Bloc<PatientBlocEvent, PatientBlocState> {
   FutureOr<void> _onBluetoohData(BluetoothData event, Emitter emit) {
     emit(Loading());
     try {} catch (e) {}
+  }
+
+  FutureOr<void> _onGetProfileData(
+    GetProfileData event,
+    Emitter<PatientBlocState> emit,
+  ) async {
+    emit(Loading());
+
+    try {
+      Profilemodel profilemodel = await _paitentRepo.getProfileData();
+      emit(ProfileRecordFetched(profilemodel: profilemodel));
+    } catch (e) {
+      emit(Failed(message: e.toString()));
+      debugPrint("Failed:$e");
+    }
   }
 }

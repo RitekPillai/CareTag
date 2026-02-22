@@ -1,12 +1,12 @@
 package com.example.CareTag.Services.AuthServices;
 
 import com.example.CareTag.DTOs.authDTOs.*;
-import com.example.CareTag.Models.Patient;
+import com.example.CareTag.Models.Paitent.PatientRecords;
 import com.example.CareTag.Models.RefreshToken;
 import com.example.CareTag.Models.User;
 import com.example.CareTag.Models.type.AuthProvider;
 import com.example.CareTag.Models.type.RoleType;
-import com.example.CareTag.Repos.PatientRepo;
+import com.example.CareTag.Repos.Paitent.PatientRecordsRepo;
 import com.example.CareTag.Repos.UserRepo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +27,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
+import static java.rmi.server.LogStream.log;
+
 
 @Slf4j
 @Service
@@ -40,7 +42,7 @@ public class AuthService {
 @Lazy
        private final  AuthenticationManager authenticationManager;
         private final RefereshTokenService refereshTokenService;
-        private  final PatientRepo  patientRepo;
+        private  final PatientRecordsRepo patientRecordsRepo;
         private final EmailService emailService;
         private final CacheService cacheService;
     private final PasswordEncoder passwordEncoder;
@@ -67,7 +69,7 @@ public class AuthService {
     public ResponseEntity<String> patientSignUp(SignUpRequestDTO signUpRequestDTO) throws Exception {
 
 
-
+/// checkling if the yuser is already exsisit
         if(userRepo.existsByEmail(signUpRequestDTO.getEmail())){
             return  ResponseEntity.badRequest().body("Email already exists");
         }
@@ -89,7 +91,7 @@ public class AuthService {
 
                     .build();
         cacheService.savingPendingUser(pendingUser);
-        log.info("Pending User has been Successfully Saved In cache"+pendingUser);
+        AuthService.log.info("Pending User has been Successfully Saved In cache"+pendingUser);
 
 
         return ResponseEntity.status(HttpStatus.OK).body(token);
@@ -102,7 +104,7 @@ public class AuthService {
             User user = (User) authentication.getPrincipal();
         SecureRandom secureRandom = new SecureRandom();
         String otpcode = String.format("%06d", secureRandom.nextInt(1000000));
-            log.info("Login Otp code:{}",otpcode);
+            AuthService.log.info("Login Otp code:{}",otpcode);
             cacheService.savingOtp(req.getEmail(),otpcode);
         emailService.sendOtpEmail(user.getEmail(),otpcode,"Login Verification");
             return new  ResponseEntity<>("The Otp Has Been Sent to your Email Please Check It:)",HttpStatus.ACCEPTED);
@@ -138,7 +140,7 @@ public class AuthService {
 
     }
 
-    public ResponseEntity<LoginResponseDTO> verifyLogin(String  email,String requestOtp) {
+    public ResponseEntity<LogResponseDTO> verifyLogin(String  email,String requestOtp) {
        String otp = cacheService.fetchotp(email);
 
 
@@ -152,25 +154,20 @@ public class AuthService {
         if(!otp.equals(requestOtp)){
             throw new RuntimeException("Invalid Otp Code.Code does not match");
         }
-
         cacheService.deleteOtp(email);
         User user = userRepo.findByEmail(email);
         if(user==null){
             throw new RuntimeException("User not found");
         }
-        Optional<Patient> patient = patientRepo.findById(user.getId());
-        boolean isRegister = false;
-        if(patient.isPresent()){
-            isRegister = true;
-            log.info("Patient has been Registered");
-            log.info(patient.get().getCareTagId());
-        }
+     Optional<PatientRecords> patient =   patientRecordsRepo.findById(user.getId());
+        boolean isPatient = patient.isPresent();
 
+        log("IS patient is already Registered "+isPatient);
 
         String jwtToken = authUtil.generateToken(user);
         RefreshToken refreshToken = refereshTokenService.generateToken(user.getEmail());
 
-        return ResponseEntity.ok(new LoginResponseDTO(jwtToken, user.getUsername(), refreshToken.getToken(),false,isRegister));
+        return ResponseEntity.ok(new LogResponseDTO(jwtToken, refreshToken.getToken(),isPatient));
 
 
 
@@ -184,8 +181,8 @@ public class AuthService {
 
             String jwtToken = authUtil.generateToken(user);
             RefreshToken refreshToken =refereshTokenService.generateToken(user.getEmail());
-            log.info("JWT TOKEN:{}",jwtToken);
-            log.info("REFRESH TOKEN:{}",refreshToken);
+            AuthService.log.info("JWT TOKEN:{}",jwtToken);
+            AuthService.log.info("REFRESH TOKEN:{}",refreshToken);
 
             return new ResponseEntity<>(new VerifyResponse(jwtToken, user.getUsername(), refreshToken.getToken()),HttpStatus.OK);
 
@@ -205,25 +202,35 @@ public class AuthService {
         }
 
 
-    public ResponseEntity<?> getCurrentUser(Principal principal) {
+    public ResponseEntity<String> getCurrentUser(Principal principal) {
+
         if (principal == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            AuthService.log.error("Principal is null");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Principal is null");
         }
-
+        AuthService.log.info("Current User:{}",principal.getName());
         User user = userRepo.findByEmail(principal.getName());
-        if (user == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        AuthService.log.info("Current User:{}", user.getEmail());
+        if(user==null){
+            AuthService.log.error("User not found");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User  not found");
         }
+        log("Current user id:"+user.getId());
+        System.out.println("Current user id:"+user.getId());
 
-        Optional<Patient> patient = patientRepo.findById(user.getId());
+        Optional<PatientRecords> patient = patientRecordsRepo.findById(user.getId());
 
         if (patient.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.ACCEPTED)
-                    .body("REGISTRATION_INCOMPLETE");
+
+
+            return ResponseEntity.status(HttpStatus.OK).body("REGISTRATION_INCOMPLETE");
+        } else {
+            System.out.println("Current user id:"+patient.get().getId());
+            return ResponseEntity.status(HttpStatus.OK).body("AUTHENTICATED");
         }
 
-        return ResponseEntity.ok(user);
-    }   
+
+    }
 }
 
 

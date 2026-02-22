@@ -1,25 +1,12 @@
-class LoginResponse {
-  String? username;
-  String? jwtToken;
-  String? responseToken;
+class LoginOtpResponse {
+  String? token;
+  String? refreshToken;
+  bool? registered; // You can keep this name in Dart...
 
-  LoginResponse({
-    required this.username,
-    required this.jwtToken,
-    required this.responseToken,
-  });
-
-  LoginResponse.fromJson(Map<String, dynamic> json) {
-    username = json['username'];
-    jwtToken = json['token'];
-    responseToken = json['RefreshToken'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['username'] = username;
-    data['token'] = jwtToken;
-    data['RefreshToken'] = responseToken;
-    return data;
+  LoginOtpResponse.fromJson(Map<String, dynamic> json) {
+    token = json['token'];
+    refreshToken = json['refreshToken'];
+    // ...but point it to 'isRegistered' from the Java JSON
+    registered = json['registered'];
   }
 }

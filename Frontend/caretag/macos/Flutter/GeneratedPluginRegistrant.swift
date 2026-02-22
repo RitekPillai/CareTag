@@ -11,11 +11,11 @@ import desktop_webview_window
 import fast_rsa
 import file_selector_macos
 import flutter_blue_plus_darwin
+import flutter_local_notifications
 import flutter_secure_storage_darwin
 import flutter_web_auth_2
 import gal
 import google_sign_in_ios
-import path_provider_foundation
 import share_plus
 import url_launcher_macos
 import video_player_avfoundation
@@ -28,11 +28,11 @@ func RegisterGeneratedPlugins(registry: FlutterPluginRegistry) {
   FastRsaPlugin.register(with: registry.registrar(forPlugin: "FastRsaPlugin"))
   FileSelectorPlugin.register(with: registry.registrar(forPlugin: "FileSelectorPlugin"))
   FlutterBluePlusPlugin.register(with: registry.registrar(forPlugin: "FlutterBluePlusPlugin"))
+  FlutterLocalNotificationsPlugin.register(with: registry.registrar(forPlugin: "FlutterLocalNotificationsPlugin"))
   FlutterSecureStorageDarwinPlugin.register(with: registry.registrar(forPlugin: "FlutterSecureStorageDarwinPlugin"))
   FlutterWebAuth2Plugin.register(with: registry.registrar(forPlugin: "FlutterWebAuth2Plugin"))
   GalPlugin.register(with: registry.registrar(forPlugin: "GalPlugin"))
   FLTGoogleSignInPlugin.register(with: registry.registrar(forPlugin: "FLTGoogleSignInPlugin"))
-  PathProviderPlugin.register(with: registry.registrar(forPlugin: "PathProviderPlugin"))
   SharePlusMacosPlugin.register(with: registry.registrar(forPlugin: "SharePlusMacosPlugin"))
   UrlLauncherPlugin.register(with: registry.registrar(forPlugin: "UrlLauncherPlugin"))
   FVPVideoPlayerPlugin.register(with: registry.registrar(forPlugin: "FVPVideoPlayerPlugin"))

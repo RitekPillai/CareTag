@@ -1,13 +1,19 @@
+import 'package:caretag/Modules/card_registration/data/model/profileModel.dart';
 import 'package:caretag/Modules/home/widgets/profilePageHelpers.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 class Profilepage extends StatelessWidget {
   const Profilepage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    Profilemodel? profilemodel = Hive.box<Profilemodel>(
+      'profile_records',
+    ).get('profile_record');
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: Column(
@@ -26,7 +32,7 @@ class Profilepage extends StatelessWidget {
                   child: Text(
                     "Quick Summary",
                     style: GoogleFonts.poppins(
-                      fontSize: 15,
+                      fontSize: 15.sp,
                       fontWeight: FontWeight.w600,
                       color: Colors.black,
                     ),
@@ -37,7 +43,7 @@ class Profilepage extends StatelessWidget {
                 clipper: CurveClipper(),
                 child: Container(
                   width: double.infinity,
-                  height: 370,
+                  height: 370.h,
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [Color(0xff5EACFF), Colors.white],
@@ -47,7 +53,7 @@ class Profilepage extends StatelessWidget {
                   ),
                   child: Column(
                     children: [
-                      const SizedBox(height: 60),
+                      SizedBox(height: 60.h),
 
                       Center(
                         child: Text(
@@ -61,10 +67,10 @@ class Profilepage extends StatelessWidget {
                       ),
                       const SizedBox(height: 30),
                       SizedBox(
-                        height: 122,
-                        width: 119,
+                        height: 122.h,
+                        width: 119.w,
                         child: CircleAvatar(
-                          maxRadius: 25,
+                          maxRadius: 25.r,
 
                           backgroundImage: NetworkImage(
                             "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjduXBTnBVs-4N-tCmYSl1Z8O95GAlK_ZnUg&s",
@@ -74,7 +80,7 @@ class Profilepage extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.only(top: 8.0),
                         child: Text(
-                          "Steve harrington",
+                          profilemodel!.fullName,
                           style: GoogleFonts.poppins(
                             fontWeight: FontWeight.w600,
                             fontSize: 18,
@@ -84,7 +90,7 @@ class Profilepage extends StatelessWidget {
                       Padding(
                         padding: EdgeInsetsGeometry.only(bottom: 5),
                         child: Text(
-                          "CTG-8359-2047-1638",
+                          profilemodel!.careTagId,
                           style: GoogleFonts.poppins(
                             fontWeight: FontWeight.w600,
                             fontSize: 16,
@@ -108,7 +114,7 @@ class Profilepage extends StatelessWidget {
                   "Appointments\nDone",
                   185,
                 ),
-                const SizedBox(width: 10),
+                SizedBox(width: 10.w),
                 infoTitle(
                   "assets/images/profilePage/group.svg",
                   "79",
@@ -126,7 +132,7 @@ class Profilepage extends StatelessWidget {
                   "23",
                   " Active \n  Records",
                 ),
-                const SizedBox(width: 10),
+                SizedBox(width: 10.w),
                 infoTitle(
                   "assets/images/profilePage/coins.svg",
                   "2000",
@@ -144,7 +150,7 @@ class Profilepage extends StatelessWidget {
                   earningUsageSection(),
                   supportHelpSection(),
                   appLeagalSection(),
-                  const SizedBox(height: 30),
+                  SizedBox(height: 30.h),
                   ElevatedButton(
                     style: ButtonStyle(
                       backgroundColor: WidgetStatePropertyAll(

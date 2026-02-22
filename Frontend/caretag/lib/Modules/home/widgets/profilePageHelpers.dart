@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -131,9 +132,9 @@ Widget earningUsageSection() {
           ),
         ),
 
-        profileRowTile("$path/lock.svg", "My DashBoard"),
+        profileRowTile("$path/dashboard.svg", "My DashBoard"),
         profileRowTile("$path/lock.svg", "Subscriptions"),
-        profileRowTile("$path/lock.svg", "Transcation History"),
+        profileRowTile("$path/history.svg", "Transcation History"),
       ],
     ),
   );
@@ -157,9 +158,9 @@ Widget supportHelpSection() {
           ),
         ),
 
-        profileRowTile("$path/lock.svg", "Help Center"),
-        profileRowTile("$path/lock.svg", "Contact Support"),
-        profileRowTile("$path/lock.svg", "Report a Problem"),
+        profileRowTile("$path/help.svg", "Help Center"),
+        profileRowTile("$path/call.svg", "Contact Support"),
+        profileRowTile("$path/report.svg", "Report a Problem"),
       ],
     ),
   );
@@ -183,10 +184,10 @@ Widget appLeagalSection() {
           ),
         ),
 
-        profileRowTile("$path/lock.svg", "App Preference"),
-        profileRowTile("$path/lock.svg", "Terms & Conditions Support"),
-        profileRowTile("$path/lock.svg", "privacy policy"),
-        profileRowTile("$path/lock.svg", "About App"),
+        profileRowTile("$path/app.svg", "App Preference"),
+        profileRowTile("$path/terms.svg", "Terms & Conditions Support"),
+        profileRowTile("$path/privacy.svg", "privacy policy"),
+        profileRowTile("$path/laboutApp.svg", "About App"),
       ],
     ),
   );
@@ -206,8 +207,8 @@ Widget profileRowTile(String Imagepath, String value) {
             Text(
               value,
               style: GoogleFonts.poppins(
-                fontWeight: FontWeight.w600,
-                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                fontSize: 16.sp,
                 color: textColor,
               ),
             ),

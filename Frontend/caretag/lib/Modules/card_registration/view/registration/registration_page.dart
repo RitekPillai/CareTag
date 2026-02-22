@@ -213,7 +213,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                     fullname: _controllers[0].text,
                     dob: _controllers[1].text,
                     address: _controllers[2].text,
-                    bloodgroup: _controllers[3].text,
+                    bloodGroup: _controllers[3].text,
                   );
                   final medicalDetails = MedicalDetails(
                     allegries: _controllers[4].text,

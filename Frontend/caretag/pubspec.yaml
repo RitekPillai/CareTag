@@ -65,6 +65,11 @@ dependencies:
   flutter_screenutil: ^5.9.3
   camera: ^0.11.3+1
   image_picker: ^1.2.1
+  hive: ^2.2.3
+  flutter_background_service: ^5.1.0
+  hive_flutter: ^1.1.0
+  flutter_local_notifications: ^20.1.0
+  
  
 
 
@@ -72,6 +77,8 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  build_runner: ^2.4.8
+  hive_generator: ^2.0.1 # <--- Ensure this is exactly here
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is

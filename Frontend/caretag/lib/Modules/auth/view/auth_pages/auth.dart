@@ -248,7 +248,7 @@ class _AuthPageState extends State<AuthPage> {
               BlocListener<AuthBloc, AuthState>(
                 listener: (context, state) {
                   final authBloc = context.read<AuthBloc>();
-
+                  //for signup
                   if (state is SignUpCOmpleted) {
                     final paitentBloc = context.read<PatientBloc>();
                     Navigator.pushReplacement(
@@ -256,11 +256,18 @@ class _AuthPageState extends State<AuthPage> {
                       customRoute(RegistrationIntroPage(), paitentBloc),
                     );
                   }
+
+                  //// if login is sucess and everything loooks good goes to homePage
                   if (state is Authenticated) {
-                    Navigator.push(context, customRoute(Homepage(), authBloc));
+                    Navigator.pushReplacement(
+                      context,
+                      customRoute(Homepage(), authBloc),
+                    );
                   }
+
+                  /// login for the first time
                   if (state is LoginCompleted) {
-                    Navigator.push(
+                    Navigator.pushReplacement(
                       context,
                       customRoute(
                         OtpPage(email: emailController.text),

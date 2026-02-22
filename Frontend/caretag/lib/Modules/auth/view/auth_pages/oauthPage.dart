@@ -5,6 +5,7 @@ import 'package:caretag/widgets/animatedRoute.dart';
 import 'package:caretag/widgets/custombutton.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart' show ReadContext, BlocProvider;
+import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:video_player/video_player.dart';
@@ -163,7 +164,7 @@ class _OauthpageState extends State<Oauthpage> {
 Widget oauthRegTile(String path, String title) {
   return Container(
     width: 299,
-    height: 39,
+    height: 40,
     decoration: BoxDecoration(
       borderRadius: BorderRadius.circular(12),
       border: Border.all(width: 1, color: Color(0xffC2C2C2)),
@@ -171,7 +172,7 @@ Widget oauthRegTile(String path, String title) {
     child: Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        //   SizedBox(height: 50, width: 50, child: SvgPicture.asset(path)),
+        SizedBox(height: 50, width: 50, child: SvgPicture.asset(path)),
         Text(
           title,
           style: GoogleFonts.poppins(

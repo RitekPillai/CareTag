@@ -1,13 +1,11 @@
 package com.example.CareTag.Services.AuthServices;
 
 import com.example.CareTag.DTOs.authDTOs.LoginResponseDTO;
-import com.example.CareTag.DTOs.authDTOs.SignUpRequestDTO;
-import com.example.CareTag.Models.DatabaseSequence;
-import com.example.CareTag.Models.Patient;
+import com.example.CareTag.Models.Paitent.PatientRecords;
 import com.example.CareTag.Models.RefreshToken;
 import com.example.CareTag.Models.User;
 import com.example.CareTag.Models.type.AuthProvider;
-import com.example.CareTag.Repos.PatientRepo;
+import com.example.CareTag.Repos.Paitent.PatientRecordsRepo;
 import com.example.CareTag.Repos.UserRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +23,7 @@ public class OAuth2Service {
     private final AuthUtil authUtil;
     private final UserRepo userRepo;
     private final DatabaseSeqService databaseSeqService;
-    private  final PatientRepo patientRepo;
+    private  final PatientRecordsRepo patientRecordsRepo;
 
 
     private final RefereshTokenService refereshTokenService;
@@ -43,7 +41,7 @@ public class OAuth2Service {
         User emailUser = userRepo.findByEmail(email);
 
         boolean isRegister = false;
-        Optional<Patient> patient = patientRepo.findById(user.getId());
+        Optional<PatientRecords> patient = patientRecordsRepo.findById(user.getId());
 
         if(patient.isPresent()){
 

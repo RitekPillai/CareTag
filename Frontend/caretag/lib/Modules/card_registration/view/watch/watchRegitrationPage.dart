@@ -1,11 +1,14 @@
 import 'package:caretag/Modules/card_registration/model_view/bloc/patient_bloc_bloc.dart';
 import 'package:caretag/Modules/card_registration/model_view/service/bluetoothService.dart';
+import 'package:caretag/Modules/card_registration/view/subscription/subscription_page.dart';
 import 'package:caretag/constants/app_color.dart';
+import 'package:caretag/widgets/animatedRoute.dart';
 import 'package:caretag/widgets/custom_divider.dart';
 import 'package:caretag/widgets/custombutton.dart';
 import 'package:caretag/widgets/helpPage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:video_player/video_player.dart';
@@ -75,7 +78,7 @@ class _WatchregitrationpageState extends State<Watchregitrationpage> {
               ),
             ),
             SizedBox(
-              height: 300,
+              height: 300.h,
               child: AspectRatio(
                 aspectRatio: _controller.value.aspectRatio,
                 child: VideoPlayer(_controller),
@@ -166,7 +169,12 @@ class _WatchregitrationpageState extends State<Watchregitrationpage> {
                       const SizedBox(width: 10),
                       TextButton(
                         onPressed: () {
-                          //  Navigator.pushReplacement(context, customRoute(sub, blocInstance))
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => SubscriptionPage(),
+                            ),
+                          );
                         },
                         child: Text(
                           "Skip For now",

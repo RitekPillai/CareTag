@@ -15,6 +15,8 @@ public class RegistrationRequestDTO {
     private String encryptedAesKey;
     private String mac;
     private String rsaPublicKey;
+    private String id;
+    private BasicDataDTO basicDataDTO;
 
 
 }

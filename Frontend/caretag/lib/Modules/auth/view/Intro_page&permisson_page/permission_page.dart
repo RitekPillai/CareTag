@@ -4,6 +4,7 @@ import 'package:caretag/Modules/auth/view/auth_pages/oauthPage.dart';
 import 'package:caretag/constants/app_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart' show ReadContext;
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -60,16 +61,18 @@ class _PermissionPageState extends State<PermissionPage> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SizedBox(height: 50),
-          Padding(
-            padding: const EdgeInsets.only(left: 15),
-            child: Text(
-              textAlign: TextAlign.start,
-              "Let’s get started",
-              style: GoogleFonts.poppins(
-                fontWeight: FontWeight.w700,
-                fontSize: 36,
-                color: AppColor.darkishBlue,
+          SizedBox(height: 20.h),
+          SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.only(left: 15),
+              child: Text(
+                textAlign: TextAlign.start,
+                "Let’s get started",
+                style: GoogleFonts.poppins(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 36,
+                  color: AppColor.darkishBlue,
+                ),
               ),
             ),
           ),

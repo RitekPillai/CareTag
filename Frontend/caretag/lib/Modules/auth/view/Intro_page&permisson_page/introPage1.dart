@@ -5,6 +5,8 @@ import 'package:caretag/Modules/auth/view/Intro_page&permisson_page/permission_p
 import 'package:caretag/constants/app_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart' show ReadContext;
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
@@ -29,36 +31,36 @@ class _Intropage1State extends State<Intropage1> {
     final authBloc = context.read<AuthBloc>();
     List<Imagemodel> images = [
       Imagemodel(
-        path: "assets/images/intro/Image1.png",
-        width: 363,
-        height: 320,
+        path: "assets/images/intro/image1.svg",
+        width: 363.w,
+        height: 320.h,
       ), //0
       Imagemodel(
         path: "assets/images/intro/Image2.png",
-        width: 317,
-        height: 317,
+        width: 317.w,
+        height: 317.h,
       ), //1
       Imagemodel(
         path: "assets/images/intro/Image3.png",
-        width: 317,
-        height: 317,
+        width: 317.w,
+        height: 317.h,
       ),
 
       ///2
       Imagemodel(
-        path: "assets/images/intro/Image4.png",
-        width: 317,
-        height: 317,
+        path: "assets/images/intro/image4.svg",
+        width: 317.w,
+        height: 317.h,
       ), //3
       Imagemodel(
         path: "assets/images/intro/Image5.png",
-        width: 317,
-        height: 317,
+        width: 317.w,
+        height: 317.h,
       ), //4
       Imagemodel(
         path: "assets/images/intro/Image6.png",
-        width: 317,
-        height: 317,
+        width: 317.w,
+        height: 317.h,
       ), //5
     ];
 
@@ -80,62 +82,57 @@ class _Intropage1State extends State<Intropage1> {
     ];
 
     /// -----------------------------------on pressed Button
+
     void onPressed() async {
-      Storageservice storageservice = Storageservice();
-      await storageservice.setTrueNewUser();
+      if (index == 5) {
+        final storageservice = Storageservice();
+
+        await storageservice.setTrueNewUser();
+        debugPrint("Storage updated: User is no longer 'New'");
+
+        if (!mounted) return;
+
+        Navigator.push(context, customRoute(const PermissionPage(), authBloc));
+        return;
+      }
 
       setState(() {
         index++;
+        headingindex++;
+
         if (index > 0) {
-          headingindex++;
-          _currentTopPadding = _currentTopPadding = 5.0;
-        }
-        if (index != 0) {
+          _currentTopPadding = 5.0;
           height = 700;
         }
-        if (index == 6) {
-          index = index - 1;
-          Navigator.push(context, customRoute(PermissionPage(), authBloc));
-        }
-        debugPrint(index.toString());
       });
+
+      debugPrint("Current Slide Index: $index");
     }
 
     return Scaffold(
       backgroundColor: Colors.white,
       body: Column(
         children: [
-          const SizedBox(height: 50),
-
-          ////----------------------------Welcome To careTag
-          AnimatedSize(
-            duration: Duration(milliseconds: 500),
-            curve: Curves.easeIn,
-            child: Column(
-              children: [
-                Center(
-                  child: Text(
+          SizedBox(height: 10.h),
+          SafeArea(
+            child: AnimatedSize(
+              duration: Duration(milliseconds: 500),
+              curve: Curves.easeIn,
+              child: Column(
+                children: [
+                  Text(
                     textAlign: TextAlign.center,
-                    "Welcome to",
+                    "Welcome to\nCare Tag",
 
                     style: GoogleFonts.poppins(
                       fontWeight: FontWeight.w900,
                       color: AppColor.darkishBlue,
-                      fontSize: index == 0 ? 50 : 35,
+                      fontSize: index == 0 ? 50.sp : 35.sp,
+                      height: 1,
                     ),
                   ),
-                ),
-                Text(
-                  textAlign: TextAlign.center,
-                  "CareTag",
-
-                  style: GoogleFonts.poppins(
-                    fontWeight: FontWeight.w900,
-                    color: AppColor.darkishBlue,
-                    fontSize: index == 0 ? 50 : 35,
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
 
@@ -145,12 +142,24 @@ class _Intropage1State extends State<Intropage1> {
               transitionBuilder: (child, animation) {
                 return FadeTransition(opacity: animation, child: child);
               },
-              child: Image.asset(
+              child: SvgPicture.asset(
                 images[index].path,
                 width: images[index].width,
                 height: images[index].height,
-                fit: BoxFit.cover,
                 key: ValueKey<int>(index),
+                errorBuilder: (context, error, stackTrace) {
+                  return Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Image.asset(
+                        images[index].path,
+                        width: images[index].width,
+                        height: images[index].height,
+                        key: ValueKey<int>(index),
+                      ),
+                    ),
+                  );
+                },
               ),
             ),
           ),
@@ -162,35 +171,102 @@ class _Intropage1State extends State<Intropage1> {
               builder: (context, value, child) => Padding(
                 padding: EdgeInsets.only(top: value),
                 child: Container(
-                  width: 393,
-                  height: 423,
+                  width: 393.w,
 
                   decoration: BoxDecoration(
                     color: AppColor.lightblueColor,
                     borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(100),
-                      topRight: Radius.circular(100),
+                      topLeft: Radius.circular(100.r),
+                      topRight: Radius.circular(100.r),
                     ),
                   ),
 
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      SizedBox(height: index == 0 ? 50 : 15),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 15, right: 15),
-                        child: index == 0
-                            ? Text(
-                                textAlign: TextAlign.center,
-                                "CareTag bridges patients and doctors with secure, RFID-powered access to vital health records—anytime, anywhere.",
-                                style: GoogleFonts.poppins(
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 16,
-                                  color: AppColor.textColor,
+                  child: SingleChildScrollView(
+                    physics: NeverScrollableScrollPhysics(),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        SizedBox(height: index == 0 ? 25.w : 15.w),
+                        Padding(
+                          padding: EdgeInsets.only(left: 15.w, right: 15.w),
+                          child: index == 0
+                              ? Text(
+                                  textAlign: TextAlign.center,
+                                  "CareTag bridges patients and doctors\nwith secure, RFID-powered access to\nvital health records—anytime, anywhere.",
+                                  style: GoogleFonts.poppins(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 16.sp,
+                                    color: AppColor.textColor,
+                                  ),
+                                )
+                              : Padding(
+                                  padding: EdgeInsets.only(top: 30.h),
+                                  child: AnimatedSwitcher(
+                                    duration: Duration(milliseconds: 500),
+                                    transitionBuilder: (child, animation) {
+                                      return FadeTransition(
+                                        opacity: animation,
+                                        child: child,
+                                      );
+                                    },
+
+                                    child: Text(
+                                      key: ValueKey<int>(headingindex - 1),
+                                      textAlign: TextAlign.center,
+                                      headingTexts[headingindex - 1],
+                                      style: GoogleFonts.poppins(
+                                        fontWeight: FontWeight.w700,
+                                        fontSize: 22.sp,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                  ),
                                 ),
+                        ),
+                        SizedBox(height: index == 0 ? 20.h : 5),
+                        index == 0
+                            ? Column(
+                                children: [
+                                  Text.rich(
+                                    TextSpan(
+                                      text: "By continuing, you accept ",
+                                      style: GoogleFonts.poppins(
+                                        fontWeight: FontWeight.w300,
+                                        fontSize: 13.sp,
+                                      ),
+                                      children: [
+                                        TextSpan(
+                                          text: "T&C ",
+                                          style: GoogleFonts.poppins(
+                                            fontWeight: FontWeight.w700,
+                                            fontSize: 15.sp,
+                                            color: Color(0xff1D4ED8),
+                                          ),
+                                        ),
+                                        TextSpan(
+                                          text: "and",
+                                          style: GoogleFonts.poppins(
+                                            fontWeight: FontWeight.w300,
+                                            fontSize: 13.sp,
+                                          ),
+                                          children: [
+                                            TextSpan(
+                                              text: " Privacy Policy",
+                                              style: GoogleFonts.poppins(
+                                                fontWeight: FontWeight.w700,
+                                                fontSize: 15.sp,
+                                                color: Color(0xff1D4ED8),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
                               )
                             : Padding(
-                                padding: const EdgeInsets.only(top: 30),
+                                padding: const EdgeInsets.all(8.0),
                                 child: AnimatedSwitcher(
                                   duration: Duration(milliseconds: 500),
                                   transitionBuilder: (child, animation) {
@@ -201,139 +277,77 @@ class _Intropage1State extends State<Intropage1> {
                                   },
 
                                   child: Text(
-                                    key: ValueKey<int>(headingindex - 1),
+                                    key: ValueKey<int>(headingindex),
                                     textAlign: TextAlign.center,
-                                    headingTexts[headingindex - 1],
+                                    leadingText[headingindex - 1],
                                     style: GoogleFonts.poppins(
-                                      fontWeight: FontWeight.w700,
-                                      fontSize: 22,
-                                      color: Colors.black,
+                                      color: AppColor.lightBlueTextColor,
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 14,
                                     ),
                                   ),
                                 ),
                               ),
-                      ),
-                      SizedBox(height: index == 0 ? 10 : 5),
-                      index == 0
-                          ? Column(
-                              children: [
-                                Text.rich(
-                                  TextSpan(
-                                    text: "By continuing, you accept ",
-                                    style: GoogleFonts.poppins(
-                                      fontWeight: FontWeight.w300,
-                                      fontSize: 13,
-                                    ),
-                                    children: [
-                                      TextSpan(
-                                        text: "T&C ",
-                                        style: GoogleFonts.poppins(
-                                          fontWeight: FontWeight.w700,
-                                          fontSize: 15,
-                                          color: Color(0xff1D4ED8),
-                                        ),
-                                      ),
-                                      TextSpan(
-                                        text: "and",
-                                        style: GoogleFonts.poppins(
-                                          fontWeight: FontWeight.w300,
-                                          fontSize: 13,
-                                        ),
-                                        children: [
-                                          TextSpan(
-                                            text: " Privacy Policy",
-                                            style: GoogleFonts.poppins(
-                                              fontWeight: FontWeight.w700,
-                                              fontSize: 15,
-                                              color: Color(0xff1D4ED8),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
+                        SizedBox(height: index == 0 ? 10.h : 36.h),
+                        index != 0
+                            ? AnimatedSmoothIndicator(
+                                activeIndex: headingindex - 1,
+                                curve: Curves.easeInOut,
+                                count: 5,
+                                effect: ExpandingDotsEffect(
+                                  activeDotColor: Color(0xff0063F7),
+                                  dotColor: Color.fromRGBO(0, 99, 247, 0.65),
+                                  dotWidth: 7.w,
+                                  dotHeight: 7.h,
+                                  radius: 20.r,
+                                  spacing: 10,
                                 ),
-                              ],
-                            )
-                          : Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: AnimatedSwitcher(
-                                duration: Duration(milliseconds: 500),
-                                transitionBuilder: (child, animation) {
-                                  return FadeTransition(
-                                    opacity: animation,
-                                    child: child,
-                                  );
-                                },
+                              )
+                            : Container(),
+                        SizedBox(height: index == 0 ? 10.h : 21.h),
 
-                                child: Text(
-                                  key: ValueKey<int>(headingindex),
-                                  textAlign: TextAlign.center,
-                                  leadingText[headingindex - 1],
-                                  style: GoogleFonts.poppins(
-                                    color: AppColor.lightBlueTextColor,
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 14,
-                                  ),
-                                ),
-                              ),
-                            ),
-                      const SizedBox(height: 10),
-                      index != 0
-                          ? AnimatedSmoothIndicator(
-                              activeIndex: headingindex - 1,
-                              curve: Curves.easeInOut,
-                              count: 5,
-                              effect: ExpandingDotsEffect(
-                                activeDotColor: Color(0xff0063F7),
-                                dotColor: Color.fromRGBO(0, 99, 247, 0.65),
-                                dotWidth: 7,
-                                dotHeight: 7,
-                                radius: 20,
-                                spacing: 10,
-                              ),
-                            )
-                          : Container(),
-                      const SizedBox(height: 10),
-
-                      Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(89),
-                          gradient: LinearGradient(
-                            colors: [Color(0xff5B8DEF), Color(0xff0063F7)],
-                          ),
-                        ),
-
-                        child: ElevatedButton(
-                          onPressed: onPressed,
-                          style: ButtonStyle(
-                            shadowColor: WidgetStatePropertyAll(
-                              Colors.transparent,
-                            ),
-
-                            shape: WidgetStatePropertyAll(
-                              RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(89),
-                              ),
-                            ),
-                            fixedSize: WidgetStatePropertyAll(Size(322, 74)),
-
-                            backgroundColor: WidgetStatePropertyAll(
-                              Colors.transparent,
+                        Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(89),
+                            gradient: LinearGradient(
+                              colors: [Color(0xff5B8DEF), Color(0xff0063F7)],
                             ),
                           ),
 
-                          child: Text(
-                            index == 0 ? "Get Started" : "Next",
-                            style: GoogleFonts.poppins(
-                              fontWeight: FontWeight.w700,
-                              fontSize: 36,
-                              color: Colors.white,
+                          child: ElevatedButton(
+                            onPressed: onPressed,
+                            style: ButtonStyle(
+                              shadowColor: WidgetStatePropertyAll(
+                                Colors.transparent,
+                              ),
+
+                              shape: WidgetStatePropertyAll(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(89.r),
+                                ),
+                              ),
+                              fixedSize: WidgetStatePropertyAll(
+                                Size(322.w, 74.h),
+                              ),
+
+                              backgroundColor: WidgetStatePropertyAll(
+                                Colors.transparent,
+                              ),
+                            ),
+
+                            child: Text(
+                              index == 0 ? "Get Started" : "Next",
+                              style: GoogleFonts.poppins(
+                                fontWeight: FontWeight.w700,
+                                fontSize: 36.sp,
+
+                                color: Colors.white,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),

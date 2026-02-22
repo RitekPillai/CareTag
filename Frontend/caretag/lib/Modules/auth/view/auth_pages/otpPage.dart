@@ -69,143 +69,146 @@ class _OtpPageState extends State<OtpPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          TextButton(
-            onPressed: () {
-              debugPrint("Going to the help Page");
-            },
-            child: Align(
-              alignment: Alignment.topRight,
+      body: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            TextButton(
+              onPressed: () {
+                debugPrint("Going to the help Page");
+              },
+              child: Align(
+                alignment: Alignment.topRight,
+                child: Text(
+                  "Help?",
+                  style: GoogleFonts.poppins(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 15,
+                    color: Colors.black,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 30),
+            Padding(
+              padding: const EdgeInsets.only(left: 5.0, right: 5.0, bottom: 20),
               child: Text(
-                "Help?",
+                "Enter the OTP?",
                 style: GoogleFonts.poppins(
+                  fontSize: 32,
                   fontWeight: FontWeight.w700,
-                  fontSize: 15,
-                  color: Colors.black,
                 ),
               ),
             ),
-          ),
-          const SizedBox(height: 30),
-          Padding(
-            padding: const EdgeInsets.only(left: 5.0, right: 5.0, bottom: 20),
-            child: Text(
-              "Enter the OTP?",
-              style: GoogleFonts.poppins(
-                fontSize: 32,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ),
-          Center(
-            child: Text(
-              "Don’t worry, we’ll help you reset it securely.",
-              style: GoogleFonts.poppins(
-                fontWeight: FontWeight.w500,
-                fontSize: 14,
-                color: AppColor.lightBlueTextColor,
-              ),
-            ),
-          ),
-          const SizedBox(height: 20),
-          Text(
-            "We’ve sent a 6-digit code to your registered \n email.\n\n\nEnter the code below to reset your password.",
-            textAlign: TextAlign.center,
-            style: GoogleFonts.poppins(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          const SizedBox(height: 20),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: List.generate(6, (index) {
-              return otpTextFiled(context, index, controllers, focusNodes);
-            }),
-          ),
-          const SizedBox(height: 60),
-
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Text(
-                "Didn’t receive the code?",
+            Center(
+              child: Text(
+                "Don’t worry, we’ll help you reset it securely.",
                 style: GoogleFonts.poppins(
-                  fontSize: 17,
                   fontWeight: FontWeight.w500,
+                  fontSize: 14,
+                  color: AppColor.lightBlueTextColor,
                 ),
               ),
-              _start > 0
-                  ? Text(
-                      "Resend the OTP in ${_start}s",
-                      style: GoogleFonts.poppins(
-                        color: Color(0xffFF5257),
-                        fontWeight: FontWeight.w600,
-                        fontSize: 14,
-                      ),
-                    )
-                  : TextButton(
-                      onPressed: () {
-                        debugPrint("Generating the otp again.....");
-                      },
-                      child: Text(
-                        "Click Here",
+            ),
+            const SizedBox(height: 20),
+            Text(
+              "We’ve sent a 6-digit code to your registered \n email.\n\n\nEnter the code below to reset your password.",
+              textAlign: TextAlign.center,
+              style: GoogleFonts.poppins(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: List.generate(6, (index) {
+                return otpTextFiled(context, index, controllers, focusNodes);
+              }),
+            ),
+            const SizedBox(height: 60),
+
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Text(
+                  "Didn’t receive the code?",
+                  style: GoogleFonts.poppins(
+                    fontSize: 17,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                _start > 0
+                    ? Text(
+                        "Resend the OTP in ${_start}s",
                         style: GoogleFonts.poppins(
                           color: Color(0xffFF5257),
                           fontWeight: FontWeight.w600,
-                          fontSize: 15,
+                          fontSize: 14,
+                        ),
+                      )
+                    : TextButton(
+                        onPressed: () {
+                          debugPrint("Generating the otp again.....");
+                        },
+                        child: Text(
+                          "Click Here",
+                          style: GoogleFonts.poppins(
+                            color: Color(0xffFF5257),
+                            fontWeight: FontWeight.w600,
+                            fontSize: 15,
+                          ),
                         ),
                       ),
-                    ),
-            ],
-          ),
-          const SizedBox(height: 20),
-
-          BlocListener<AuthBloc, AuthState>(
-            listener: (context, state) {
-              if (state is Authenticated) {
-                Navigator.pushReplacement(
-                  context,
-                  customRoute(Homepage(), context.read<AuthBloc>()),
-                );
-              }
-              if (state is SignUpCOmpleted) {
-                debugPrint("going to sighnup page");
-
-                Navigator.pushReplacement(
-                  context,
-                  customRoute(
-                    RegistrationIntroPage(),
-                    context.read<PatientBloc>(),
-                  ),
-                );
-              }
-            },
-            child: customElevatedButton(
-              58,
-              253,
-              "Verify",
-              24,
-              FontWeight.w700,
-              () {
-                String otpcode = "";
-                for (var code in controllers) {
-                  otpcode += code.text;
-                }
-                context.read<AuthBloc>().add(
-                  AuthLoginOtpVerify(
-                    req: OtpVerifyModel(email: widget.email, otpCode: otpcode),
-                  ),
-                );
-
-                debugPrint("OTP CoDE : $otpcode");
-              },
+              ],
             ),
-          ),
-        ],
+            const SizedBox(height: 20),
+
+            BlocListener<AuthBloc, AuthState>(
+              listener: (context, state) {
+                if (state is Authenticated) {
+                  Navigator.pushReplacement(
+                    context,
+                    customRoute(Homepage(), context.read<AuthBloc>()),
+                  );
+                }
+                if (state is LoginCompleted) {
+                  Navigator.pushReplacement(
+                    context,
+                    customRoute(
+                      RegistrationIntroPage(),
+                      context.read<PatientBloc>(),
+                    ),
+                  );
+                }
+              },
+              child: customElevatedButton(
+                58,
+                253,
+                "Verify",
+                24,
+                FontWeight.w700,
+                () {
+                  String otpcode = "";
+                  for (var code in controllers) {
+                    otpcode += code.text;
+                  }
+                  context.read<AuthBloc>().add(
+                    AuthLoginOtpVerify(
+                      req: OtpVerifyModel(
+                        email: widget.email,
+                        otpCode: otpcode,
+                      ),
+                    ),
+                  );
+
+                  debugPrint("OTP CoDE : $otpcode");
+                },
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

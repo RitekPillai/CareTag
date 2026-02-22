@@ -9,6 +9,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class RefreshTokenResponseDTO {
     String refreshToken;
-    String email;
     String jwtToken;
 }

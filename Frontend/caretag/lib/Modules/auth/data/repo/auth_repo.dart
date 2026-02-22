@@ -1,7 +1,9 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:caretag/Modules/auth/data/auth/forgot_password_request.dart';
 import 'package:caretag/Modules/auth/data/auth/login_request.dart';
+import 'package:caretag/Modules/auth/data/auth/login_response.dart';
 import 'package:caretag/Modules/auth/data/auth/signup_request.dart';
 import 'package:caretag/Modules/auth/data/model/authException.dart';
 import 'package:caretag/Modules/auth/data/model/otpVerifyRequest.dart';
@@ -9,6 +11,7 @@ import 'package:caretag/Modules/auth/data/model/signupresponse.dart';
 import 'package:caretag/Modules/auth/data/model/tokenModel.dart';
 import 'package:caretag/Modules/auth/model_view/service/AuthenticationService.dart';
 import 'package:caretag/utils/storageService.dart';
+import 'package:flutter/material.dart';
 
 import 'package:flutter/rendering.dart';
 import 'package:flutter_web_auth_2/flutter_web_auth_2.dart';
@@ -68,9 +71,9 @@ class AuthRepo {
     }
   }
 
-  Future<String> login(LoginRequest req) async {
+  Future<void> login(LoginRequest req) async {
     Map<String, dynamic> payload = req.toJson();
-    debugPrint("Loging payload:${payload}");
+
     try {
       final response = await http.post(
         Uri.parse("$paitentUrl/login"),
@@ -78,25 +81,13 @@ class AuthRepo {
         headers: {'Content-Type': 'application/json'},
       );
 
-      debugPrint("Reposee  ; ${response}");
-
       if (response.statusCode == 202) {
-        return response.body;
-      } else if (response.statusCode == 401) {
-        throw AuthException(
-          StatusCode: "",
-          errorMessage: "Either the Email or Password is invaild",
-          timeStamp: DateTime.now().toString(),
-        );
+        log("REQUEST SUCESS");
       } else {
-        AuthException authException = AuthException.fromJson(
-          jsonDecode(response.body),
-        );
-        debugPrint("Auth Exceptipon${authException.errorMessage}");
         throw AuthException(
-          StatusCode: authException.StatusCode,
-          errorMessage: authException.errorMessage,
-          timeStamp: authException.timeStamp,
+          StatusCode: response.statusCode.toString(),
+          errorMessage: response.body,
+          timeStamp: DateTime.now().toString(),
         );
       }
     } catch (e) {
@@ -134,13 +125,9 @@ class AuthRepo {
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = jsonDecode(response.body);
 
-        return Tokenmodel(
-          accessToken: data['token'],
-          refreshToken: data['refreshToken'],
-          username: data['username'],
-          isNew: isNewUser,
-          isRegister: data['isRegister'],
-        );
+        Tokenmodel model = Tokenmodel.fromJson(data);
+        log("Token Model:$model");
+        return model;
       } else {
         final authException = AuthException.fromJson(jsonDecode(response.body));
         throw authException;
@@ -150,25 +137,27 @@ class AuthRepo {
     }
   }
 
-  Future<Tokenmodel> loginOtpVerify(OtpVerifyModel req) async {
+  Future<LoginOtpResponse> loginOtpVerify(OtpVerifyModel req) async {
     Map<String, dynamic> payload = req.toJson();
-    debugPrint("called");
 
     try {
       final response = await http.post(
         Uri.parse("$baseUrl/login-verify"),
         body: jsonEncode(payload),
-        headers: {'Content-Type': 'application/json'},
+        headers: {"Content-Type": "application/json"},
       );
-      debugPrint("Response body : ${response.body}");
-      if (response.statusCode >= 200) {
-        Tokenmodel loginTokens = Tokenmodel.fromJson(jsonDecode(response.body));
-        debugPrint(response.body);
-        return loginTokens;
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        log("Data :$data");
+        return LoginOtpResponse.fromJson(data);
+      } else {
+        throw AuthException(
+          StatusCode: response.statusCode.toString(),
+          errorMessage: response.body,
+          timeStamp: DateTime.now().toString(),
+        );
       }
-      throw Exception();
     } catch (e) {
-      debugPrint(e.toString());
       rethrow;
     }
   }
@@ -227,45 +216,32 @@ class AuthRepo {
   }
 
   Future<String> isAuthenticated() async {
-    try {
-      String? accessToken = await storageservice.getAcessToken();
-      String? refreshToken = await storageservice.getRefreshToken();
-      bool isIntroSeeen = await storageservice.hasSeenIntro();
+    String? accessToken = await storageservice.getAcessToken();
+    String? refreshToken = await storageservice.getRefreshToken();
+    bool isIntroSeeen = await storageservice.hasSeenIntro();
 
-      debugPrint(accessToken);
-      debugPrint(refreshToken);
-      debugPrint(isIntroSeeen.toString());
-
-      if (!isIntroSeeen) {
-        return "newuser";
-      }
-
-      if (accessToken == null || refreshToken == null) {
-        return "loginScreen";
-      }
-
+    debugPrint("accessToken: $accessToken");
+    debugPrint("Refresh Token: $refreshToken");
+    debugPrint(" is New User: ${isIntroSeeen.toString()}");
+    if (!isIntroSeeen) {
+      log(
+        "--------------------------------------------------------This is a new User",
+      );
+      return "newuser";
+    } else if (accessToken == null || refreshToken == null) {
+      log(
+        "------------------------- this is a new user but seen the intro but not yet logged in(may be got exisited in the middle of the process)",
+      );
+      return "loginScreen";
+    } else {
       final response = await _authenticationservice.get(
         Uri.parse("$baseUrl/me"),
       );
-
-      {
-        switch (response.statusCode) {
-          case 200:
-            return "homePage";
-          case 401:
-            return "loginScreen";
-
-          case 202:
-            return "registration needed";
-          default:
-            debugPrint("Unknown Auth Status: ${response.statusCode}");
-            return "loginScreen";
-        }
-      }
-    } catch (e) {
-      debugPrint("Auth Repository Error: $e");
-
-      return "loginScreen";
+      log(
+        "---------------------------------------------------------------response:${response.body}",
+      );
+      debugPrint("Function done");
+      return response.body;
     }
   }
 }

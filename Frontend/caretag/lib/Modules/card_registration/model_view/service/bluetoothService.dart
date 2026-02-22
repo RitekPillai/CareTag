@@ -49,6 +49,42 @@ class Bluetooothservice {
     }
   }
 
+  Future<int> getSteps(String remoteId) async {
+    BluetoothDevice device = BluetoothDevice.fromId(remoteId);
+    int steps = 0;
+    if (!device.isConnected) {
+      await device
+          .connect(autoConnect: false, license: License.free)
+          .timeout(Duration(seconds: 5));
+    }
+    try {
+      await device
+          .connect(autoConnect: false, license: License.free)
+          .timeout(Duration(seconds: 5));
+
+      List<BluetoothService> services = await device.discoverServices();
+
+      for (var service in services) {
+        for (var characteristic in service.characteristics) {
+          if (characteristic.uuid.toString().contains("ff01") ||
+              characteristic.uuid.toString().contains("1814")) {
+            List<int> value = await characteristic.read();
+
+            steps = _convertBytesToInt(value);
+          }
+        }
+      }
+    } catch (e) {
+      debugPrint("Step Fetch Error: $e");
+    }
+    return steps;
+  }
+
+  int _convertBytesToInt(List<int> value) {
+    if (value.isEmpty) return 0;
+    return value[0] + (value[1] << 8) + (value[2] << 16) + (value[3] << 24);
+  }
+
   Stream<int> connectAndStreamHR(String remoteId) async* {
     BluetoothDevice device = BluetoothDevice.fromId(remoteId);
 
@@ -91,37 +127,6 @@ class Bluetooothservice {
     } catch (e) {
       debugPrint("CLEANUP ERROR: $e");
       // If we get 133, the stream effectively closes.
-    }
-  }
-
-  Future<int> getSteps(String remoteId) async {
-    BluetoothDevice device = BluetoothDevice.fromId(remoteId);
-    try {
-      if (!device.isConnected) await device.connect(license: License.free);
-      List<BluetoothService> services = await device.discoverServices();
-
-      // --- ADD THIS TEMPORARY DEBUG LOOP ---
-      for (var s in services) {
-        debugPrint("FOUND SERVICE: ${s.uuid}");
-        for (var c in s.characteristics) {
-          debugPrint(
-            "   CHARACTERISTIC: ${c.uuid} | READ: ${c.properties.read}",
-          );
-        }
-      }
-      // -------------------------------------
-
-      // This is where it's currently crashing because it can't find 'fee0'
-      var stepService = services.firstWhere(
-        (s) =>
-            s.uuid.toString().contains("fee0"), // Change this after seeing logs
-      );
-
-      // ... rest of code
-      return 0;
-    } catch (e) {
-      debugPrint("Step Error: $e");
-      return 0;
     }
   }
 

@@ -25,193 +25,198 @@ class Records extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      body: SingleChildScrollView(
-        physics: BouncingScrollPhysics(),
-        child: Column(
-          children: [
-            Stack(
-              alignment: Alignment(1, 2),
-              children: [
-                Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    SvgPicture.asset("assets/images/records/Ellipse 94.svg"),
-                    SafeArea(
-                      child: Column(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Center(
-                                child: Padding(
-                                  padding: EdgeInsets.only(left: 70.w),
-                                  child: Text(
-                                    "Records",
-                                    style: GoogleFonts.poppins(
-                                      fontWeight: FontWeight.w700,
-                                      color: Colors.white,
-                                      fontSize: 24.sp,
-                                    ),
+      body: Column(
+        children: [
+          Stack(
+            alignment: Alignment(1, 2),
+            children: [
+              Stack(
+                alignment: Alignment.center,
+                children: [
+                  SvgPicture.asset("assets/images/records/Ellipse 94.svg"),
+                  SafeArea(
+                    child: Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Center(
+                              child: Padding(
+                                padding: EdgeInsets.only(left: 70.w),
+                                child: Text(
+                                  "Records",
+                                  style: GoogleFonts.poppins(
+                                    fontWeight: FontWeight.w700,
+                                    color: Colors.white,
+                                    fontSize: 24.sp,
                                   ),
                                 ),
                               ),
-                              SizedBox(width: 12.w),
-                              SvgPicture.asset("$imagePath/heart.svg"),
+                            ),
+                            SizedBox(width: 12.w),
+                            SvgPicture.asset("$imagePath/heart.svg"),
 
-                              SizedBox(width: 11.72.w),
-                              SvgPicture.asset("$imagePath/bell.svg"),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                customSearchBar(),
-              ],
-            ),
-            SizedBox(height: 30.w),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              physics: ScrollPhysics(parent: BouncingScrollPhysics()),
-              padding: EdgeInsets.symmetric(horizontal: 12.w),
-              child: Row(
-                children: [
-                  Text(
-                    "Home",
-                    style: GoogleFonts.poppins(
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.w500,
-                      color: blueTextColor,
+                            SizedBox(width: 11.72.w),
+                            SvgPicture.asset("$imagePath/bell.svg"),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
-                  SizedBox(width: 21.w),
-                  Container(
-                    width: 0,
-                    height: 20.h,
-                    decoration: BoxDecoration(
-                      border: Border.all(width: 0.75, color: Colors.black),
-                    ),
-                  ),
-                  SizedBox(width: 21.w),
-
-                  titleStyleWidget("Doctor\nPrescription"),
-                  SizedBox(width: 21.w),
-
-                  titleStyleWidget("Diagnostic\nReports"),
-                  SizedBox(width: 21.w),
-
-                  titleStyleWidget("Vaccination\nReports"),
-                  SizedBox(width: 21.w),
-                  titleStyleWidget("Medical\nHistory"),
-                  SizedBox(width: 21.w),
-                  titleStyleWidget("Bills\nInvoices"),
-                  SizedBox(width: 21.w),
-                  titleStyleWidget("Insurance Policy\n& Claims"),
-                  SizedBox(width: 21.w),
-                  titleStyleWidget("Health\nCertificates"),
                 ],
               ),
-            ),
-            SizedBox(height: 16.h),
-            DocContainerTile(),
-            SizedBox(height: 24.h),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              customSearchBar(),
+            ],
+          ),
+          SizedBox(height: 30.w),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
               children: [
-                RecordOptionContaineTile(
-                  containerColor: blueContainerColor,
-                  imagePath: "$imagePath/med.svg",
-                  title: "Prescriptions",
+                Text(
+                  "Home",
+                  style: GoogleFonts.poppins(
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.w500,
+                    color: blueTextColor,
+                  ),
                 ),
-                RecordOptionContaineTile(
-                  containerColor: orangeContainerColor,
-                  imagePath: "$imagePath/lab.svg",
-                  title: "Lab Reports",
+                SizedBox(width: 21.w),
+                Container(
+                  width: 0,
+                  height: 20.h,
+                  decoration: BoxDecoration(
+                    border: Border.all(width: 0.75, color: Colors.black),
+                  ),
                 ),
-                RecordOptionContaineTile(
-                  containerColor: purpleContainerColor,
-                  imagePath: "$imagePath/scan.svg",
-                  title: "Scans",
-                ),
-                RecordOptionContaineTile(
-                  containerColor: greenContainerColor,
-                  imagePath: "$imagePath/bill.svg",
-                  title: "Invoices",
-                ),
+                SizedBox(width: 21.w),
+
+                titleStyleWidget("Doctor\nPrescription"),
+                SizedBox(width: 21.w),
+
+                titleStyleWidget("Diagnostic\nReports"),
+                SizedBox(width: 21.w),
+
+                titleStyleWidget("Vaccination\nReports"),
+                SizedBox(width: 21.w),
+                titleStyleWidget("Medical\nHistory"),
+                SizedBox(width: 21.w),
+                titleStyleWidget("Bills\nInvoices"),
+                SizedBox(width: 21.w),
+                titleStyleWidget("Insurance Policy\n& Claims"),
+                SizedBox(width: 21.w),
+                titleStyleWidget("Health\nCertificates"),
               ],
             ),
-            SizedBox(height: 24.h),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 23.w),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          ),
+          Expanded(
+            child: SingleChildScrollView(
+              scrollDirection: Axis.vertical,
+              physics: BouncingScrollPhysics(),
+              child: Column(
                 children: [
-                  Text(
-                    "Recent Files",
-                    style: GoogleFonts.poppins(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 16.sp,
-                      color: recentFilesColor,
+                  SizedBox(height: 16.h),
+                  DocContainerTile(),
+                  SizedBox(height: 24.h),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      RecordOptionContaineTile(
+                        containerColor: blueContainerColor,
+                        imagePath: "$imagePath/med.svg",
+                        title: "Prescriptions",
+                      ),
+                      RecordOptionContaineTile(
+                        containerColor: orangeContainerColor,
+                        imagePath: "$imagePath/lab.svg",
+                        title: "Lab Reports",
+                      ),
+                      RecordOptionContaineTile(
+                        containerColor: purpleContainerColor,
+                        imagePath: "$imagePath/scan.svg",
+                        title: "Scans",
+                      ),
+                      RecordOptionContaineTile(
+                        containerColor: greenContainerColor,
+                        imagePath: "$imagePath/bill.svg",
+                        title: "Invoices",
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 24.h),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 23.w),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "Recent Files",
+                          style: GoogleFonts.poppins(
+                            fontWeight: FontWeight.w700,
+                            fontSize: 16.sp,
+                            color: recentFilesColor,
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () {},
+                          child: Text(
+                            "View All",
+                            style: GoogleFonts.poppins(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 12.sp,
+                              color: lightBlueTextColor,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  TextButton(
-                    onPressed: () {},
-                    child: Text(
-                      "View All",
-                      style: GoogleFonts.poppins(
-                        fontWeight: FontWeight.w500,
-                        fontSize: 12.sp,
-                        color: lightBlueTextColor,
+                  SizedBox(height: 16.h),
+                  FilesTile(),
+                  SizedBox(height: 24.h),
+                  Padding(
+                    padding: EdgeInsetsGeometry.only(left: 24.w),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        textAlign: TextAlign.start,
+                        "Recommended Actions",
+                        style: GoogleFonts.poppins(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 16.sp,
+                          color: recentFilesColor,
+                        ),
                       ),
                     ),
                   ),
+                  SizedBox(height: 16.h),
+
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        RecommededTile(
+                          title: "Renew Insurance",
+                          date: "Expires in 12 days",
+                          buttonText: "Review Plan",
+                        ),
+                        SizedBox(width: 16.w),
+
+                        RecommededTile(
+                          title: "Annual Checkup",
+                          date: "Due next month",
+                          buttonText: "Schedule",
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 16.h),
                 ],
               ),
             ),
-            SizedBox(height: 16.h),
-            FilesTile(),
-            SizedBox(height: 24.h),
-            Padding(
-              padding: EdgeInsetsGeometry.only(left: 24.w),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  textAlign: TextAlign.start,
-                  "Recommended Actions",
-                  style: GoogleFonts.poppins(
-                    fontWeight: FontWeight.w700,
-                    fontSize: 16.sp,
-                    color: recentFilesColor,
-                  ),
-                ),
-              ),
-            ),
-            SizedBox(height: 16.h),
-
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: [
-                  RecommededTile(
-                    title: "Renew Insurance",
-                    date: "Expires in 12 days",
-                    buttonText: "Review Plan",
-                  ),
-                  SizedBox(width: 16.w),
-
-                  RecommededTile(
-                    title: "Annual Checkup",
-                    date: "Due next month",
-                    buttonText: "Schedule",
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(height: 16.h),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

@@ -26,7 +26,7 @@ public class JWTfilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-    try {
+    try{
         final String requestHeader =   request.getHeader("Authorization");
         String path = request.getServletPath();
         if (path.startsWith("/oauth2/") || path.startsWith("/login/oauth2/")) {
@@ -46,7 +46,9 @@ public class JWTfilter extends OncePerRequestFilter {
         }
 
         String token =requestHeader.split("Bearer ")[1];
+
         String email =authUtil.getUsernameFromToken(token);
+
         log.info("Acess Token:{}",token);
         log.info("Authenticated Email: {}", email);
 

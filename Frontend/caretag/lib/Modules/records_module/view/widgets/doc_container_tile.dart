@@ -19,7 +19,7 @@ class _DocContainerTileState extends State<DocContainerTile>
     super.initState();
     controller = BottomSheet.createAnimationController(this);
     controller.duration = const Duration(milliseconds: 500);
-    controller.reverseDuration = const Duration(seconds: 500);
+    controller.reverseDuration = const Duration(milliseconds: 500);
     controller.drive(CurveTween(curve: Curves.bounceInOut));
   }
 
@@ -149,6 +149,8 @@ class _DocContainerTileState extends State<DocContainerTile>
 
     showModalBottomSheet(
       context: context,
+      isDismissible: false,
+      enableDrag: false,
       transitionAnimationController: controller,
       builder: (context) {
         return Container(
@@ -248,21 +250,24 @@ class _DocContainerTileState extends State<DocContainerTile>
               ),
               SizedBox(height: 44.h),
               Center(
-                child: Container(
-                  height: 50.h,
-                  width: 346.w,
+                child: GestureDetector(
+                  onTap: () => Navigator.pop(context),
+                  child: Container(
+                    height: 50.h,
+                    width: 346.w,
 
-                  decoration: BoxDecoration(
-                    color: buttonBgColor,
-                    borderRadius: BorderRadius.circular(32.r),
-                  ),
-                  child: Center(
-                    child: Text(
-                      "Cancel",
-                      style: GoogleFonts.poppins(
-                        color: cancelButtonTextColor,
-                        fontWeight: FontWeight.w700,
-                        fontSize: 14.sp,
+                    decoration: BoxDecoration(
+                      color: buttonBgColor,
+                      borderRadius: BorderRadius.circular(32.r),
+                    ),
+                    child: Center(
+                      child: Text(
+                        "Cancel",
+                        style: GoogleFonts.poppins(
+                          color: cancelButtonTextColor,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 14.sp,
+                        ),
                       ),
                     ),
                   ),

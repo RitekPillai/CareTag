@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:caretag/Modules/auth/data/model/authException.dart';
 import 'package:caretag/Modules/auth/data/model/tokenModel.dart';
@@ -14,24 +15,38 @@ class Authenticationservice extends http.BaseClient {
 
   @override
   Future<http.StreamedResponse> send(http.BaseRequest request) async {
-    String? acessToken = await storage.getAcessToken();
+    String? accessToken = await storage.getAcessToken();
 
-    if (acessToken != null && JwtDecoder.isExpired(acessToken)) {
-      /// Request for new Request token---
-      await tokenRequest();
-      acessToken = await storage.getAcessToken();
+    if (accessToken == null ||
+        accessToken.isEmpty ||
+        JwtDecoder.isExpired(accessToken)) {
+      try {
+        log("Token invalid or expired. Attempting refresh...");
+        await tokenRequest();
+
+        log("New Token:$accessToken");
+        accessToken = await storage.getAcessToken();
+      } catch (e) {
+        log("Refresh failed: $e");
+        //   await storage.clearAll();
+        return http.StreamedResponse(Stream.empty(), 401);
+      }
     }
 
-    request.headers['Authorization'] = 'Bearer $acessToken';
+    if (accessToken == null || accessToken.isEmpty) {
+      log("Abort: No token available after refresh attempt.");
+      return http.StreamedResponse(Stream.empty(), 401);
+    }
+    request.headers['Authorization'] = 'Bearer $accessToken';
 
     request.headers['Content-Type'] = 'application/json';
-    debugPrint(
-      "--------------------${request.headers.toString()},${request.method},${request.url}",
-    );
 
     // send the request
     http.StreamedResponse response = await _inner.send(request);
-
+    if (response.statusCode == 401) {
+      log("Server returned 401. Clearing tokens.");
+      await storage.clearAll();
+    }
     return response;
   }
 
@@ -59,16 +74,11 @@ class Authenticationservice extends http.BaseClient {
         Uri.parse("$baseUrl/refresh"),
         body: refreshToken,
       );
-      debugPrint(
-        "Resposne of the Refresh token Request :${response.toString()}",
-      );
+
       if (response.statusCode == 200) {
-        debugPrint("Response  ${response.body}");
-        debugPrint("Done.");
         final newToken = Tokenmodel.fromJson(jsonDecode(response.body));
         await storage.saveToken(newToken.accessToken, newToken.refreshToken);
       } else if (response.statusCode == 500 || response.statusCode == 501) {
-        debugPrint(response.body);
       } else {
         AuthException authException = AuthException.fromJson(
           jsonDecode(response.body),

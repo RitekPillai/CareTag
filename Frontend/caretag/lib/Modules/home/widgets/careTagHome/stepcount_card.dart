@@ -3,8 +3,11 @@ import 'package:caretag/Modules/home/widgets/careTagHome/barchart.dart';
 import 'package:caretag/Modules/home/widgets/careTagHome/currentdate.dart';
 import 'package:caretag/utils/storageService.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
 
 class StepcountCard extends StatefulWidget {
@@ -27,7 +30,10 @@ class _StepcountCardState extends State<StepcountCard> {
 
   Future<void> _connectToBluetoothId() async {
     debugPrint("Inside the Function");
-    String? id = await storageservice.getBid();
+
+    final box = await Hive.openBox('health_vault');
+
+    String? id = await box.get("watchId");
     if (mounted) {
       setState(() {
         savedId = id;
@@ -42,9 +48,13 @@ class _StepcountCardState extends State<StepcountCard> {
   Widget build(BuildContext context) {
     const Color bgColor = Color.fromRGBO(250, 164, 128, 0.05);
     const Color boderColor = Color.fromRGBO(250, 164, 128, 0.6);
+    const Color orangeContainerColor = Color(0xffFFEDD5);
+    const Color lightGreenContainerColor = Color(0xffD7FEE3);
+    const Color greenTextColor = Color(0xff009E2D);
 
     return Container(
-      width: 180,
+      width: 180.w,
+      height: 270.h,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(25),
 
@@ -55,6 +65,55 @@ class _StepcountCardState extends State<StepcountCard> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Padding(
+                padding: EdgeInsets.only(left: 9.0.w, top: 10.h),
+                child: Container(
+                  width: 34,
+                  height: 34,
+                  decoration: BoxDecoration(
+                    color: orangeContainerColor,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Center(
+                    child: SvgPicture.asset("assets/images/home/step.svg"),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.only(right: 18.0.w, top: 10.h),
+                child: Container(
+                  width: 54.w,
+                  height: 16.h,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10.r),
+                    color: lightGreenContainerColor,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.arrow_upward_rounded,
+                        color: greenTextColor,
+                        size: 15,
+                      ),
+                      Text(
+                        "12%",
+                        style: GoogleFonts.poppins(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 12,
+                          color: greenTextColor,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+
           Padding(
             padding: const EdgeInsets.only(left: 8.0),
             child: (savedId == null || savedId!.isEmpty)
@@ -65,21 +124,14 @@ class _StepcountCardState extends State<StepcountCard> {
                       fontSize: 32,
                     ),
                   )
-                : FutureBuilder<int>(
-                    future: bluetoothService.getSteps(savedId!),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Text(
-                          "...",
-                          style: GoogleFonts.poppins(fontSize: 32),
-                        );
-                      }
-                      // Fallback to "0" if data is null
-                      String displaySteps = NumberFormat(
-                        '#,###',
-                      ).format(snapshot.data ?? 0);
+                : ValueListenableBuilder(
+                    valueListenable: Hive.box(
+                      'health_vault',
+                    ).listenable(keys: ['current_steps']),
+                    builder: (context, box, _) {
+                      final steps = box.get('current_steps', defaultValue: 0);
                       return Text(
-                        displaySteps,
+                        NumberFormat('#,###').format(steps),
                         style: GoogleFonts.poppins(
                           fontWeight: FontWeight.w700,
                           fontSize: 32,
@@ -99,9 +151,10 @@ class _StepcountCardState extends State<StepcountCard> {
               ),
             ),
           ),
-          SizedBox(height: 120, child: BarGraphTile()),
+          SizedBox(height: 135.h, child: BarGraphTile()),
 
-          Center(
+          Align(
+            alignment: Alignment.bottomCenter,
             child: Container(
               width: 94,
               height: 14,

@@ -1,13 +1,16 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:caretag/Modules/auth/data/auth/forgot_password_request.dart';
 import 'package:caretag/Modules/auth/data/auth/login_request.dart';
+import 'package:caretag/Modules/auth/data/auth/login_response.dart';
 import 'package:caretag/Modules/auth/data/auth/signup_request.dart';
 import 'package:caretag/Modules/auth/data/model/authException.dart';
 import 'package:caretag/Modules/auth/data/model/otpVerifyRequest.dart';
 import 'package:caretag/Modules/auth/data/model/tokenModel.dart';
 import 'package:caretag/Modules/auth/data/repo/auth_repo.dart';
+import 'package:caretag/Modules/card_registration/model_view/bloc/patient_bloc_bloc.dart';
 import 'package:caretag/utils/storageService.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/rendering.dart';
@@ -33,33 +36,34 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<OnAppStart>(_onAppStart);
   }
   Future<void> _onAppStart(OnAppStart event, Emitter emit) async {
+    debugPrint("Called me");
     emit(AuthLoading());
     try {
       final String message = await _authRepo.isAuthenticated();
-      final String result = message.toLowerCase().trim();
+      debugPrint("Message has been arvied $message");
 
-      debugPrint("Auth State Check: $result");
-
-      if (result == "homepage") {
-        return emit(Authenticated());
+      if (message == "AUTHENTICATED") {
+        emit(Authenticated());
       }
 
-      if (result == "newuser") {
-        return emit(NewUser());
+      if (message == "newuser") {
+        emit(NewUser());
       }
 
-      if (result == "loginscreen") {
-        return emit(LoginScreen());
+      if (message == "REGISTRATION_INCOMPLETE") {
+        emit(RegistrationPage());
       }
 
-      if (result == "registration needed") {
-        return emit(SignUpCOmpleted());
+      if (message == "loginScreen" || message == "Principal is null") {
+        emit(LoginScreen());
       }
 
-      emit(LoginScreen());
-    } catch (e) {
-      debugPrint("Auth Error: $e");
-      emit(AuthFailed(message: e.toString()));
+      // if (result == "registration needed") {
+      //   emit(SignUpCOmpleted());
+      // }
+    } catch (e, s) {
+      debugPrint("Auth Errorr: ${e.toString()}\n StackTrace:${s.toString()}");
+      //    emit(AuthFailed(message: e.toString()));
     }
   }
 
@@ -89,33 +93,36 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     AuthLoginOtpVerify event,
     Emitter<AuthState> emit,
   ) async {
+    emit(AuthLoading());
     try {
-      emit(AuthLoading());
-      OtpVerifyModel req = OtpVerifyModel(
+      OtpVerifyModel otpVerifyModel = OtpVerifyModel(
         email: event.req.email,
         otpCode: event.req.otpCode,
       );
+      final response = await _authRepo.loginOtpVerify(otpVerifyModel);
 
-      Tokenmodel tokenmodel = await _authRepo.loginOtpVerify(req);
-      debugPrint("isRegister:${tokenmodel.isRegister.toString()}");
-      if (tokenmodel.isRegister == true) {
+      log(
+        "Tokens\n Response Token:${response.token} \n Refresht token:${response.refreshToken}",
+      );
+      await _storageservice.saveToken(response.token!, response.refreshToken!);
+
+      if (response.registered!) {
         emit(Authenticated());
       } else {
-        emit(SignUpCOmpleted());
+        emit(LoginCompleted(message: "Registration is not Compelete"));
       }
+      debugPrint("IS REGISTREDDDDDDDDDDDDDDDDDdd${response.registered}");
     } catch (e) {
-      debugPrint(e.toString());
-      emit(AuthFailed(message: e.toString()));
+      log("ERROR :$e");
     }
   }
 
   Future<void> _onLoginRequest(AuthLoginRequest event, Emitter emit) async {
-    debugPrint("Inside the Login bloc function");
     emit(AuthLoading());
     try {
-      String message = await _authRepo.login(event.loginRequest);
-      debugPrint("from block---$message");
-      emit(LoginCompleted(message: message));
+      await _authRepo.login(event.loginRequest);
+
+      emit(LoginCompleted(message: "OTP HAS BEEN SEND"));
     } catch (e) {
       if (e is AuthException) {
         emit(AuthFailed(message: e.errorMessage));
@@ -164,11 +171,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(AuthLoading());
     try {
       Tokenmodel tokenmodel = await _authRepo.GoogleOauthSignUp();
-      if (tokenmodel.isNew) {
-        emit(SignUpCOmpleted());
-      } else {
-        emit(Authenticated());
-      }
+      // if (tokenmodel.isNew) {
+      //   emit(SignUpCOmpleted());
+      // } else {
+      //   emit(Authenticated());
+      // }
     } catch (e) {
       if (e is AuthException) {
         debugPrint(e.errorMessage);

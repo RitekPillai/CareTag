@@ -17,6 +17,11 @@ final class Failed extends PatientBlocState {
   const Failed({required this.message});
 }
 
+final class ProfileRecordFetched extends PatientBlocState {
+  final Profilemodel profilemodel;
+  const ProfileRecordFetched({required this.profilemodel});
+}
+
 final class RecordFetched extends PatientBlocState {
   final Medicarecordmodel medicalRecord;
   const RecordFetched(this.medicalRecord);

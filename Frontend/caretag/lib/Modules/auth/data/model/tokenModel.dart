@@ -3,34 +3,22 @@ import 'package:equatable/equatable.dart';
 class Tokenmodel extends Equatable {
   final String refreshToken;
   final String accessToken;
-  final String username;
-  final bool isNew;
-  final bool isRegister;
+  final bool isRegistered;
 
   const Tokenmodel({
     required this.refreshToken,
     required this.accessToken,
-    required this.username,
-    this.isNew = false,
-    required this.isRegister,
+    required this.isRegistered,
   });
 
   factory Tokenmodel.fromJson(Map<String, dynamic> json) {
     return Tokenmodel(
-      username: json['username'] ?? '',
       refreshToken: json['refreshToken'] ?? '',
-      accessToken: json['token'] ?? '',
-      isNew: json['isNew'] ?? false,
-      isRegister: json['register'],
+      accessToken: json['jwtToken'] ?? '',
+      isRegistered: json['isRegistered'] ?? false,
     );
   }
 
   @override
-  List<Object?> get props => [
-    refreshToken,
-    accessToken,
-    username,
-    isNew,
-    isRegister,
-  ];
+  List<Object?> get props => [refreshToken, accessToken];
 }

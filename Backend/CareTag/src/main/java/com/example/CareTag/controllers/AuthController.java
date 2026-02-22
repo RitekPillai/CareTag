@@ -111,8 +111,8 @@ return authService.patientSignUp(signUpRequestDTO);
     }
 
 
-    @PostMapping("/login-verify")
-    public ResponseEntity<LoginResponseDTO> verifyLogin(
+                                                                                                                                                                                                                            @PostMapping("/login-verify")
+    public ResponseEntity<LogResponseDTO> verifyLogin(
             @RequestBody OtpRequest otpRequest
     ){
         log.info("CONTROLLER OTP REQUEST"+otpRequest.getOtpCode());
@@ -120,7 +120,7 @@ return authService.patientSignUp(signUpRequestDTO);
     }
 
     @GetMapping("/me")
-    public ResponseEntity<?> getCurrentUser(Principal principal){
+    public ResponseEntity<String> getCurrentUser(Principal principal){
         return authService.getCurrentUser(principal);
 
 

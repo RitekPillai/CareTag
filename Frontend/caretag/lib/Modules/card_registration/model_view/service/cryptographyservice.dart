@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:caretag/Modules/card_registration/data/model/medicarecordmodel.dart';
 import 'package:caretag/Modules/card_registration/data/model/registrationresponsemodel.dart';
+import 'package:caretag/Modules/card_registration/data/model/reordRequestModel.dart';
 import 'package:caretag/utils/storageService.dart';
 import 'package:cryptography/cryptography.dart' hide KeyPair, Hash;
 import 'package:fast_rsa/fast_rsa.dart';
@@ -23,7 +25,11 @@ class Cryptographyservice {
     return _aesAlgorithm.newSecretKey();
   }
 
-  Future<Registrationmodel> encrypingData(String data, SecretKey aesKey) async {
+  Future<Registrationmodel> encrypingData(
+    String data,
+    SecretKey aesKey,
+    BasicPersonalDetails basicPersonalDetails,
+  ) async {
     final aeskeyBytes = await aesKey.extractBytes();
     final Uint8List uint8keybytes = Uint8List.fromList(aeskeyBytes);
 
@@ -48,10 +54,11 @@ class Cryptographyservice {
       iv: base64Encode(encrpyt.nonce),
       mac: base64Encode(encrpyt.mac.bytes),
       rsaPublicKey: rsaPublicKey,
+      basicPersonalDetails: basicPersonalDetails,
     );
   }
 
-  Future<String> decryptingData(Registrationmodel model) async {
+  Future<String> decryptingData(RecordRequestModel model) async {
     ///getting the privater key RSA
     String? privateKey = await storageservice.getRsaPrivateKey();
 

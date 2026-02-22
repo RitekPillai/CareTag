@@ -1,6 +1,8 @@
+import 'package:caretag/Modules/card_registration/data/model/profileModel.dart';
 import 'package:caretag/Modules/home/modelview/homePageService.dart';
 import 'package:caretag/Modules/home/view.dart/sectionPages/careTagPage.dart';
 import 'package:caretag/constants/app_color.dart';
+import 'package:caretag/utils/hiveService.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -18,6 +20,12 @@ List<Color> gradientColor = [Color(0xff3B81F6), Colors.white];
 class _CaretagHomepageState extends State<CaretagHomepage> {
   @override
   Widget build(BuildContext context) {
+    Profilemodel? profileData = Hiveservice().getProfileData();
+    String userName = "";
+    String bloodGroup = "";
+    if (profileData != null) {
+      userName = profileData.fullName;
+    }
     return Scaffold(
       backgroundColor: Colors.white,
       body: Stack(
@@ -60,11 +68,15 @@ class _CaretagHomepageState extends State<CaretagHomepage> {
                                   fontSize: 14,
                                 ),
                               ),
-                              Text(
-                                "Steve harrington",
-                                style: GoogleFonts.poppins(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 18,
+                              SizedBox(
+                                width: 200,
+                                child: Text(
+                                  overflow: TextOverflow.ellipsis,
+                                  userName,
+                                  style: GoogleFonts.poppins(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 18,
+                                  ),
                                 ),
                               ),
                             ],

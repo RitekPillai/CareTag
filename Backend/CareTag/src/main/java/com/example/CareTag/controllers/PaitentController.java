@@ -1,5 +1,7 @@
 package com.example.CareTag.controllers;
 
+import com.example.CareTag.DTOs.PatientDTOs.BasicDataDTO;
+import com.example.CareTag.DTOs.PatientDTOs.MedicalRecordResponseDTO;
 import com.example.CareTag.DTOs.PatientDTOs.RegistrationRequestDTO;
 import com.example.CareTag.DTOs.PatientDTOs.SubscriberRequestDTO;
 import com.example.CareTag.Services.PaitentServices.PatientService;
@@ -20,14 +22,20 @@ public class PaitentController {
     )
 
     {
+
         return paitentService.registerMedicalRecord(requestDTOp);
     }
+
+    @GetMapping("/profile")
+    public ResponseEntity<BasicDataDTO>  getProfileData(){
+        return  paitentService.getProfileData();
+    }
     @PostMapping("/record")
-    public ResponseEntity< RegistrationRequestDTO> getMedicalRecord(
-            @RequestBody String careTagId
+    public ResponseEntity<MedicalRecordResponseDTO> getMedicalRecord(
+
     ){
-        log.info("CareTag id :{}", careTagId);
-        return paitentService.getMedicalRecord(careTagId);
+
+        return paitentService.getMedicalRecord();
     }
 
     @PostMapping("/subscripiton")

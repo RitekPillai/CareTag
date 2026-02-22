@@ -3,8 +3,11 @@ import 'package:caretag/Modules/home/widgets/careTagHome/currentdate.dart';
 import 'package:caretag/utils/storageService.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:lottie/lottie.dart';
 
 class Heartbeatcard extends StatefulWidget {
@@ -25,7 +28,7 @@ class _HeartbeatcardState extends State<Heartbeatcard>
   @override
   void initState() {
     super.initState();
-    _connectToBluetoothId();
+    // _connectToBluetoothId();
     animatationController = AnimationController(
       duration: const Duration(milliseconds: 500),
       vsync: this,
@@ -38,18 +41,18 @@ class _HeartbeatcardState extends State<Heartbeatcard>
     animatationController.repeat(reverse: true);
   }
 
-  Future<void> _connectToBluetoothId() async {
-    debugPrint("Inside the Function");
-    String? id = await storageservice.getBid();
-    if (mounted) {
-      setState(() {
-        savedId = id;
-        debugPrint("Watch ID:$savedId");
-      });
-    } else {
-      debugPrint("No watch ID saved in storage.");
-    }
-  }
+  // Future<void> _connectToBluetoothId() async {
+  //   debugPrint("Inside the Function");
+  //   String? id = await storageservice.getBid();
+  //   if (mounted) {
+  //     setState(() {
+  //       savedId = id;
+  //       debugPrint("Watch ID:$savedId");
+  //     });
+  //   } else {
+  //     debugPrint("No watch ID saved in storage.");
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -59,8 +62,8 @@ class _HeartbeatcardState extends State<Heartbeatcard>
     Color greyColor = Color.fromRGBO(0, 0, 0, 0.4);
 
     return Container(
-      width: 180,
-      height: 250,
+      width: 180.w,
+      height: 270.h,
       decoration: BoxDecoration(
         color: bgColor,
         border: Border.all(color: boderColor, width: 0.4),
@@ -167,38 +170,25 @@ class _HeartbeatcardState extends State<Heartbeatcard>
   }
 
   Widget _buildHeartRateValue() {
-    if (savedId == null) {
-      return Text(
-        "...",
-        style: GoogleFonts.poppins(fontWeight: FontWeight.w700, fontSize: 32),
-      );
+    // Check if the box is open before trying to use it to avoid crashes
+    if (!Hive.isBoxOpen('health_vault')) {
+      return const Text("--");
     }
 
-    if (savedId!.isEmpty) {
-      debugPrint(savedId);
-      return Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            "Empty",
-            style: GoogleFonts.poppins(
-              fontWeight: FontWeight.w700,
-              fontSize: 32,
-            ),
-          ),
-        ],
-      );
-    }
+    return ValueListenableBuilder(
+      valueListenable: Hive.box(
+        'health_vault',
+      ).listenable(keys: ['current_hr']),
+      builder: (context, Box box, _) {
+        // Use 'box' directly from the builder
+        final heartRate = box.get('current_hr', defaultValue: 0);
 
-    return StreamBuilder(
-      stream: bluetoothService.connectAndStreamHR(savedId!),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Text("...", style: GoogleFonts.poppins(fontSize: 32));
-        }
         return Text(
-          snapshot.hasData ? snapshot.data.toString() : "N/A",
-          style: GoogleFonts.poppins(fontWeight: FontWeight.w700, fontSize: 32),
+          heartRate > 0 ? heartRate.toString() : "--",
+          style: GoogleFonts.poppins(
+            fontWeight: FontWeight.w700,
+            fontSize: 32.sp,
+          ),
         );
       },
     );

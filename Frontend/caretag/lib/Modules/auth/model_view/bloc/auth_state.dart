@@ -16,6 +16,8 @@ final class NewUser extends AuthState {}
 
 final class LoginScreen extends AuthState {}
 
+final class RegistrationPage extends AuthState {}
+
 final class LoginCompleted extends AuthState {
   final String message;
 

@@ -1,11 +1,16 @@
 import 'dart:convert';
+import 'dart:developer';
+import 'dart:ffi';
 
 import 'package:caretag/Modules/auth/data/model/authException.dart';
 import 'package:caretag/Modules/auth/model_view/service/AuthenticationService.dart';
 import 'package:caretag/Modules/card_registration/data/model/medicarecordmodel.dart';
+import 'package:caretag/Modules/card_registration/data/model/profileModel.dart';
 import 'package:caretag/Modules/card_registration/data/model/registrationresponsemodel.dart';
+import 'package:caretag/Modules/card_registration/data/model/reordRequestModel.dart';
 import 'package:caretag/Modules/card_registration/data/model/shippingRegistration.dart';
 import 'package:caretag/Modules/card_registration/model_view/service/cryptographyservice.dart';
+import 'package:caretag/utils/hiveService.dart';
 import 'package:caretag/utils/storageService.dart';
 import 'package:flutter/material.dart';
 
@@ -15,25 +20,36 @@ class PaitientRepo {
   final Storageservice storageservice = Storageservice();
   final String baseUrl =
       "https://uncatastrophic-nonobserving-marylyn.ngrok-free.dev/paitent";
+  final hiveservice = Hiveservice();
 
   Future<String> medicalRegistration(Medicarecordmodel medicalRecord) async {
-    ///create rsa key
     await cryptographyservice.generatingRsaKey();
 
-    ///create aes key
     final aeskey = await cryptographyservice.generatingAesKey();
 
-    var data = jsonEncode(medicalRecord.toJson());
+    final sensitiveData = {
+      'medicalDetails': medicalRecord.medicalDetails.toJson(),
+      'emergencyDetails': medicalRecord.emergencyDetails.toJson(),
+      'insuranceDetails': medicalRecord.insuranceDetails.toJson(),
+      'lifeStyleDetails': medicalRecord.lifeStyleDetails.toJson(),
+    };
 
     Registrationmodel finalResposne = await cryptographyservice.encrypingData(
-      data,
+      jsonEncode(sensitiveData),
       aeskey,
+      medicalRecord.basicPersonalDetails,
+    );
+
+    log(
+      "PayLoad of the  Medical Registration:\n${finalResposne.basicPersonalDetails!.fullname}\n${finalResposne.ciphertext}",
     );
 
     final reponse = await authenticationService.post(
       Uri.parse("$baseUrl/register"),
       body: jsonEncode(finalResposne.toJson()),
     );
+    log("paylaod :${finalResposne.toJson()}");
+    log(jsonEncode(finalResposne.toJson()));
 
     if (reponse.statusCode >= 200 || reponse.statusCode <= 203) {
       String careTagId = reponse.body;
@@ -44,25 +60,72 @@ class PaitientRepo {
     throw Exception();
   }
 
-  Future<Medicarecordmodel> getRecord() async {
+  Future<Profilemodel> getProfileData() async {
+    try {
+      final response = await authenticationService.get(
+        Uri.parse("$baseUrl/profile"),
+      );
+      if (response.statusCode >= 200 || response.statusCode <= 203) {
+        Profilemodel profilemodel = Profilemodel.formJson(
+          jsonDecode(response.body),
+        );
+        await hiveservice.saveProfileData(profilemodel);
+        return profilemodel;
+      } else {
+        throw AuthException(
+          StatusCode: response.statusCode.toString(),
+          errorMessage: response.body,
+          timeStamp: DateTime.now().toString(),
+        );
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<MedicalDetails> getRecord() async {
     String? careTagId = await storageservice.getCareTagId();
+
     final response = await authenticationService.post(
       Uri.parse("$baseUrl/record"),
       body: careTagId,
     );
-    debugPrint("response:${response.body}");
+
     try {
       if (response.statusCode == 200) {
-        Registrationmodel data = Registrationmodel.fromJson(
+        RecordRequestModel recordRequestModel = RecordRequestModel.fromJson(
           jsonDecode(response.body),
         );
-        String jsonData = await cryptographyservice.decryptingData(data);
-        return Medicarecordmodel.fromJson(jsonDecode(jsonData));
+        log("Cipper text ${recordRequestModel.ciphertext}");
+        log("IV ${recordRequestModel.iv}");
+        log("mac ${recordRequestModel.mac}");
+        log("aes ${recordRequestModel.encryptedAesKey}");
+        log("rsa ${recordRequestModel.rsaPublicKey}");
+
+        String decrptedData = await cryptographyservice.decryptingData(
+          recordRequestModel,
+        );
+
+        await hiveservice.decryptAndSaveToHive(decrptedData);
+        return MedicalDetails.fromJson(jsonDecode(decrptedData));
+
+        // await hiveservice.decryptAndSaveToHive(registrationmodel);
+
+        // Registrationmodel data = Registrationmodel.fromJson(
+        //   jsonDecode(response.body),
+        // );
+        // log("response from getRecord ${data.iv},${data.basicPersonalDetails}");
+        // String jsonData = await cryptographyservice.decryptingData(data);
+
+        // await hiveservice.decryptAndSaveToHive(data);
+
+        // return Medicarecordmodel.fromJson(jsonDecode(jsonData));
       } else {
         throw Exception();
       }
-    } catch (e) {
+    } catch (e, s) {
       debugPrint(e.toString());
+      debugPrint(s.toString());
       rethrow;
     }
   }

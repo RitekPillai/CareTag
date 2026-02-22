@@ -1,3 +1,6 @@
+import 'dart:developer';
+
+import 'package:caretag/Modules/card_registration/data/model/profileModel.dart';
 import 'package:caretag/Modules/card_registration/model_view/bloc/patient_bloc_bloc.dart';
 import 'package:caretag/Modules/home/view.dart/emergencypage.dart';
 import 'package:caretag/Modules/home/widgets/careTagHome/careTagCard.dart';
@@ -6,17 +9,26 @@ import 'package:caretag/Modules/home/widgets/careTagHome/medinceremindertile.dar
 import 'package:caretag/Modules/home/widgets/careTagHome/stepcount_card.dart';
 import 'package:caretag/Modules/home/widgets/caretag_homepage_helpers.dart';
 import 'package:caretag/constants/app_color.dart';
+import 'package:caretag/utils/hiveService.dart';
 import 'package:caretag/widgets/custom_search_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hive/hive.dart';
 
 class Caretagpage extends StatelessWidget {
   const Caretagpage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    Profilemodel? profileData = Hiveservice().getProfileData();
+    String userName = "";
+    String bloodGroup = "";
+    if (profileData != null) {
+      userName = profileData.fullName;
+      bloodGroup = profileData.bloodGroup;
+    }
     final helper = CaretagHomepageHelpers();
     Color textColor = Color(0xff0063F7);
     return Column(
@@ -73,17 +85,21 @@ class Caretagpage extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      Text(
-                        "Steve Harrington",
-                        style: GoogleFonts.poppins(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
-                          color: Colors.white,
+                      SizedBox(
+                        width: 220,
+                        child: Text(
+                          overflow: TextOverflow.ellipsis,
+                          userName,
+                          style: GoogleFonts.poppins(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                            color: Colors.white,
+                          ),
                         ),
                       ),
 
                       Text(
-                        "Blood Type O+ve",
+                        "Blood Type $bloodGroup",
                         style: GoogleFonts.poppins(
                           fontWeight: FontWeight.w600,
                           fontSize: 16,
@@ -107,7 +123,18 @@ class Caretagpage extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                       builder: (context) {
+                        final box = Hive.box('decrypted_records');
+                        final cachedData = box.get('latest_emergency_profile');
+
+                        if (cachedData != null) {
+                          log(
+                            "Using local vault data. No network request sent.",
+                          );
+                          return Emergencypage();
+                        }
+
                         context.read<PatientBloc>().add(GetPatientRecord());
+
                         return Emergencypage();
                       },
                     ),

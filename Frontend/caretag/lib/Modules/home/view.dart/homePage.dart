@@ -1,8 +1,16 @@
+import 'package:caretag/Modules/card_registration/data/model/profileModel.dart';
+import 'package:caretag/Modules/card_registration/model_view/bloc/patient_bloc_bloc.dart';
 import 'package:caretag/Modules/home/modelview/homePageService.dart';
 import 'package:caretag/Modules/home/view.dart/caretag_homepage.dart';
+import 'package:caretag/Modules/home/view.dart/mainscreen.dart';
+import 'package:caretag/utils/hiveService.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 class Homepage extends StatelessWidget {
   const Homepage({super.key});
@@ -14,6 +22,35 @@ class Homepage extends StatelessWidget {
     List<Color> orangeGradient = [Color(0xffFDBA74), Color(0xffFF6800)];
 
     Color circleColor = Color.fromRGBO(20, 50, 78, 0.2);
+
+    Widget getUserName() {
+      Hiveservice hiveservice = Hiveservice();
+      final profileData = hiveservice.getProfileData();
+      if (profileData != null) {
+        Profilemodel profilemodel = profileData;
+        return Text(
+          profilemodel.fullName,
+          style: GoogleFonts.poppins(fontWeight: FontWeight.w600, fontSize: 18),
+        );
+      } else {
+        return BlocBuilder<PatientBloc, PatientBlocState>(
+          builder: (context, state) {
+            if (state is Loading) {
+              return Text("...");
+            } else if (state is ProfileRecordFetched) {
+              return Text(
+                state.profilemodel.fullName,
+                style: GoogleFonts.poppins(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 18,
+                ),
+              );
+            }
+            return SizedBox.shrink();
+          },
+        );
+      }
+    }
 
     return Scaffold(
       body: Column(
@@ -43,12 +80,13 @@ class Homepage extends StatelessWidget {
                       fontSize: 14,
                     ),
                   ),
-                  Text(
-                    "Steve harrington",
-                    style: GoogleFonts.poppins(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 18,
-                    ),
+                  ValueListenableBuilder(
+                    valueListenable: Hive.box<Profilemodel>(
+                      'profile_records',
+                    ).listenable(),
+                    builder: (context, value, child) {
+                      return getUserName();
+                    },
                   ),
                 ],
               ),
@@ -70,7 +108,7 @@ class Homepage extends StatelessWidget {
                 () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => CaretagHomepage()),
+                    MaterialPageRoute(builder: (context) => Mainscreen()),
                   );
                 },
                 blueGradient,
@@ -149,8 +187,8 @@ class Homepage extends StatelessWidget {
                         ),
                         Image.asset(
                           "assets/images/home/gym.png",
-                          width: 160,
-                          height: 120,
+                          width: 160.w,
+                          height: 120.h,
                           fit: BoxFit.fill,
                         ),
                       ],

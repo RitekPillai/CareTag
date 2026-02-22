@@ -1,11 +1,14 @@
+import 'dart:developer';
+
+import 'package:caretag/AuthGate.dart';
 import 'package:caretag/Modules/auth/data/repo/auth_repo.dart';
 import 'package:caretag/Modules/auth/model_view/bloc/auth_bloc.dart';
+
 import 'package:caretag/Modules/card_registration/data/repos/paitent_repo.dart';
 import 'package:caretag/Modules/card_registration/model_view/bloc/patient_bloc_bloc.dart';
-import 'package:caretag/Modules/home/view.dart/mainscreen.dart';
-import 'package:caretag/Modules/records_module/view/pages/selectfiles_screen.dart';
 
 import 'package:caretag/constants/appsize.dart';
+import 'package:caretag/utils/hiveService.dart';
 
 import 'package:caretag/utils/storageService.dart';
 
@@ -13,8 +16,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive/hive.dart';
 
-void main() => runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  final hive = Hiveservice();
+  await hive.setupHive();
+
+  final healthBox = Hive.box('health_vault');
+  String? watchId = healthBox.get("watchId");
+
+  if (watchId != null) {
+    await hive.initializeService();
+  }
+
+  runApp(const MyApp());
+}
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -50,7 +68,7 @@ class MyApp extends StatelessWidget {
               ),
               colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
             ),
-            home: const Mainscreen(),
+            home: Authgate(),
           );
         },
       ),

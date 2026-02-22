@@ -53,7 +53,7 @@ return findToken(Token)
             User user = userRepo.findByEmail(email);
             String newJWT = authUtil.generateToken(user);
             Long id = user.getId();
-            return ResponseEntity.ok(new RefreshTokenResponseDTO(Token, email,newJWT));
+            return ResponseEntity.ok(new RefreshTokenResponseDTO(Token,newJWT));
         }).orElseThrow(() -> new RuntimeException("Refresh token is not in database!"));
 
 }

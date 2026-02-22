@@ -14,6 +14,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -28,6 +29,8 @@ import java.util.List;
 @Configuration
 @RequiredArgsConstructor
 @Slf4j
+
+@EnableMethodSecurity
 public class SecurityConfig {
     private final JWTfilter jwTfilter;
     private final CustomUserDeatilsService customUserDeatilsService;
@@ -45,6 +48,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(req -> req
                         .requestMatchers("/auth/**", "/exchange", "/login/**", "/oauth2/**", "/error").permitAll()
                         .requestMatchers("/doctor/**").hasRole("DOCTOR")
+                        .requestMatchers("/paitent/**").hasRole("PATIENT")
                         .requestMatchers("/auth/me").authenticated()
                         .anyRequest().authenticated()
                 )

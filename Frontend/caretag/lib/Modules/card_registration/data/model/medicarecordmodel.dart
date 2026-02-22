@@ -50,30 +50,30 @@ class BasicPersonalDetails {
   final String fullname;
   final String dob;
   final String address;
-  final String bloodgroup;
+  final String bloodGroup;
 
   BasicPersonalDetails({
     required this.fullname,
     required this.dob,
     required this.address,
-    required this.bloodgroup,
+    required this.bloodGroup,
   });
 
   factory BasicPersonalDetails.fromJson(Map<String, dynamic> json) {
     return BasicPersonalDetails(
-      fullname: json['fullname'] ?? '',
+      fullname: json['fullName'] ?? '',
       dob: json['dob'] ?? '',
       address: json['address'] ?? '',
-      bloodgroup: json['bloodgroup'] ?? '',
+      bloodGroup: json['bloodGroup'] ?? '',
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'fullname': fullname,
+      'fullName': fullname,
       'dob': dob,
       'address': address,
-      'bloodgroup': bloodgroup,
+      'bloodGroup': bloodGroup,
     };
   }
 }

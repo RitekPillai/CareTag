@@ -8,9 +8,11 @@ import 'package:caretag/widgets/animatedRoute.dart';
 import 'package:caretag/widgets/custombutton.dart';
 import 'package:caretag/widgets/helpPage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hive/hive.dart';
 import 'package:lottie/lottie.dart';
 
 class Watchpairing extends StatefulWidget {
@@ -58,19 +60,44 @@ class _WatchpairingState extends State<Watchpairing> {
     }
   }
 
+  void startTheService() async {
+    final service = FlutterBackgroundService();
+    bool isRunning = await service.isRunning();
+    if (!isRunning) {
+      // 2. Start the background service manually
+      await service.startService();
+      debugPrint("Background Service Started after Watch Registration");
+    }
+  }
+
   void connectToWatch(BluetoothDevice device) async {
     await FlutterBluePlus.stopScan();
 
     try {
-      await device.connect(
-        license: License.free,
-        autoConnect: false,
-        timeout: const Duration(seconds: 15),
-      );
-      await device.discoverServices();
+      if (device.prevBondState != BluetoothConnectionState.connected) {
+        await device.connect(
+          license: License.free,
+          autoConnect: false,
+          timeout: const Duration(seconds: 15),
+        );
+      }
 
-      debugPrint("Watch Id:${device.remoteId.str}");
-      storageservice.saveBId(device.remoteId.str);
+      await device.discoverServices();
+      debugPrint("Watch Id: ${device.remoteId.str}");
+
+      // --- FIX START ---
+      // Check if box is open, if not, open it.
+      Box box;
+      if (Hive.isBoxOpen('health_vault')) {
+        box = Hive.box('health_vault');
+      } else {
+        box = await Hive.openBox('health_vault');
+      }
+
+      await box.put('watchId', device.remoteId.str);
+      // --- FIX END ---
+
+      startTheService();
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -81,18 +108,27 @@ class _WatchpairingState extends State<Watchpairing> {
             backgroundColor: Colors.green,
           ),
         );
-      }
 
+        _navigateToSubscription();
+      }
+    } catch (e) {
+      debugPrint("Connection Error Details: $e");
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("Storage Error: $e")));
+      }
+    }
+  }
+
+  void _navigateToSubscription() {
+    try {
       Navigator.pushReplacement(
         context,
         customRoute(SubscriptionPage(), context.read<PatientBloc>()),
       );
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Failed to connect. Please try again.")),
-        );
-      }
+    } catch (navError) {
+      debugPrint("Navigation Error: $navError");
     }
   }
 

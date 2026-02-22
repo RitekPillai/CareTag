@@ -1,10 +1,15 @@
 import 'package:caretag/Modules/auth/model_view/bloc/auth_bloc.dart';
 import 'package:caretag/Modules/auth/view/Intro_page&permisson_page/introPage1.dart';
 import 'package:caretag/Modules/auth/view/auth_pages/oauthPage.dart';
+import 'package:caretag/Modules/card_registration/data/model/profileModel.dart';
+import 'package:caretag/Modules/card_registration/model_view/bloc/patient_bloc_bloc.dart';
 import 'package:caretag/Modules/card_registration/view/registration/registration_intro_page.dart';
+import 'package:caretag/Modules/home/view.dart/caretag_homepage.dart';
 import 'package:caretag/Modules/home/view.dart/homePage.dart';
+import 'package:caretag/Modules/home/view.dart/mainscreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive_flutter/adapters.dart';
 
 class Authgate extends StatelessWidget {
   const Authgate({super.key});
@@ -20,10 +25,24 @@ class Authgate extends StatelessWidget {
         }
       },
       builder: (BuildContext context, AuthState state) {
-        if (state is Authenticated) return const Homepage();
-        if (state is SignUpCOmpleted) return const RegistrationIntroPage();
-        if (state is NewUser) return const Intropage1();
-        if (state is LoginScreen) return const Oauthpage();
+        if (state is NewUser) {
+          return const Intropage1();
+        } else if (state is Authenticated) {
+          final box = Hive.box<Profilemodel>('profile_records');
+          final profileData = box.get('profile_record');
+
+          if (profileData != null) {
+            return const Homepage();
+          }
+
+          context.read<PatientBloc>().add(GetProfileData());
+
+          return const Homepage();
+        } else if (state is RegistrationPage) {
+          return const RegistrationIntroPage();
+        } else if (state is LoginScreen) {
+          return Oauthpage();
+        }
 
         return const Scaffold(
           body: Center(
