@@ -1,10 +1,13 @@
-package com.example.CareTag.Models;
+package com.example.CareTag.Models.common;
 
+import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collection = "refreshTokenSequence")
-public class refereshTokenDatabaseSeq {
+@Data
+
+@Document(collection = "database_sequences")
+public class DatabaseSequence {
 
     @Id
     private String id;

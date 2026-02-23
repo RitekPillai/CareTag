@@ -1,10 +1,10 @@
 package com.example.CareTag.Services.AuthServices;
 
 import com.example.CareTag.DTOs.authDTOs.RefreshTokenResponseDTO;
-import com.example.CareTag.Models.RefreshToken;
-import com.example.CareTag.Models.User;
-import com.example.CareTag.Repos.RefreshTokenRepo;
-import com.example.CareTag.Repos.UserRepo;
+import com.example.CareTag.Models.common.RefreshToken;
+import com.example.CareTag.Models.common.User;
+import com.example.CareTag.Repos.common.RefreshTokenRepo;
+import com.example.CareTag.Repos.common.UserRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;

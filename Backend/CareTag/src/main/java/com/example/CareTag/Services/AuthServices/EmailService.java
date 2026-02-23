@@ -1,7 +1,7 @@
 package com.example.CareTag.Services.AuthServices;
 
-import com.example.CareTag.Models.User;
-import com.example.CareTag.Repos.UserRepo;
+import com.example.CareTag.Models.common.User;
+import com.example.CareTag.Repos.common.UserRepo;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;

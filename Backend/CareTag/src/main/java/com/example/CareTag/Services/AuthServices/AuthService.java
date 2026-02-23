@@ -2,12 +2,12 @@ package com.example.CareTag.Services.AuthServices;
 
 import com.example.CareTag.DTOs.authDTOs.*;
 import com.example.CareTag.Models.Paitent.PatientRecords;
-import com.example.CareTag.Models.RefreshToken;
-import com.example.CareTag.Models.User;
+import com.example.CareTag.Models.common.RefreshToken;
+import com.example.CareTag.Models.common.User;
 import com.example.CareTag.Models.type.AuthProvider;
 import com.example.CareTag.Models.type.RoleType;
 import com.example.CareTag.Repos.Paitent.PatientRecordsRepo;
-import com.example.CareTag.Repos.UserRepo;
+import com.example.CareTag.Repos.common.UserRepo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Lazy;
@@ -230,6 +230,13 @@ public class AuthService {
         }
 
 
+    }
+
+    public void doctorLogin(LoginRequestDTO loginRequestDTO) {
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequestDTO.getEmail(),loginRequestDTO.getPassword()));
+        User user = (User) authentication.getPrincipal();
+
+        
     }
 }
 

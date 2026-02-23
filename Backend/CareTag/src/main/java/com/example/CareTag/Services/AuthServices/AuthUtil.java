@@ -1,10 +1,8 @@
 package com.example.CareTag.Services.AuthServices;
 
-import com.example.CareTag.DTOs.authDTOs.SignUpRequestDTO;
-import com.example.CareTag.Models.User;
+import com.example.CareTag.Models.common.User;
 import com.example.CareTag.Models.type.AuthProvider;
-import com.example.CareTag.Models.type.RoleType;
-import com.example.CareTag.Repos.UserRepo;
+import com.example.CareTag.Repos.common.UserRepo;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
@@ -12,7 +10,6 @@ import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
@@ -20,8 +17,6 @@ import javax.crypto.SecretKey;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service

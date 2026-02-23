@@ -1,7 +1,7 @@
 package com.example.CareTag.Filters;
 
-import com.example.CareTag.Models.User;
-import com.example.CareTag.Repos.UserRepo;
+import com.example.CareTag.Models.common.User;
+import com.example.CareTag.Repos.common.UserRepo;
 import com.example.CareTag.Services.AuthServices.AuthUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

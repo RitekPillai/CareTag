@@ -1,6 +1,6 @@
-package com.example.CareTag.Repos;
+package com.example.CareTag.Repos.common;
 
-import com.example.CareTag.Models.User;
+import com.example.CareTag.Models.common.User;
 import com.example.CareTag.Models.type.AuthProvider;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;

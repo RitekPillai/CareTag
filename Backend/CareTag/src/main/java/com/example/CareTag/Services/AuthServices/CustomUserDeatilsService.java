@@ -1,9 +1,9 @@
 package com.example.CareTag.Services.AuthServices;
 
 
-import com.example.CareTag.Models.User;
+import com.example.CareTag.Models.common.User;
 import com.example.CareTag.Models.type.AuthProvider;
-import com.example.CareTag.Repos.UserRepo;
+import com.example.CareTag.Repos.common.UserRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.userdetails.UserDetails;

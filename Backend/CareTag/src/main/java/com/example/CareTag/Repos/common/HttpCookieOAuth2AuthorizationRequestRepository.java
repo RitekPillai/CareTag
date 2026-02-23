@@ -1,4 +1,4 @@
-package com.example.CareTag.Repos;
+package com.example.CareTag.Repos.common;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -7,7 +7,6 @@ import org.springframework.security.oauth2.client.web.AuthorizationRequestReposi
 import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.util.SerializationUtils;
-import org.springframework.util.StringUtils;
 
 import java.util.Base64;
 

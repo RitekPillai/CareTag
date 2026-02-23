@@ -1,7 +1,7 @@
 package com.example.CareTag.configs;
 
 import com.example.CareTag.Filters.JWTfilter;
-import com.example.CareTag.Repos.HttpCookieOAuth2AuthorizationRequestRepository;
+import com.example.CareTag.Repos.common.HttpCookieOAuth2AuthorizationRequestRepository;
 import com.example.CareTag.Services.AuthServices.CustomUserDeatilsService;
 
 import com.example.CareTag.Services.AuthServices.OAuthFailureHandler;
@@ -22,7 +22,11 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.util.Arrays;
 import java.util.List;
 
 @EnableWebSecurity
@@ -46,6 +50,8 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
 
                 .authorizeHttpRequests(req -> req
+
+                        .requestMatchers("/doctor/signup","/doctor/login").permitAll()
                         .requestMatchers("/auth/**", "/exchange", "/login/**", "/oauth2/**", "/error").permitAll()
                         .requestMatchers("/doctor/**").hasRole("DOCTOR")
                         .requestMatchers("/paitent/**").hasRole("PATIENT")
@@ -73,6 +79,19 @@ public class SecurityConfig {
                 .build();
     }
 
+
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(List.of("*")); // For development
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "ngrok-skip-browser-warning"));
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
@@ -81,3 +100,4 @@ public class SecurityConfig {
         return provider;
     }
 }
+

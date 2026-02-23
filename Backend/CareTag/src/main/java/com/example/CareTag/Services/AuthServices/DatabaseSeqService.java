@@ -1,6 +1,6 @@
 package com.example.CareTag.Services.AuthServices;
 
-import com.example.CareTag.Models.DatabaseSequence;
+import com.example.CareTag.Models.common.DatabaseSequence;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;

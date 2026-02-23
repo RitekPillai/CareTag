@@ -1,13 +1,14 @@
 package com.example.CareTag.controllers;
 
+import com.example.CareTag.DTOs.DoctorDTOs.SignUpRequest;
 import com.example.CareTag.DTOs.authDTOs.*;
-import com.example.CareTag.Models.User;
 import com.example.CareTag.Services.AuthServices.*;
+import com.example.CareTag.Services.doctorService.DoctorAuthService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -17,6 +18,7 @@ import java.util.Map;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/auth")
+
 public class AuthController {
 private final AuthService authService;
 private final TokenExchangeService tokenExchangeService;
@@ -58,6 +60,14 @@ return authService.patientSignUp(signUpRequestDTO);
             @RequestBody LoginRequestDTO loginRequestDTO
     ) throws Exception {
         return authService.login(loginRequestDTO);
+    }
+
+    @PostMapping("/doctor")
+    public void doctor(
+            @RequestBody LoginRequestDTO loginRequestDTO
+    )throws Exception{
+        log.info("Doctor Login Request Received"+loginRequestDTO);
+          authService.doctorLogin(loginRequestDTO);
     }
 
 
@@ -125,6 +135,11 @@ return authService.patientSignUp(signUpRequestDTO);
 
 
     }
+
+
+
+
+
 
 
 }

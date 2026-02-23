@@ -1,6 +1,6 @@
-package com.example.CareTag.Repos;
+package com.example.CareTag.Repos.common;
 
-import com.example.CareTag.Models.RefreshToken;
+import com.example.CareTag.Models.common.RefreshToken;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.Optional;
