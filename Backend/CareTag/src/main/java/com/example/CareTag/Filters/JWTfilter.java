@@ -34,6 +34,11 @@ public class JWTfilter extends OncePerRequestFilter {
             return;
         }
 
+        if (path.startsWith("/ws") || path.startsWith("/websocket")||path.startsWith("/wss")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
 
         if(requestHeader==null || !requestHeader.startsWith("Bearer ")){
             log.info("Invalid Headder");

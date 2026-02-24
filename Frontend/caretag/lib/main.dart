@@ -2,6 +2,8 @@ import 'dart:developer';
 
 import 'package:caretag/Modules/home/view.dart/homePage.dart';
 import 'package:caretag/Modules/home/view.dart/mainscreen.dart';
+import 'package:caretag/Modules/home/widgets/careTagHome/acceptPage.dart';
+import 'package:caretag/Modules/home/widgets/careTagHome/denyPage.dart';
 import 'package:caretag/constants/messagingService.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';

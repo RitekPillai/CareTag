@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:caretag/Modules/card_registration/data/model/acceptReqModel.dart';
@@ -22,15 +23,13 @@ class PatientBloc extends Bloc<PatientBlocEvent, PatientBlocState> {
   final PaitientRepo _paitentRepo;
 
   PatientBloc(this._paitentRepo) : super(PatientBlocInitial()) {
-    on<PatientBlocEvent>((event, emit) {
-      // TODO: implement event handler
-    });
     on<PatientRegistration>(_onPatientRegistration);
     on<GetPatientRecord>(_onGetPaitentRecord);
     on<SubscriptionEvent>(_onSubscription);
     on<BluetoothData>(_onBluetoohData);
     on<GetProfileData>(_onGetProfileData);
     on<RequestAccept>(_onRequestAccept);
+    on<DenyPermission>(_onDenyPermission);
   }
   Future<void> _onPatientRegistration(
     PatientRegistration event,
@@ -127,12 +126,23 @@ class PatientBloc extends Bloc<PatientBlocEvent, PatientBlocState> {
       );
       _paitentRepo.requestAccept(
         Acceptreqmodel(
-          docName: event.permissionRequestModel.docName,
+          docEmail: event.permissionRequestModel.docEmail,
           encryptedAesBlob: encrytedAesBlob,
         ),
       );
     } catch (e) {
       debugPrint(" erorr:$e");
+    }
+  }
+
+  FutureOr<void> _onDenyPermission(
+    DenyPermission event,
+    Emitter<PatientBlocState> emit,
+  ) {
+    emit(Loading());
+    _paitentRepo.denyRequest(event.docId);
+    try {} catch (e) {
+      log("Error while denying the permission:$e");
     }
   }
 }

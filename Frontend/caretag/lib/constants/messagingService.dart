@@ -65,7 +65,7 @@ class NotificationService {
         Permissionrequestmodel model = Permissionrequestmodel.formMap(
           message.data,
         );
-        showDialogBox(model.docName, model.placeName);
+        showDialogBox(model);
 
         ////-------ui
 

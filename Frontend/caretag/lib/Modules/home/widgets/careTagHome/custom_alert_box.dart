@@ -1,18 +1,21 @@
-import 'package:caretag/constants/app_color.dart';
-import 'package:caretag/widgets/custombutton.dart';
+// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:caretag/Modules/home/widgets/careTagHome/acceptPage.dart';
+import 'package:caretag/Modules/home/widgets/careTagHome/denyPage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:permission_handler/permission_handler.dart';
+
+import 'package:caretag/Modules/card_registration/model_view/bloc/patient_bloc_bloc.dart';
+import 'package:caretag/Modules/home/model/permissionRequestModel.dart';
+import 'package:caretag/constants/app_color.dart';
+import 'package:caretag/widgets/custombutton.dart';
 
 class CustomAlertBox extends StatelessWidget {
-  final String docName;
-  final String hospitalName;
-  const CustomAlertBox({
-    super.key,
-    required this.docName,
-    required this.hospitalName,
-  });
+  final Permissionrequestmodel permissionRequestModel;
+  const CustomAlertBox({super.key, required this.permissionRequestModel});
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +60,7 @@ class CustomAlertBox extends StatelessWidget {
               Text.rich(
                 textAlign: TextAlign.center,
                 TextSpan(
-                  text: docName,
+                  text: permissionRequestModel.docName,
                   style: GoogleFonts.poppins(
                     fontWeight: FontWeight.w600,
                     fontSize: 14,
@@ -73,7 +76,7 @@ class CustomAlertBox extends StatelessWidget {
                       ),
                       children: [
                         TextSpan(
-                          text: "$hospitalName\n",
+                          text: "${permissionRequestModel.placeName}\n",
                           style: GoogleFonts.poppins(
                             fontWeight: FontWeight.w600,
                             fontSize: 14,
@@ -111,14 +114,44 @@ class CustomAlertBox extends StatelessWidget {
                 "Approve Access",
                 16,
                 FontWeight.w700,
-                () {},
+                () {
+                  Navigator.pop(context);
+                  context.read<PatientBloc>().add(
+                    RequestAccept(
+                      permissionRequestModel: permissionRequestModel,
+                    ),
+                  );
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => Acceptpage(
+                        docName: permissionRequestModel.docName,
+                        hospitalName: permissionRequestModel.placeName,
+                      ),
+                    ),
+                  );
+                },
               ),
               SizedBox(height: 20.h),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.pop(context);
+                      context.read<PatientBloc>().add(
+                        DenyPermission(docId: permissionRequestModel.docEmail),
+                      );
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => Denypage(
+                            docName: permissionRequestModel.docName,
+                            hospitalName: permissionRequestModel.placeName,
+                          ),
+                        ),
+                      );
+                    },
                     child: Text(
                       "Deny",
                       style: GoogleFonts.poppins(

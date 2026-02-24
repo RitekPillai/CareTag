@@ -1,5 +1,6 @@
 import 'package:caretag/Modules/card_registration/data/model/profileModel.dart';
 import 'package:caretag/Modules/card_registration/model_view/bloc/patient_bloc_bloc.dart';
+import 'package:caretag/Modules/home/model/permissionRequestModel.dart';
 import 'package:caretag/Modules/home/modelview/homePageService.dart';
 import 'package:caretag/Modules/home/view.dart/caretag_homepage.dart';
 import 'package:caretag/Modules/home/view.dart/mainscreen.dart';
@@ -96,7 +97,13 @@ class Homepage extends StatelessWidget {
                 alignment: Alignment.centerRight,
                 child: GestureDetector(
                   onTap: () {
-                    showDialogBox("Ritek", "Pillai Hospital");
+                    // showDialogBox(
+                    //   Permissionrequestmodel(
+                    //     docName: "Ritek Abhishek",
+                    //     placeName: "Pillai Hospital",
+                    //     publicKey: "6767",
+                    //   ),
+                    // );
                   },
                   child: SvgPicture.asset("assets/images/home/bell.svg"),
                 ),

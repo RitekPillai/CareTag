@@ -34,6 +34,7 @@ return Keys.hmacShaKeyFor(keyBytes);
     }
 
 public String generateToken(User user){
+        log.info("userID:"+user.getId());
     List<String> roles = user.getRole().stream()
             .map(Enum::name)
             .toList();
@@ -42,6 +43,7 @@ public String generateToken(User user){
 
                 .subject(user.getEmail())
                 .claim("userId",user.getId())
+
                 .claim("roles",roles)
 
                 .issuedAt(new Date())

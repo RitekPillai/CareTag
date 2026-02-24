@@ -23,6 +23,12 @@ class GetPatientRecord extends PatientBlocEvent {
   const GetPatientRecord();
 }
 
+class DenyPermission extends PatientBlocEvent {
+  final String docId;
+
+  const DenyPermission({required this.docId});
+}
+
 class GetProfileData extends PatientBlocEvent {}
 
 class SubscriptionEvent extends PatientBlocEvent {

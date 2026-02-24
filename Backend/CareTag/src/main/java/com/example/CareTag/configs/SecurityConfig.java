@@ -50,8 +50,10 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
 
                 .authorizeHttpRequests(req -> req
-
+                                .requestMatchers("/ws/**", "/ws", "/websocket/**,/wss/**").permitAll()
                         .requestMatchers("/doctor/signup","/doctor/login").permitAll()
+
+            .requestMatchers("/websocket/**", "/websocket", "/websocket/*").permitAll() // Allow WebSocket handshake
                         .requestMatchers("/webscoket/**").permitAll() // SockJS handshake needs to get through
                         .requestMatchers("/auth/**", "/exchange", "/login/**", "/oauth2/**", "/error").permitAll()
                         .requestMatchers("/doctor/**").hasRole("DOCTOR")

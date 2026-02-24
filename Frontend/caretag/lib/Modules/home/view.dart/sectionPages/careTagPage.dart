@@ -51,18 +51,7 @@ class Caretagpage extends StatelessWidget {
                 ),
               ),
               TextButton(
-                onPressed: () {
-                  context.read<PatientBloc>().add(
-                    RequestAccept(
-                      permissionRequestModel: Permissionrequestmodel(
-                        docName: 'doc',
-                        placeName: 'name',
-                        publicKey:
-                            ' MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA1CiwpJ1+fT+MLoVlVRLjq681CXqUux3VGD0hcqNXxs+9R864aAoFQso4XrdeGwYKSnQsru+tRMFpSEvWhj8Ywc8yjPN4m2/0mLxPBqxVbf2/1RU4GkBtFgfkPlnvssyJLcFtPjOBJpaCLjC7L/ttb2Q8H5NaHnuIv51eNxr4nC6LPkQA+4xeKutlAHU8L6UNggWCB2mRzDyq/lUWbEN/tzsu+pT9/vlaCnKXiqH4BTpvd/DrtL+j7HzNFMW7Qwurk2xrYTGJVD0mtus33tdVfY9Hf8dBfVE4f+rk1iSeI3vNfSyFsuDO7c5ug0tU1O0IrgYRcgJpHTkpuVngK9tB8QIDAQAB',
-                      ),
-                    ),
-                  );
-                },
+                onPressed: () {},
                 child: Text(
                   "View Card",
                   style: GoogleFonts.poppins(
