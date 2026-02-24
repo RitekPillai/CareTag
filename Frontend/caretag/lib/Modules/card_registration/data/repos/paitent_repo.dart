@@ -1,18 +1,20 @@
 import 'dart:convert';
 import 'dart:developer';
-import 'dart:ffi';
 
 import 'package:caretag/Modules/auth/data/model/authException.dart';
 import 'package:caretag/Modules/auth/model_view/service/AuthenticationService.dart';
+import 'package:caretag/Modules/card_registration/data/model/acceptReqModel.dart';
 import 'package:caretag/Modules/card_registration/data/model/medicarecordmodel.dart';
 import 'package:caretag/Modules/card_registration/data/model/profileModel.dart';
 import 'package:caretag/Modules/card_registration/data/model/registrationresponsemodel.dart';
 import 'package:caretag/Modules/card_registration/data/model/reordRequestModel.dart';
 import 'package:caretag/Modules/card_registration/data/model/shippingRegistration.dart';
 import 'package:caretag/Modules/card_registration/model_view/service/cryptographyservice.dart';
+import 'package:caretag/Modules/home/model/permissionRequestModel.dart';
 import 'package:caretag/utils/hiveService.dart';
 import 'package:caretag/utils/storageService.dart';
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 class PaitientRepo {
   final Cryptographyservice cryptographyservice = Cryptographyservice();
@@ -22,10 +24,16 @@ class PaitientRepo {
       "https://uncatastrophic-nonobserving-marylyn.ngrok-free.dev/paitent";
   final hiveservice = Hiveservice();
 
-  Future<String> medicalRegistration(Medicarecordmodel medicalRecord) async {
+  Future<String> medicalRegistration(
+    Medicarecordmodel medicalRecord,
+    String fcmToken,
+  ) async {
     await cryptographyservice.generatingRsaKey();
 
     final aeskey = await cryptographyservice.generatingAesKey();
+    final box = Hive.box('decrypted_records');
+    final bytes = await aeskey.extractBytes();
+    await box.put('aesKeyBytes', bytes);
 
     final sensitiveData = {
       'medicalDetails': medicalRecord.medicalDetails.toJson(),
@@ -38,6 +46,7 @@ class PaitientRepo {
       jsonEncode(sensitiveData),
       aeskey,
       medicalRecord.basicPersonalDetails,
+      fcmToken,
     );
 
     log(
@@ -147,6 +156,28 @@ class PaitientRepo {
         );
       }
     } catch (e) {
+      rethrow;
+    }
+  }
+
+  void requestAccept(Acceptreqmodel acceptReqModel) async {
+    Map<String, dynamic> payload = acceptReqModel.toJson();
+    try {
+      final response = await authenticationService.post(
+        Uri.parse(
+          "https://uncatastrophic-nonobserving-marylyn.ngrok-free.dev/link/accept",
+        ),
+        body: jsonEncode(payload),
+      );
+      if (response.statusCode == 200) {
+        log(" Success: ${response.body}");
+        return;
+      }
+      throw Exception(
+        "Backend Error: ${response.statusCode} - ${response.body}",
+      );
+    } catch (e) {
+      log("error$e");
       rethrow;
     }
   }

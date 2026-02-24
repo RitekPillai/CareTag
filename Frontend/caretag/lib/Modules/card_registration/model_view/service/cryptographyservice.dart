@@ -29,6 +29,7 @@ class Cryptographyservice {
     String data,
     SecretKey aesKey,
     BasicPersonalDetails basicPersonalDetails,
+    String fcmToken,
   ) async {
     final aeskeyBytes = await aesKey.extractBytes();
     final Uint8List uint8keybytes = Uint8List.fromList(aeskeyBytes);
@@ -55,7 +56,52 @@ class Cryptographyservice {
       mac: base64Encode(encrpyt.mac.bytes),
       rsaPublicKey: rsaPublicKey,
       basicPersonalDetails: basicPersonalDetails,
+      fcmToken: fcmToken,
     );
+  }
+
+  String formatRSAPublicKey(String publicKey) {
+    String cleanKey = publicKey
+        .replaceAll('-----BEGIN PUBLIC KEY-----', '')
+        .replaceAll('-----END PUBLIC KEY-----', '')
+        .replaceAll('\n', '')
+        .replaceAll('\r', '')
+        .replaceAll(' ', '')
+        .trim();
+
+    final buffer = StringBuffer();
+    buffer.writeln("-----BEGIN PUBLIC KEY-----");
+
+    for (int i = 0; i < cleanKey.length; i += 64) {
+      int end = (i + 64 < cleanKey.length) ? i + 64 : cleanKey.length;
+      buffer.writeln(cleanKey.substring(i, end));
+    }
+
+    buffer.write("-----END PUBLIC KEY-----");
+    return buffer.toString();
+  }
+
+  Future<String> reEncrytion(SecretKey aesKey, String rawPublicKey) async {
+    try {
+      final aesKeyBytes = await aesKey.extractBytes();
+      final uint8keybytes = Uint8List.fromList(aesKeyBytes);
+
+      final String formattedKey = formatRSAPublicKey(rawPublicKey);
+
+      debugPrint("Final Formatted Key:\n$formattedKey");
+
+      final aeskeyEncrytion = await RSA.encryptOAEPBytes(
+        uint8keybytes,
+        "CareTag-AES-KEY",
+        Hash.SHA256,
+        formattedKey,
+      );
+
+      return base64Encode(aeskeyEncrytion);
+    } catch (e) {
+      debugPrint("RSA Encryption Logic Error: $e");
+      rethrow;
+    }
   }
 
   Future<String> decryptingData(RecordRequestModel model) async {

@@ -13,6 +13,12 @@ class PatientRegistration extends PatientBlocEvent {
   const PatientRegistration({required this.medicalRecord});
 }
 
+class RequestAccept extends PatientBlocEvent {
+  final Permissionrequestmodel permissionRequestModel;
+
+  const RequestAccept({required this.permissionRequestModel});
+}
+
 class GetPatientRecord extends PatientBlocEvent {
   const GetPatientRecord();
 }

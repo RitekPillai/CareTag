@@ -20,4 +20,10 @@ class AppColor {
     Color(0xff5B8DEF),
     Color(0xff0063F7),
   ];
+
+  static const Color lightBlueSmallContainerColor = Color(0xffEFF6FF);
+
+  static const Color darkishBlueTextColor = Color(0xff0F172A);
+
+  static const Color greyTextColor = Color(0xff64748B);
 }

@@ -52,6 +52,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(req -> req
 
                         .requestMatchers("/doctor/signup","/doctor/login").permitAll()
+                        .requestMatchers("/webscoket/**").permitAll() // SockJS handshake needs to get through
                         .requestMatchers("/auth/**", "/exchange", "/login/**", "/oauth2/**", "/error").permitAll()
                         .requestMatchers("/doctor/**").hasRole("DOCTOR")
                         .requestMatchers("/paitent/**").hasRole("PATIENT")

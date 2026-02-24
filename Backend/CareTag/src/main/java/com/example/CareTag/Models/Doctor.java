@@ -20,6 +20,8 @@ public class Doctor {
 private String fullName;
 private String mobileNumber;
 
+private String email;
+
     private String primaryQualification;
     private String specialization;
     private Integer yearsOfExperience;
@@ -38,5 +40,6 @@ private String mobileNumber;
     private String city;
     private String state;
     private  String consultationType;
+    private String publicKey;
 
 }

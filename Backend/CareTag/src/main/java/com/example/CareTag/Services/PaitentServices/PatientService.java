@@ -88,9 +88,11 @@ private PaitentCacheService paitentCacheService;
                 .id(currentuser.getId())
                 .fullName(basicDataDTO.getFullName())
                 .dob(basicDataDTO.getDob())
+                .email(user.getEmail())
                 .address(basicDataDTO.getAddress())
                 .careTagId(careTagId)
                 .bloodGroup(basicDataDTO.getBloodGroup())
+                .fcmToken(req.getFcmToken())
                 .build();
 
         paitentRepo.save(paitent);

@@ -3,6 +3,7 @@ import 'package:caretag/Modules/card_registration/model_view/bloc/patient_bloc_b
 import 'package:caretag/Modules/home/modelview/homePageService.dart';
 import 'package:caretag/Modules/home/view.dart/caretag_homepage.dart';
 import 'package:caretag/Modules/home/view.dart/mainscreen.dart';
+import 'package:caretag/Modules/home/widgets/careTagHome/dialogBox.dart';
 import 'package:caretag/utils/hiveService.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -93,7 +94,12 @@ class Homepage extends StatelessWidget {
               const SizedBox(width: 100),
               Align(
                 alignment: Alignment.centerRight,
-                child: SvgPicture.asset("assets/images/home/bell.svg"),
+                child: GestureDetector(
+                  onTap: () {
+                    showDialogBox("Ritek", "Pillai Hospital");
+                  },
+                  child: SvgPicture.asset("assets/images/home/bell.svg"),
+                ),
               ),
             ],
           ),

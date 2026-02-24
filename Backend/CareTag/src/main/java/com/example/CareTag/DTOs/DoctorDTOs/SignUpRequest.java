@@ -28,4 +28,6 @@ public class SignUpRequest {
     private String city;
     private String state;
     private String consultationType;
+
+    private String publicKey;
 }

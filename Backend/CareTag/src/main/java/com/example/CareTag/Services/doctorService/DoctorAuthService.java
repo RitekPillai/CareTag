@@ -69,6 +69,8 @@ long userId = databaseSeqService.generateSequence(User.SEQUENCE_NAME);
 
        Doctor doctor = Doctor.builder()
                        .fullName(signUpRequest.getFullName())
+               .publicKey(signUpRequest.getPublicKey())
+               .email(signUpRequest.getEmail())
                         .mobileNumber(signUpRequest.getMobileNumber())
                         .primaryQualification(signUpRequest.getPrimaryQualification())
                         .specialization(signUpRequest.getSpecialization())

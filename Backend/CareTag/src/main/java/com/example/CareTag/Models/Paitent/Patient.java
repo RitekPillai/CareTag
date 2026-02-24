@@ -22,5 +22,9 @@ public class Patient {
 
     private String address;
 
+    private String fcmToken;
+
+    private String email;
+
 
 }

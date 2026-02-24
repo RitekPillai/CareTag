@@ -7,6 +7,7 @@ class Registrationmodel {
   final String mac;
   final String rsaPublicKey;
   final String? id;
+  final String fcmToken;
   final BasicPersonalDetails? basicPersonalDetails;
 
   Registrationmodel({
@@ -17,6 +18,7 @@ class Registrationmodel {
     required this.rsaPublicKey,
     this.id,
     this.basicPersonalDetails,
+    required this.fcmToken,
   });
 
   Map<String, dynamic> toJson() {
@@ -28,6 +30,7 @@ class Registrationmodel {
       'rsaPublicKey': rsaPublicKey,
       'basicDataDTO': basicPersonalDetails,
       'id': id,
+      'fcmToken': fcmToken,
     };
   }
 
@@ -38,6 +41,7 @@ class Registrationmodel {
       encryptedAesKey: json['encryptedAesKey'] ?? '',
       mac: json['mac'] ?? '',
       rsaPublicKey: json['rsaPublicKey'] ?? '',
+      fcmToken: json['fcmToken'],
     );
   }
 }

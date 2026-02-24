@@ -7,16 +7,23 @@ class RecordOptionContaineTile extends StatelessWidget {
   final Color containerColor;
   final String imagePath;
   final String title;
+
+  final double? fontSize;
+  final FontWeight? fontWeight;
+  final Color? textColor;
   const RecordOptionContaineTile({
     super.key,
     required this.containerColor,
     required this.imagePath,
     required this.title,
+    this.fontSize,
+    this.fontWeight,
+    this.textColor,
   });
 
   @override
   Widget build(BuildContext context) {
-    const Color textColor = Color(0xff4B5563);
+    const Color defaultTextColor = Color(0xff4B5563);
     return Column(
       children: [
         Container(
@@ -31,11 +38,12 @@ class RecordOptionContaineTile extends StatelessWidget {
         ),
         SizedBox(height: 8.h),
         Text(
+          textAlign: TextAlign.center,
           title,
           style: GoogleFonts.poppins(
-            fontWeight: FontWeight.w500,
-            color: textColor,
-            fontSize: 10.sp,
+            fontWeight: fontWeight ?? FontWeight.w500,
+            color: textColor ?? defaultTextColor,
+            fontSize: fontSize ?? 10.sp,
           ),
         ),
       ],

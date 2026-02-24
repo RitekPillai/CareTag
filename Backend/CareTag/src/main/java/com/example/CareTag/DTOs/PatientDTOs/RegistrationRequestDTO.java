@@ -17,6 +17,7 @@ public class RegistrationRequestDTO {
     private String rsaPublicKey;
     private String id;
     private BasicDataDTO basicDataDTO;
+    private String fcmToken;
 
 
 }
