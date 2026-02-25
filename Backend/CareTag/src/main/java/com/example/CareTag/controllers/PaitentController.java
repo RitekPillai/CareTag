@@ -17,7 +17,7 @@ import java.util.Map;
 
 @Slf4j
 @RestController
-@RequestMapping("/paitent")
+    @RequestMapping("/paitent")
 public class PaitentController {
     @Autowired
     private PatientService paitentService;
@@ -63,6 +63,11 @@ public class PaitentController {
             return ResponseEntity.ok("Token updated successfully");
         }
         return ResponseEntity.status(404).body("Patient not found");
+    }
+    @GetMapping("/doctors")
+    public ResponseEntity<?> getDoctors() {
+
+        return paitentService.getDoctors();
     }
 
 }

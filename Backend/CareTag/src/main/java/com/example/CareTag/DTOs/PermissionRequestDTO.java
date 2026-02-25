@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 public class PermissionRequestDTO {
         private     String publicKey;
     private String docName;
-    private String docEmail;
+    private Long docId;
     private String hospitalName;
     private String careTagId;
 }

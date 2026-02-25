@@ -128,7 +128,7 @@ class PatientBloc extends Bloc<PatientBlocEvent, PatientBlocState> {
       );
       _paitentRepo.requestAccept(
         Acceptreqmodel(
-          docEmail: event.permissionRequestModel.docEmail,
+          docId: event.permissionRequestModel.docId,
           encryptedAesBlob: encrytedAesBlob,
         ),
       );

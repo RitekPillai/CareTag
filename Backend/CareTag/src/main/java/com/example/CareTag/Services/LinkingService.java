@@ -1,9 +1,11 @@
 package com.example.CareTag.Services;
 
+import com.example.CareTag.DTOs.BlockRequestDTO;
 import com.example.CareTag.DTOs.PermissionRequestDTO;
-import com.example.CareTag.Models.Doctor;
+import com.example.CareTag.Models.doctor.Doctor;
 import com.example.CareTag.Models.Paitent.Patient;
 import com.example.CareTag.Models.common.Link;
+import com.example.CareTag.Models.common.Report;
 import com.example.CareTag.Repos.common.LinkRepo;
 import com.example.CareTag.Repos.Paitent.PaitentRepo;
 import com.example.CareTag.Repos.common.ReportRepo;
@@ -11,13 +13,12 @@ import com.example.CareTag.Repos.doctor.DoctorRepo;
 import com.google.firebase.messaging.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Map;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -32,13 +33,17 @@ public class LinkingService {
     @Autowired
     LinkRepo linkRepo;
 
+
   @Autowired
-  HandShakeController handShakeController;
+  ReportRepo  reportRepo;
 
 
 
-    @Autowired
-    ReportRepo reportRepo;
+
+
+
+
+
 
     public  void PermissionRequest(String careTagId){
         log.info(" careTagId:{}",careTagId);
@@ -59,20 +64,20 @@ public class LinkingService {
             log.info("Both are Already Linked");
             return;
         }
-
-
         boolean isBlocked =  reportRepo.existsByDocIdAndPatientId(doctor.getId(),patient.getId());
+if(isBlocked){
+    log.info("You have been blocked can not send request");
+    return;
+}
 
-        if(isBlocked){
 
 
-            return;
-        }
+
 
         PermissionRequestDTO permissionRequestDTO = PermissionRequestDTO.builder()
                 .docName(doctor.getFullName())
                 .hospitalName(doctor.getClinicName())
-                .docEmail(doctor.getEmail())
+                .docId(doctor.getId())
                 .careTagId(careTagId)
                 .publicKey(doctor.getPublicKey())
                 .build();
@@ -85,9 +90,13 @@ log.info("done");
 
     }
     @Transactional
-public void createLink(String docEmail,String aesEncryptedKey){
+public void createLink(String docId,String aesEncryptedKey){
 
-        Doctor doctor = doctorRepo.findByEmail(docEmail);
+        Optional<Doctor> doctorData = doctorRepo.findById(Long.parseLong(docId));
+        if(doctorData.isEmpty()){
+            throw new IllegalArgumentException("doctor not found");
+        }
+        Doctor doctor = doctorData.get();
         log.info("doctor:{}",doctor);
         String patientEmail = SecurityContextHolder.getContext().getAuthentication().getName();
         Patient patient = paitentRepo.findByEmail(patientEmail);
@@ -120,7 +129,7 @@ log.info("Link has been Established");
                 .putData("docName", permissionRequestDTO.getDocName())
                 .putData("placeName", permissionRequestDTO.getHospitalName())
                 .putData("publicKey", permissionRequestDTO.getPublicKey())
-                .putData("docEmail",permissionRequestDTO.getDocEmail())
+                .putData("docId",permissionRequestDTO.getDocId().toString())
                 .setNotification(Notification.builder()
                         .setTitle("Access Request")
 
@@ -144,5 +153,35 @@ log.info("Link has been Established");
         }
 
     }
+
+    public void blockDoctor(BlockRequestDTO blockrequestDTO) {
+        log.info("Inside the function");
+        String  patientEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        Patient patient = paitentRepo.findByEmail(patientEmail);
+
+
+log.info("Doctor:{}",blockrequestDTO.getDocID());
+/// TODO:Change it to findById in future
+        Optional<Doctor> doctorData = doctorRepo.findById(Long.parseLong(blockrequestDTO.getDocID()));
+Doctor doctor = doctorData.get();
+
+
+        boolean isReportExsist = reportRepo.existsByDocIdAndPatientId(doctor.getId(), patient.getId());
+        if((isReportExsist)){
+            log.info("Report has been Made Already");
+            return;
+        }
+        Report report = Report.builder()
+                .docId(doctor.getId())
+                .patientId(patient.getId())
+                .reason(blockrequestDTO.getReason())
+                .additionalInfo(blockrequestDTO.getDescription())
+                .reportDate(LocalDateTime.now())
+                .build();
+        reportRepo.save(report);
+        log.info("Report Has been Saved SucessFully:{}",report);
+
     }
+}
 

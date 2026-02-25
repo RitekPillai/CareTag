@@ -2,13 +2,13 @@ class Permissionrequestmodel {
   final String docName;
   final String placeName;
   final String publicKey;
-  final String docEmail;
+  final String docId;
 
   Permissionrequestmodel({
     required this.docName,
     required this.placeName,
     required this.publicKey,
-    required this.docEmail,
+    required this.docId,
   });
 
   factory Permissionrequestmodel.formMap(Map<String, dynamic> map) {
@@ -16,7 +16,7 @@ class Permissionrequestmodel {
       docName: map['docName'] ?? '',
       placeName: map['placeName'],
       publicKey: map['publicKey'] ?? '',
-      docEmail: map['docEmail'] ?? '', // Ensure this key name matches exactly
+      docId: map['docId'] ?? '',
     );
   }
 }

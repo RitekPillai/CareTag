@@ -17,6 +17,7 @@ import 'package:caretag/widgets/custombutton.dart';
 
 class CustomAlertBox extends StatelessWidget {
   final Permissionrequestmodel permissionRequestModel;
+
   const CustomAlertBox({super.key, required this.permissionRequestModel});
 
   @override
@@ -142,7 +143,7 @@ class CustomAlertBox extends StatelessWidget {
                     onPressed: () {
                       Navigator.pop(context);
                       context.read<PatientBloc>().add(
-                        DenyPermission(docId: permissionRequestModel.docEmail),
+                        DenyPermission(docId: permissionRequestModel.docId),
                       );
                       Navigator.push(
                         context,
@@ -174,8 +175,7 @@ class CustomAlertBox extends StatelessWidget {
                             context,
                             MaterialPageRoute(
                               builder: (context) => Reportpage(
-                                docName: permissionRequestModel.docName,
-                                hospitalName: permissionRequestModel.placeName,
+                                permissionrequestmodel: permissionRequestModel,
                               ),
                             ),
                           );

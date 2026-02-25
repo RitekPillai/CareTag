@@ -1,5 +1,7 @@
 import 'package:caretag/Modules/card_registration/data/model/bloc_req_model.dart';
 import 'package:caretag/Modules/card_registration/model_view/bloc/patient_bloc_bloc.dart';
+import 'package:caretag/Modules/home/model/permissionRequestModel.dart';
+import 'package:caretag/Modules/home/widgets/careTagHome/dialogBox.dart';
 import 'package:caretag/Modules/home/widgets/report/doc_report_conatiner_tile.dart';
 import 'package:caretag/constants/app_color.dart';
 import 'package:caretag/widgets/custombutton.dart';
@@ -12,13 +14,8 @@ import 'package:hive_flutter/adapters.dart';
 import 'package:http/http.dart' as context;
 
 class Reportpage extends StatefulWidget {
-  final String docName;
-  final String hospitalName;
-  const Reportpage({
-    super.key,
-    required this.docName,
-    required this.hospitalName,
-  });
+  final Permissionrequestmodel permissionrequestmodel;
+  const Reportpage({super.key, required this.permissionrequestmodel});
 
   @override
   State<Reportpage> createState() => _ReportpageState();
@@ -94,8 +91,8 @@ class _ReportpageState extends State<Reportpage> {
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 16.0),
                     child: DocReportConatinerTile(
-                      docName: widget.docName,
-                      hospitalName: widget.hospitalName,
+                      docName: widget.permissionrequestmodel.docName,
+                      hospitalName: widget.permissionrequestmodel.placeName,
                     ),
                   ),
                   SizedBox(height: 24.h),
@@ -213,15 +210,23 @@ class _ReportpageState extends State<Reportpage> {
             padding: const EdgeInsets.all(30.0),
             child: GestureDetector(
               onTap: () {
+                if (selecteReason == null || selecteReason == '') {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text("Please Select The options")),
+                  );
+                  return;
+                }
                 context.read<PatientBloc>().add(
                   ReportRequest(
                     blockReqModel: BlockReqModel(
-                      docID: widget.docName,
+                      docID: widget.permissionrequestmodel.docId,
                       reason: selecteReason!,
                       discription: controller.text,
                     ),
                   ),
                 );
+
+                showDialogBox(widget.permissionrequestmodel, true);
               },
               child: Container(
                 width: 358.w,

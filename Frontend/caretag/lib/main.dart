@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:caretag/Modules/home/model/permissionRequestModel.dart';
 import 'package:caretag/Modules/home/view.dart/homePage.dart';
 import 'package:caretag/Modules/home/view.dart/mainscreen.dart';
 import 'package:caretag/Modules/home/view.dart/reportPage.dart';
@@ -82,10 +83,7 @@ class MyApp extends StatelessWidget {
               ),
               colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
             ),
-            home: Reportpage(
-              docName: "Ritek Pillai",
-              hospitalName: "Pillai Hospital",
-            ),
+            home: Authgate(),
           );
         },
       ),

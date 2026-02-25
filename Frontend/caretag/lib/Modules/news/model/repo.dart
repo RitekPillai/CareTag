@@ -26,7 +26,7 @@ class NewsRepo {
       }
       return [];
     } catch (e) {
-      print("Pagination Error: $e");
+      debugPrint("Pagination Error: $e");
       return [];
     }
   }

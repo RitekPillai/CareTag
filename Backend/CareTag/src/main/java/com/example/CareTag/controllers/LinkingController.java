@@ -20,7 +20,7 @@ public class LinkingController {
 
     @PostMapping("/request")
     public void requestPaitentPermission(@RequestBody String careTagId){
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+
         linkingService.PermissionRequest(careTagId);
 
 

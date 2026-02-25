@@ -64,7 +64,7 @@ class _SelectfilesScreenState extends State<SelectfilesScreen> {
       if (await dir.exists()) {
         try {
           final List<FileSystemEntity> entities = dir.listSync();
-          print(
+          debugPrint(
             "Folder ${folder.name} actually contains ${entities.length} total items.",
           );
 

@@ -18,10 +18,10 @@ public class HandShakeController {
     private final  SimpMessagingTemplate simpMessagingTemplate;
 
 private  final LinkingService linkingService;
-/// Server(paitent) to doctor
     @PostMapping("/accept")
     public ResponseEntity<String> accept(@RequestBody Map<String, String> payload) {
-        String doctor = payload.get("docEmail");
+        log.info("Received request to accept link{}",payload);
+        String doctor = payload.get("docId");
         log.info("doctor: " + doctor);
         String encryptedKeyBundle = payload.get("encryptedAesBlob");
         Map<String, String> response = Map.of(
@@ -47,6 +47,8 @@ private  final LinkingService linkingService;
 
     @PostMapping("/block")
     public ResponseEntity<String> block(@RequestBody BlockRequestDTO blockrequestDTO) {
+
+        linkingService.blockDoctor(blockrequestDTO);
         log.info("block: " + blockrequestDTO);
         simpMessagingTemplate.convertAndSendToUser(blockrequestDTO.getDocID(),"/queue/approval",Map.of("status", "BLOCKED"));
         return ResponseEntity.ok("Blocked to doctor");

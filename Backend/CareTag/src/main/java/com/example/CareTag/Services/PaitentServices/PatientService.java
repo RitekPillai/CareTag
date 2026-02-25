@@ -1,19 +1,20 @@
 package com.example.CareTag.Services.PaitentServices;
 
-import com.example.CareTag.DTOs.PatientDTOs.BasicDataDTO;
-import com.example.CareTag.DTOs.PatientDTOs.MedicalRecordResponseDTO;
-import com.example.CareTag.DTOs.PatientDTOs.RegistrationRequestDTO;
-import com.example.CareTag.DTOs.PatientDTOs.SubscriberRequestDTO;
+import com.example.CareTag.DTOs.PatientDTOs.*;
+import com.example.CareTag.Models.doctor.Doctor;
 import com.example.CareTag.Models.Paitent.Patient;
 import com.example.CareTag.Models.Paitent.PatientRecords;
 import com.example.CareTag.Models.Paitent.ShippingDetails;
 import com.example.CareTag.Models.Paitent.Subscription;
+import com.example.CareTag.Models.common.Link;
 import com.example.CareTag.Models.common.User;
 import com.example.CareTag.Repos.Paitent.PaitentRepo;
 import com.example.CareTag.Repos.Paitent.PatientRecordsRepo;
 import com.example.CareTag.Repos.Paitent.ShippingDetailsRepo;
 import com.example.CareTag.Repos.Paitent.SubscriptionRepo;
+import com.example.CareTag.Repos.common.LinkRepo;
 import com.example.CareTag.Repos.common.UserRepo;
+import com.example.CareTag.Repos.doctor.DoctorRepo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -27,6 +28,7 @@ import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 
@@ -46,6 +48,12 @@ public class PatientService {
     private SubscriptionRepo subscriptionRepo;
     @Autowired
   private   ShippingDetailsRepo shippingDetailsRepo;
+
+    @Autowired
+    private DoctorRepo doctorRepo;
+
+    @Autowired
+    private LinkRepo linkRepo;
 @Autowired
 private MongoTemplate  mongoTemplate;
 
@@ -202,5 +210,24 @@ return ResponseEntity.ok(requestDTO);
                      .build());
 
 
+    }
+
+    public ResponseEntity<?> getDoctors() {
+        String paitentEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+        Patient paitent = paitentRepo.findByEmail(paitentEmail);
+        List<Link> link = linkRepo.findByPaitentId(paitent.getId());
+        if(link==null){
+            return ResponseEntity.ok("You have not Linked with No Doctors Yet");
+        }
+    List<Long> docIds = link.stream().map(Link::getDocId).toList();
+
+        List<Doctor> doctors = doctorRepo.findAllById(docIds);
+
+        List<DoctorDetailDTO> getDoctors = doctors.stream().map(doctor -> {
+           return DoctorDetailDTO.builder().doctorName(doctor.getFullName()).id(doctor.getId()).hospitalName(doctor.getCity()).hospitalName(doctor.getClinicName()).specialization(doctor.getSpecialization()).build();
+        }).toList();
+
+        log.info("List of Doctors Link to"+paitent.getFullName()+"are "+getDoctors);
+        return ResponseEntity.ok(getDoctors);
     }
 }

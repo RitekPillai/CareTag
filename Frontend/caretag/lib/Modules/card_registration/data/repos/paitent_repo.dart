@@ -162,7 +162,7 @@ class PaitientRepo {
   }
 
   void requestAccept(Acceptreqmodel acceptReqModel) async {
-    log(acceptReqModel.docEmail);
+    log(acceptReqModel.docId);
     Map<String, dynamic> payload = acceptReqModel.toJson();
     try {
       final response = await authenticationService.post(
@@ -208,16 +208,17 @@ class PaitientRepo {
     try {
       final response = await authenticationService.post(
         Uri.parse(
-          "https://uncatastrophic-nonobserving-marylyn.ngrok-free.dev/link/deny",
+          "https://uncatastrophic-nonobserving-marylyn.ngrok-free.dev/link/block",
         ),
         body: jsonEncode(payload),
       );
       if (response.statusCode == 200) {
         log("Request sent sucessFully");
-      } else {
-        throw Exception();
       }
+
+      log("Response: ${response.body}");
     } catch (e) {
+      log("Error in blockRequest: $e");
       rethrow;
     }
   }

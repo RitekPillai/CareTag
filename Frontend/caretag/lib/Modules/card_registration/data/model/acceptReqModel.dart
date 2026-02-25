@@ -1,10 +1,10 @@
 class Acceptreqmodel {
-  final String docEmail;
+  final String docId;
   final String encryptedAesBlob;
 
-  Acceptreqmodel({required this.docEmail, required this.encryptedAesBlob});
+  Acceptreqmodel({required this.docId, required this.encryptedAesBlob});
 
   Map<String, dynamic> toJson() {
-    return {'docEmail': docEmail, 'encryptedAesBlob': encryptedAesBlob};
+    return {'docId': docId, 'encryptedAesBlob': encryptedAesBlob};
   }
 }
