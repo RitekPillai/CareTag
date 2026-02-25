@@ -4,17 +4,20 @@ import com.example.CareTag.DTOs.PermissionRequestDTO;
 import com.example.CareTag.Models.Doctor;
 import com.example.CareTag.Models.Paitent.Patient;
 import com.example.CareTag.Models.common.Link;
-import com.example.CareTag.Repos.LinkRepo;
+import com.example.CareTag.Repos.common.LinkRepo;
 import com.example.CareTag.Repos.Paitent.PaitentRepo;
+import com.example.CareTag.Repos.common.ReportRepo;
 import com.example.CareTag.Repos.doctor.DoctorRepo;
 import com.google.firebase.messaging.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -29,6 +32,14 @@ public class LinkingService {
     @Autowired
     LinkRepo linkRepo;
 
+  @Autowired
+  HandShakeController handShakeController;
+
+
+
+    @Autowired
+    ReportRepo reportRepo;
+
     public  void PermissionRequest(String careTagId){
         log.info(" careTagId:{}",careTagId);
         log.info(careTagId);
@@ -39,9 +50,25 @@ public class LinkingService {
 
         Patient patient =  paitentRepo.findByCareTagId(careTagId);
         log.info(" paitentId:{}",patient.getFullName());
-        if(patient==null){
-            throw new RuntimeException("patient not found");
+
+
+        Link isLinked = linkRepo.findByDocIdAndPaitentId(doctor.getId(),patient.getId());
+        log.info(" isLinked:{}",isLinked);
+        if(isLinked!=null){
+           // simpMessagingTemplate.convertAndSendToUser(doctor.getEmail(),"/queue/approval", Map.of("status", "ALREADY SCANNED"));
+            log.info("Both are Already Linked");
+            return;
         }
+
+
+        boolean isBlocked =  reportRepo.existsByDocIdAndPatientId(doctor.getId(),patient.getId());
+
+        if(isBlocked){
+
+
+            return;
+        }
+
         PermissionRequestDTO permissionRequestDTO = PermissionRequestDTO.builder()
                 .docName(doctor.getFullName())
                 .hospitalName(doctor.getClinicName())

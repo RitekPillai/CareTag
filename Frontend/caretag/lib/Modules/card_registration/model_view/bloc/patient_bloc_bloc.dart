@@ -3,6 +3,7 @@ import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:caretag/Modules/card_registration/data/model/acceptReqModel.dart';
+import 'package:caretag/Modules/card_registration/data/model/bloc_req_model.dart';
 import 'package:caretag/Modules/card_registration/data/model/medicarecordmodel.dart';
 import 'package:caretag/Modules/card_registration/data/model/profileModel.dart';
 import 'package:caretag/Modules/card_registration/data/model/shippingRegistration.dart';
@@ -30,6 +31,7 @@ class PatientBloc extends Bloc<PatientBlocEvent, PatientBlocState> {
     on<GetProfileData>(_onGetProfileData);
     on<RequestAccept>(_onRequestAccept);
     on<DenyPermission>(_onDenyPermission);
+    on<ReportRequest>(_onReportRequest);
   }
   Future<void> _onPatientRegistration(
     PatientRegistration event,
@@ -140,9 +142,23 @@ class PatientBloc extends Bloc<PatientBlocEvent, PatientBlocState> {
     Emitter<PatientBlocState> emit,
   ) {
     emit(Loading());
-    _paitentRepo.denyRequest(event.docId);
-    try {} catch (e) {
+
+    try {
+      _paitentRepo.denyRequest(event.docId);
+    } catch (e) {
       log("Error while denying the permission:$e");
+    }
+  }
+
+  FutureOr<void> _onReportRequest(
+    ReportRequest event,
+    Emitter<PatientBlocState> emit,
+  ) {
+    emit(Loading());
+    try {
+      _paitentRepo.blockRequest(event.blockReqModel);
+    } catch (e) {
+      log("Error while block the permission:$e");
     }
   }
 }

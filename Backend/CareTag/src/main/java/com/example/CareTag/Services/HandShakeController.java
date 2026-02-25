@@ -1,8 +1,8 @@
 package com.example.CareTag.Services;
 
+import com.example.CareTag.DTOs.BlockRequestDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
@@ -43,6 +43,13 @@ private  final LinkingService linkingService;
                 Map.of("status", "DENIED")
         );
         return ResponseEntity.ok("Denial pushed to doctor");
+    }
+
+    @PostMapping("/block")
+    public ResponseEntity<String> block(@RequestBody BlockRequestDTO blockrequestDTO) {
+        log.info("block: " + blockrequestDTO);
+        simpMessagingTemplate.convertAndSendToUser(blockrequestDTO.getDocID(),"/queue/approval",Map.of("status", "BLOCKED"));
+        return ResponseEntity.ok("Blocked to doctor");
     }
 
 

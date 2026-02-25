@@ -23,6 +23,12 @@ class GetPatientRecord extends PatientBlocEvent {
   const GetPatientRecord();
 }
 
+class ReportRequest extends PatientBlocEvent {
+  final BlockReqModel blockReqModel;
+
+  const ReportRequest({required this.blockReqModel});
+}
+
 class DenyPermission extends PatientBlocEvent {
   final String docId;
 

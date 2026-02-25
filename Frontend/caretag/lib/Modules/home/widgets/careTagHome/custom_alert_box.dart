@@ -1,4 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:caretag/Modules/card_registration/data/model/bloc_req_model.dart';
+import 'package:caretag/Modules/home/view.dart/reportPage.dart';
 import 'package:caretag/Modules/home/widgets/careTagHome/acceptPage.dart';
 import 'package:caretag/Modules/home/widgets/careTagHome/denyPage.dart';
 import 'package:flutter/material.dart';
@@ -164,12 +166,27 @@ class CustomAlertBox extends StatelessWidget {
                   Row(
                     children: [
                       Icon(Icons.flag_outlined, color: redColor),
-                      Text(
-                        "Report",
-                        style: GoogleFonts.poppins(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 14,
-                          color: redColor,
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.pop(context);
+
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => Reportpage(
+                                docName: permissionRequestModel.docName,
+                                hospitalName: permissionRequestModel.placeName,
+                              ),
+                            ),
+                          );
+                        },
+                        child: Text(
+                          "Report",
+                          style: GoogleFonts.poppins(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 14,
+                            color: redColor,
+                          ),
                         ),
                       ),
                     ],

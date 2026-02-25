@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:caretag/Modules/home/view.dart/homePage.dart';
 import 'package:caretag/Modules/home/view.dart/mainscreen.dart';
+import 'package:caretag/Modules/home/view.dart/reportPage.dart';
 import 'package:caretag/Modules/home/widgets/careTagHome/acceptPage.dart';
 import 'package:caretag/Modules/home/widgets/careTagHome/denyPage.dart';
 import 'package:caretag/constants/messagingService.dart';
@@ -81,7 +82,10 @@ class MyApp extends StatelessWidget {
               ),
               colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
             ),
-            home: Homepage(),
+            home: Reportpage(
+              docName: "Ritek Pillai",
+              hospitalName: "Pillai Hospital",
+            ),
           );
         },
       ),
