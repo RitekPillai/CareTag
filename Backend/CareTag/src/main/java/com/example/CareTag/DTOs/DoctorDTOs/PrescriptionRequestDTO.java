@@ -12,6 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @Data
 @Builder
+
 public class PrecriptionRequestDTO {
     private final String careTagId;
     private  final String diagnosis;
