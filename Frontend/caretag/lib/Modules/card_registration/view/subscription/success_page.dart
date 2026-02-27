@@ -1,3 +1,4 @@
+import 'package:caretag/Modules/card_registration/data/model/profileModel.dart';
 import 'package:caretag/Modules/card_registration/model_view/bloc/patient_bloc_bloc.dart';
 import 'package:caretag/Modules/home/view.dart/homePage.dart';
 import 'package:caretag/widgets/animatedRoute.dart';
@@ -5,6 +6,7 @@ import 'package:caretag/widgets/custombutton.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hive/hive.dart';
 
 class SuccessPage extends StatelessWidget {
   const SuccessPage({super.key});
@@ -44,10 +46,21 @@ class SuccessPage extends StatelessWidget {
           ),
           const SizedBox(height: 25),
           customElevatedButton(48, 343, "Next", 20, FontWeight.bold, () {
-            Navigator.pushReplacement(
-              context,
-              customRoute(Homepage(), context.read<PatientBloc>()),
-            );
+            final box = Hive.box<Profilemodel>('profile_records');
+            final profileData = box.get('profile_record');
+
+            if (profileData != null) {
+              Navigator.pushReplacement(
+                context,
+                customRoute(Homepage(), context.read<PatientBloc>()),
+              );
+            } else {
+              context.read<PatientBloc>().add(GetProfileData());
+              Navigator.pushReplacement(
+                context,
+                customRoute(Homepage(), context.read<PatientBloc>()),
+              );
+            }
           }, 12),
         ],
       ),

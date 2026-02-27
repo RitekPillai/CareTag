@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'dart:developer';
+
 import 'dart:typed_data';
 
 import 'package:caretag/Modules/card_registration/data/model/medicarecordmodel.dart';
@@ -107,6 +109,7 @@ class Cryptographyservice {
   Future<String> decryptingData(RecordRequestModel model) async {
     ///getting the privater key RSA
     String? privateKey = await storageservice.getRsaPrivateKey();
+    log("Private Key Retrieved: $privateKey");
 
     /// decoding the wrapone
     Uint8List encrytedAesKey = base64Decode(model.encryptedAesKey);

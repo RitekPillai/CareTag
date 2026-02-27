@@ -1,7 +1,8 @@
 package com.example.CareTag.controllers;
 
 import com.example.CareTag.DTOs.DoctorDTOs.PaitentSearchDTO;
-import com.example.CareTag.DTOs.DoctorDTOs.PrecriptionRequestDTO;
+import com.example.CareTag.DTOs.DoctorDTOs.PrescriptionRequestDTO;
+import com.example.CareTag.DTOs.DoctorDTOs.PrescriptionListDTO;
 import com.example.CareTag.DTOs.DoctorDTOs.SignUpRequest;
 import com.example.CareTag.DTOs.authDTOs.LoginRequestDTO;
 import com.example.CareTag.Services.doctorService.DoctorAuthService;
@@ -59,12 +60,18 @@ log.info("paitentSearch:{}",query);
         return doctorService.paitentSearch(query);
 
     }
-    @PostMapping("/precription")
-    public void createPrecription(@RequestBody PrecriptionRequestDTO requestDTO){
+    @PostMapping("/prescription")
+    public void createPrecription(@RequestBody PrescriptionRequestDTO requestDTO) throws Exception {
+        log.info("createPrecription:{}",requestDTO);
         doctorService.createPrecription(requestDTO);
 
     }
 
+    @GetMapping("/prescription/list")
+    public List<PrescriptionListDTO> getAllPrescription(){
+         return doctorService.getPrecriptionList();
+    }
+//
 
 
 }

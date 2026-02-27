@@ -73,22 +73,25 @@ dependencies:
   firebase_messaging: ^16.1.1
   encrypt: ^5.0.3
   stomp_dart_client: ^3.0.1
+
   
  
 
 
-
+uses-material-design: true
 dev_dependencies:
+
   flutter_test:
     sdk: flutter
   build_runner: ^2.4.8
-  hive_generator: ^2.0.1 # <--- Ensure this is exactly here
+  hive_generator: ^2.0.1 
 
-  # The "flutter_lints" package below contains a set of recommended lints to
-  # encourage good coding practices. The lint set provided by the package is
-  # activated in the `analysis_options.yaml` file located at the root of your
-  # package. See that file for information about deactivating specific lint
-  # rules and activating additional ones.
+
+
+  
+  
+  
+
   flutter_lints: ^5.0.0
 
 # For information on the generic Dart part of this file, see the
@@ -102,7 +105,6 @@ flutter:
       fonts:
         - asset: assets/fonts/Vogue.ttf
         
-
 
 
   # The following line ensures that the Material Icons font is
@@ -126,6 +128,7 @@ flutter:
     - assets/images/records/
     - assets/images/navigation/
     - assets/images/home/dialog/
+    - assets/images/records/prescription/
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

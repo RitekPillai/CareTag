@@ -3,6 +3,7 @@ package com.example.CareTag.Services;
 import com.example.CareTag.DTOs.BlockRequestDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +19,8 @@ public class HandShakeController {
     private final  SimpMessagingTemplate simpMessagingTemplate;
 
 private  final LinkingService linkingService;
+
+
     @PostMapping("/accept")
     public ResponseEntity<String> accept(@RequestBody Map<String, String> payload) {
         log.info("Received request to accept link{}",payload);

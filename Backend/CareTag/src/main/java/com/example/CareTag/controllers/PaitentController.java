@@ -1,9 +1,6 @@
 package com.example.CareTag.controllers;
 
-import com.example.CareTag.DTOs.PatientDTOs.BasicDataDTO;
-import com.example.CareTag.DTOs.PatientDTOs.MedicalRecordResponseDTO;
-import com.example.CareTag.DTOs.PatientDTOs.RegistrationRequestDTO;
-import com.example.CareTag.DTOs.PatientDTOs.SubscriberRequestDTO;
+import com.example.CareTag.DTOs.PatientDTOs.*;
 import com.example.CareTag.Models.Paitent.Patient;
 import com.example.CareTag.Repos.Paitent.PaitentRepo;
 import com.example.CareTag.Services.PaitentServices.PatientService;
@@ -13,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -68,6 +66,10 @@ public class PaitentController {
     public ResponseEntity<?> getDoctors() {
 
         return paitentService.getDoctors();
+    }
+    @GetMapping("/prescription")
+    public List<PaitentPrescriptionListDTO> getAllPrescriptions() {
+        return paitentService.getAllPrescription();
     }
 
 }

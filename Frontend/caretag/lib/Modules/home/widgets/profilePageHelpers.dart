@@ -11,17 +11,28 @@ class CurveClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
     Path path = Path();
-    path.lineTo(0, size.height - 100);
 
-    path.quadraticBezierTo(
-      size.width / 2,
-      size.height,
-      size.width,
-      size.height - 100,
+    // 1. Draw the top part of the rectangle
+    // We leave space at the bottom for the circle
+    double radius = size.width / 2;
+    path.lineTo(0, size.height - radius);
+
+    // 2. Define the "Rect" that the circle lives in
+    // This creates an invisible box at the bottom where the curve sits
+    Rect rect = Rect.fromCircle(
+      center: Offset(size.width / 2, size.height - radius),
+      radius: radius,
     );
 
+    // 3. Draw an arc from 0 degrees (left) to 180 degrees (right)
+    // In Flutter, 0 radians is at the "3 o'clock" position,
+    // so we start at pi (9 o'clock) and move pi radians (half circle).
+    path.arcTo(rect, 3.14159, -3.14159, false);
+
+    // 4. Close the path back to the top-right and then top-left
     path.lineTo(size.width, 0);
     path.close();
+
     return path;
   }
 

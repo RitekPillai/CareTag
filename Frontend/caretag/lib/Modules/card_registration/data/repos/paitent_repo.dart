@@ -12,6 +12,7 @@ import 'package:caretag/Modules/card_registration/data/model/reordRequestModel.d
 import 'package:caretag/Modules/card_registration/data/model/shippingRegistration.dart';
 import 'package:caretag/Modules/card_registration/model_view/service/cryptographyservice.dart';
 import 'package:caretag/Modules/home/model/permissionRequestModel.dart';
+import 'package:caretag/Modules/records_module/model/prescriptionModel.dart';
 import 'package:caretag/utils/hiveService.dart';
 import 'package:caretag/utils/storageService.dart';
 import 'package:flutter/material.dart';
@@ -219,6 +220,24 @@ class PaitientRepo {
       log("Response: ${response.body}");
     } catch (e) {
       log("Error in blockRequest: $e");
+      rethrow;
+    }
+  }
+
+  Future<List<PrescriptionModel>> getAllPrescription() async {
+    try {
+      final respons = await authenticationService.get(
+        Uri.parse("$baseUrl/prescription"),
+      );
+
+      if (respons.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(respons.body);
+        return data.map((e) => PrescriptionModel.fromJson(e)).toList();
+      } else {
+        throw Exception("Failed to fetch prescriptions");
+      }
+    } catch (e) {
+      log("Error in getAllPrescription: $e");
       rethrow;
     }
   }

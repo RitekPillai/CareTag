@@ -7,10 +7,11 @@ class RecordOptionContaineTile extends StatelessWidget {
   final Color containerColor;
   final String imagePath;
   final String title;
-
   final double? fontSize;
   final FontWeight? fontWeight;
   final Color? textColor;
+  final double scale;
+
   const RecordOptionContaineTile({
     super.key,
     required this.containerColor,
@@ -19,22 +20,36 @@ class RecordOptionContaineTile extends StatelessWidget {
     this.fontSize,
     this.fontWeight,
     this.textColor,
+    this.scale = 1.0,
   });
 
   @override
   Widget build(BuildContext context) {
     const Color defaultTextColor = Color(0xff4B5563);
     return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Container(
-          height: 56.h,
-          width: 56.w,
-
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: containerColor,
+        Center(
+          child: Container(
+            height: 60.h,
+            width: 60.w,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: containerColor,
+            ),
+            child: Center(
+              child: Transform.scale(
+                scale: scale,
+                child: SvgPicture.asset(
+                  imagePath,
+                  width: 48.w,
+                  height: 48.h,
+                  fit: BoxFit.scaleDown,
+                ),
+              ),
+            ),
           ),
-          child: Center(child: SvgPicture.asset(imagePath)),
         ),
         SizedBox(height: 8.h),
         Text(

@@ -1,8 +1,10 @@
+import 'package:caretag/Modules/card_registration/model_view/bloc/patient_bloc_bloc.dart';
 import 'package:caretag/Modules/records_module/view/pages/doctor_prescription_page.dart';
 import 'package:caretag/Modules/records_module/view/pages/record_home_page.dart';
 import 'package:caretag/constants/app_color.dart';
 import 'package:caretag/widgets/custom_search_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -103,6 +105,7 @@ class _RecordsState extends State<Records> {
               ],
             ),
           ),
+          SizedBox(height: 20.h),
           Expanded(
             child: SingleChildScrollView(
               scrollDirection: Axis.vertical,
@@ -120,6 +123,7 @@ class _RecordsState extends State<Records> {
       case "Home":
         return RecordHomePage();
       case "Doctor\nPrescription":
+        context.read<PatientBloc>().add(GetAllPrescription());
         return DoctorPrescriptionPage();
       default:
         return Container();

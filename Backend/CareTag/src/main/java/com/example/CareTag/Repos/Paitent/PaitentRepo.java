@@ -1,6 +1,7 @@
 package com.example.CareTag.Repos.Paitent;
 
 import com.example.CareTag.Models.Paitent.Patient;
+import com.example.CareTag.Models.doctor.Prescription;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
@@ -14,4 +15,6 @@ public interface PaitentRepo extends MongoRepository<Patient,Long> {
     Patient findByEmail(String email);
 
     List<Patient> findByFullNameContainingIgnoreCase(String query);
+
+
 }

@@ -1,24 +1,30 @@
 package com.example.CareTag.Services.doctorService;
 
 import com.example.CareTag.DTOs.DoctorDTOs.PaitentSearchDTO;
-import com.example.CareTag.DTOs.DoctorDTOs.PrecriptionRequestDTO;
+import com.example.CareTag.DTOs.DoctorDTOs.PrescriptionRequestDTO;
+import com.example.CareTag.DTOs.DoctorDTOs.PrescriptionListDTO;
 import com.example.CareTag.Models.doctor.Doctor;
 import com.example.CareTag.Models.Paitent.Patient;
 import com.example.CareTag.Models.common.Link;
-import com.example.CareTag.Models.doctor.Precription;
+import com.example.CareTag.Models.doctor.Prescription;
 import com.example.CareTag.Repos.Paitent.PaitentRepo;
 import com.example.CareTag.Repos.common.LinkRepo;
 import com.example.CareTag.Repos.doctor.DoctorRepo;
-import com.example.CareTag.Repos.doctor.PrecriptionRepo;
+import com.example.CareTag.Repos.doctor.PrescriptionRepo;
+import com.example.CareTag.Services.AuthServices.CryptographicService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -31,7 +37,12 @@ public class DoctorService {
     private PaitentRepo paitentRepo;
 
     @Autowired
-    private PrecriptionRepo  precriptionRepo;
+    private PrescriptionRepo precriptionRepo;
+
+    @Value("${crpytographic.aes-key}")
+   private String aesKey;
+
+
     public ResponseEntity<?> getPaitents() {
 
         String docEmail = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -53,10 +64,17 @@ return  ResponseEntity.ok().body(doctor);
 
     }
 
-    public void createPrecription(PrecriptionRequestDTO dto) {
+    public void createPrecription(PrescriptionRequestDTO dto) throws Exception {
+        log.info("in");
         String docEmail = SecurityContextHolder.getContext().getAuthentication().getName();
         Doctor doctor = doctorRepo.findByEmail(docEmail);
         Patient patient = paitentRepo.findByCareTagId(dto.getCareTagId());
+
+        dto.setDoctorName(doctor.getFullName());
+        dto.setPaitentName(patient.getFullName());
+        dto.setClinicName(doctor.getClinicName());
+        dto.setSpeclization(doctor.getSpecialization());
+        dto.setCreatedAt(LocalDateTime.now());
 
 
 
@@ -64,20 +82,66 @@ return  ResponseEntity.ok().body(doctor);
         if(link==null){
             throw new RuntimeException("Link is not yet established");
         }
-        Precription precription = Precription.builder().
-        createdAt(LocalDateTime.now())
-                .doctorId(doctor.getId())
-                        .notes(dto.getNotes())
-                                .diagnosis(dto.getDiagnosis())
-                                        .status(dto.getStatus())
-                                                .patientId(patient.getId())
-                                                        .maxRefills(dto.getMaxRefills())
-                                                                .medications(dto.getMedications())
-                                                                        .validTill(dto.getValidTill())
-                                                                                .
 
-                build();
-            precriptionRepo.save(precription);
+
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+
+
+        String prescriptionJson = objectMapper.writeValueAsString(dto);
+
+     String encryptedData =    CryptographicService.encrypt(prescriptionJson,aesKey);
+
+
+        Prescription prescription  = Prescription.builder()
+                .doctorId(doctor.getId())
+                .patientId(patient.getId())
+                .encryptedData(encryptedData)
+                .build();
+
+     log.info("Encryted Data:{}",encryptedData);
+
+
+     precriptionRepo.save(prescription);
+log.info("Precription Created Successfully");
+    }
+
+
+
+        public List<PrescriptionListDTO> getPrecriptionList() {
+            String email = SecurityContextHolder.getContext().getAuthentication().getName();
+            Doctor doctor = doctorRepo.findByEmail(email);
+
+            List<Prescription> listPrescription = precriptionRepo.findByDoctorId(doctor.getId());
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.registerModule(new JavaTimeModule());
+            objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+
+            return listPrescription.stream().map(prescription -> {
+                try {
+                    String json = CryptographicService.decrypt(prescription.getEncryptedData(), aesKey);
+
+                    PrescriptionRequestDTO dto = objectMapper.readValue(json, PrescriptionRequestDTO.class);
+
+                    return PrescriptionListDTO.builder()
+                            .dignosis(dto.getDiagnosis())
+                            .paitentName(dto.getPaitentName())
+                            .refills(dto.getMaxRefills())
+                            .medications(dto.getMedications())
+                            .notes(dto.getNotes())
+                            .creationDate(dto.getCreatedAt())
+                            .vaildTill(dto.getValidTill())
+                            .status(dto.getStatus())
+                            .build();
+                } catch (Exception e) {
+                 log.info(Arrays.toString(e.getStackTrace()));
+                    log.error("Decryption failed for prescription ID: {}", prescription.getId());
+                    throw new RuntimeException("Secure data access error", e);
+                }
+            }).toList();
+
 
     }
 

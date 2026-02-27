@@ -1,5 +1,6 @@
 package com.example.CareTag.Services.PaitentServices;
 
+import com.example.CareTag.DTOs.DoctorDTOs.PrescriptionRequestDTO;
 import com.example.CareTag.DTOs.PatientDTOs.*;
 import com.example.CareTag.Models.doctor.Doctor;
 import com.example.CareTag.Models.Paitent.Patient;
@@ -8,6 +9,7 @@ import com.example.CareTag.Models.Paitent.ShippingDetails;
 import com.example.CareTag.Models.Paitent.Subscription;
 import com.example.CareTag.Models.common.Link;
 import com.example.CareTag.Models.common.User;
+import com.example.CareTag.Models.doctor.Prescription;
 import com.example.CareTag.Repos.Paitent.PaitentRepo;
 import com.example.CareTag.Repos.Paitent.PatientRecordsRepo;
 import com.example.CareTag.Repos.Paitent.ShippingDetailsRepo;
@@ -15,8 +17,14 @@ import com.example.CareTag.Repos.Paitent.SubscriptionRepo;
 import com.example.CareTag.Repos.common.LinkRepo;
 import com.example.CareTag.Repos.common.UserRepo;
 import com.example.CareTag.Repos.doctor.DoctorRepo;
+import com.example.CareTag.Repos.doctor.PrescriptionRepo;
+import com.example.CareTag.Services.AuthServices.CryptographicService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -28,6 +36,7 @@ import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -56,7 +65,11 @@ public class PatientService {
     private LinkRepo linkRepo;
 @Autowired
 private MongoTemplate  mongoTemplate;
+@Autowired
+private PrescriptionRepo prescriptionRepo;
 
+    @Value("${crpytographic.aes-key}")
+    private String aesKey;
 @Autowired
 private PaitentCacheService paitentCacheService;
     public String careTagIdGenerator(){
@@ -229,5 +242,34 @@ return ResponseEntity.ok(requestDTO);
 
         log.info("List of Doctors Link to"+paitent.getFullName()+"are "+getDoctors);
         return ResponseEntity.ok(getDoctors);
+    }
+
+    public List<PaitentPrescriptionListDTO> getAllPrescription() {
+
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Patient patient = paitentRepo.findByEmail(email);
+
+      List<Prescription> prescriptionList =   prescriptionRepo.findByPatientId(patient.getId());
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+
+     return  prescriptionList.stream().map(prescription -> {
+
+
+          try {
+
+              String json = CryptographicService.decrypt(prescription.getEncryptedData(), aesKey);
+
+              PrescriptionRequestDTO dto = objectMapper.readValue(json, PrescriptionRequestDTO.class);
+
+              return  PaitentPrescriptionListDTO.builder().prescriptionId(prescription.getId()).doctorName(dto.getDoctorName()).specialization(dto.getSpeclization()).hospitalName(dto.getClinicName()).prescriptionDate(dto.getCreatedAt()).diagnosis(dto.getDiagnosis()).status(dto.getStatus()).build();
+          } catch (Exception e) {
+              log.info(Arrays.toString(e.getStackTrace()));
+              log.error("Decryption failed for prescription ID: {}", prescription.getId());
+              throw new RuntimeException("Secure data access error", e);
+          }
+      }).toList();
+
     }
 }

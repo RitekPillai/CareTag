@@ -23,6 +23,8 @@ class GetPatientRecord extends PatientBlocEvent {
   const GetPatientRecord();
 }
 
+class GetAllPrescription extends PatientBlocEvent {}
+
 class ReportRequest extends PatientBlocEvent {
   final BlockReqModel blockReqModel;
 

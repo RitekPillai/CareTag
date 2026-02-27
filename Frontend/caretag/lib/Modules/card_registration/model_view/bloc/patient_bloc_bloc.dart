@@ -10,6 +10,7 @@ import 'package:caretag/Modules/card_registration/data/model/shippingRegistratio
 import 'package:caretag/Modules/card_registration/data/repos/paitent_repo.dart';
 import 'package:caretag/Modules/card_registration/model_view/service/cryptographyservice.dart';
 import 'package:caretag/Modules/home/model/permissionRequestModel.dart';
+import 'package:caretag/Modules/records_module/model/prescriptionModel.dart';
 import 'package:caretag/constants/messagingService.dart';
 
 import 'package:cryptography/cryptography.dart';
@@ -32,6 +33,7 @@ class PatientBloc extends Bloc<PatientBlocEvent, PatientBlocState> {
     on<RequestAccept>(_onRequestAccept);
     on<DenyPermission>(_onDenyPermission);
     on<ReportRequest>(_onReportRequest);
+    on<GetAllPrescription>(_onGetAllPrescription);
   }
   Future<void> _onPatientRegistration(
     PatientRegistration event,
@@ -159,6 +161,20 @@ class PatientBloc extends Bloc<PatientBlocEvent, PatientBlocState> {
       _paitentRepo.blockRequest(event.blockReqModel);
     } catch (e) {
       log("Error while block the permission:$e");
+    }
+  }
+
+  FutureOr<void> _onGetAllPrescription(
+    GetAllPrescription event,
+    Emitter<PatientBlocState> emit,
+  ) async {
+    emit(Loading());
+    try {
+      List<PrescriptionModel> allPrescriptions = await _paitentRepo
+          .getAllPrescription();
+      emit(AllPrescriptionFetched(prescriptionList: allPrescriptions));
+    } catch (e) {
+      log("Error in _onGetAllPrescription: $e");
     }
   }
 }
