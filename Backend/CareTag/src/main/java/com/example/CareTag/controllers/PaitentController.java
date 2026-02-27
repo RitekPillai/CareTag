@@ -67,9 +67,15 @@ public class PaitentController {
 
         return paitentService.getDoctors();
     }
-    @GetMapping("/prescription")
+    @GetMapping("/prescription/list")
     public List<PaitentPrescriptionListDTO> getAllPrescriptions() {
         return paitentService.getAllPrescription();
+    }
+
+    @PostMapping("/prescription")
+    public PrescriptionDetailDTO getPrescriptionDetail(@RequestBody  String prescriptionId) throws Exception {
+        return paitentService.getPrescriptionDetails(prescriptionId);
+
     }
 
 }

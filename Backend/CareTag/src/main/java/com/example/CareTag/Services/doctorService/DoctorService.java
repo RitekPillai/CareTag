@@ -74,6 +74,7 @@ return  ResponseEntity.ok().body(doctor);
         dto.setPaitentName(patient.getFullName());
         dto.setClinicName(doctor.getClinicName());
         dto.setSpeclization(doctor.getSpecialization());
+        dto.setHospitalName(doctor.getClinicName());
         dto.setCreatedAt(LocalDateTime.now());
 
 
@@ -104,7 +105,8 @@ return  ResponseEntity.ok().body(doctor);
      log.info("Encryted Data:{}",encryptedData);
 
 
-     precriptionRepo.save(prescription);
+  Prescription prescription1 =    precriptionRepo.save(prescription);
+  log.info(prescription1.toString());
 log.info("Precription Created Successfully");
     }
 

@@ -11,6 +11,7 @@ import 'package:caretag/Modules/card_registration/data/repos/paitent_repo.dart';
 import 'package:caretag/Modules/card_registration/model_view/service/cryptographyservice.dart';
 import 'package:caretag/Modules/home/model/permissionRequestModel.dart';
 import 'package:caretag/Modules/records_module/model/prescriptionModel.dart';
+import 'package:caretag/Modules/records_module/model/prescription_detail_model.dart';
 import 'package:caretag/constants/messagingService.dart';
 
 import 'package:cryptography/cryptography.dart';
@@ -34,6 +35,7 @@ class PatientBloc extends Bloc<PatientBlocEvent, PatientBlocState> {
     on<DenyPermission>(_onDenyPermission);
     on<ReportRequest>(_onReportRequest);
     on<GetAllPrescription>(_onGetAllPrescription);
+    on<GetPrescriptionDetail>(_onGetPrescriptionDetail);
   }
   Future<void> _onPatientRegistration(
     PatientRegistration event,
@@ -175,6 +177,20 @@ class PatientBloc extends Bloc<PatientBlocEvent, PatientBlocState> {
       emit(AllPrescriptionFetched(prescriptionList: allPrescriptions));
     } catch (e) {
       log("Error in _onGetAllPrescription: $e");
+    }
+  }
+
+  FutureOr<void> _onGetPrescriptionDetail(
+    GetPrescriptionDetail event,
+    Emitter<PatientBlocState> emit,
+  ) async {
+    emit(Loading());
+    try {
+      PrescriptionDetail prescriptionDetail = await _paitentRepo
+          .getPrescriptionDetail(event.prescriptionId);
+      emit(PrescriptionDetailFetched(prescriptionDetail: prescriptionDetail));
+    } catch (e) {
+      log("Error in _onGetPrescriptionDetail: $e");
     }
   }
 }

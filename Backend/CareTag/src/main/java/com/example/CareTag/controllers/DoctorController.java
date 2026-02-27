@@ -54,6 +54,8 @@ DoctorAuthService doctorAuthService;
         return doctorService.getPaitents();
     }
 
+
+
     @PostMapping("/search")
     public List<PaitentSearchDTO>  paitentSearch(@RequestBody String query){
 log.info("paitentSearch:{}",query);

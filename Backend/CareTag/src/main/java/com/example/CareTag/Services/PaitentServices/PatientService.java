@@ -272,4 +272,42 @@ return ResponseEntity.ok(requestDTO);
       }).toList();
 
     }
+
+    public PrescriptionDetailDTO getPrescriptionDetails(String prescriptionId) throws Exception {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        log.info(email);
+
+    Patient patient =     paitentRepo.findByEmail(email);
+
+
+
+       Optional<Prescription> prescriptionData =  prescriptionRepo.findById(prescriptionId);
+       if(prescriptionData.isEmpty()){
+           throw new RuntimeException("Prescription Not Found");
+       }
+       Prescription prescription = prescriptionData.get();
+        log.info(String.valueOf(patient.getId()));
+        log.info(String.valueOf(prescription.getPatientId()));
+       if(patient.getId()!=prescription.getPatientId()){
+           throw  new RuntimeException("YOu can't access this prescription");
+       }
+
+     String dycrptedString =   CryptographicService.decrypt(prescription.getEncryptedData(),aesKey);
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+
+        PrescriptionRequestDTO dto = objectMapper.readValue(dycrptedString, PrescriptionRequestDTO.class);
+
+        PrescriptionDetailDTO prescriptionDetail = PrescriptionDetailDTO.builder()
+                        .notes(dto.getNotes())
+                                .hospitalName(dto.getHospitalName())
+                                        .medications(dto.getMedications())
+                                                .diagnosis(dto.getDiagnosis())
+                                                        .doctorName(dto.getDoctorName())
+                                                                .specialization(dto.getSpeclization()).build();
+
+
+return prescriptionDetail;
+    }
 }

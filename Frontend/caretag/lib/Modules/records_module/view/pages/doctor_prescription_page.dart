@@ -1,4 +1,8 @@
+import 'dart:developer';
+
 import 'package:caretag/Modules/card_registration/model_view/bloc/patient_bloc_bloc.dart';
+import 'package:caretag/Modules/records_module/model/prescriptionModel.dart';
+import 'package:caretag/Modules/records_module/view/pages/detail_prescription_page.dart';
 import 'package:caretag/Modules/records_module/view/widgets/prescription_tile.dart';
 import 'package:caretag/Modules/records_module/view/widgets/record_option_containe_tile.dart';
 import 'package:flutter/material.dart';
@@ -32,113 +36,8 @@ class _DoctorPrescriptionPageState extends State<DoctorPrescriptionPage> {
     super.dispose();
   }
 
-  // Sample prescription data
-  final List<List<Map<String, dynamic>>> prescriptionsByCategory = [
-    // General Physician
-    [
-      {
-        "doctorName": "Dr. Mahendra Patel",
-        "specialty": "General Physician",
-        "condition": "Seasonal Flu & Fever",
-        "date": "30 Feb '25",
-        "clinic": "Pari Clinic",
-        "status": "ACTIVE",
-        "doctorImage":
-            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjduXBTnBVs-4N-tCmYSl1Z8O95GAlK_ZnUg&s",
-      },
-      {
-        "doctorName": "Dr. Rajesh Singh",
-        "specialty": "General Physician",
-        "condition": "Common Cold",
-        "date": "28 Feb '25",
-        "clinic": "City Clinic",
-        "status": "COMPLETED",
-        "doctorImage":
-            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjduXBTnBVs-4N-tCmYSl1Z8O95GAlK_ZnUg&s",
-      },
-    ],
-    // Cardiologist
-    [
-      {
-        "doctorName": "Dr. Amit Sharma",
-        "specialty": "Cardiologist",
-        "condition": "Heart Checkup",
-        "date": "25 Feb '25",
-        "clinic": "Heart Care Center",
-        "status": "ACTIVE",
-        "doctorImage":
-            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjduXBTnBVs-4N-tCmYSl1Z8O95GAlK_ZnUg&s",
-      },
-    ],
-    // Physio Therapist
-    [
-      {
-        "doctorName": "Dr. Priya Verma",
-        "specialty": "Physio Therapist",
-        "condition": "Back Pain Treatment",
-        "date": "20 Feb '25",
-        "clinic": "Physio Care Clinic",
-        "status": "ACTIVE",
-        "doctorImage":
-            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjduXBTnBVs-4N-tCmYSl1Z8O95GAlK_ZnUg&s",
-      },
-    ],
-    // Orthopedic
-    [
-      {
-        "doctorName": "Dr. Vikram Singh",
-        "specialty": "Orthopedic",
-        "condition": "Knee Surgery Follow-up",
-        "date": "18 Feb '25",
-        "clinic": "Bone & Joint Center",
-        "status": "COMPLETED",
-        "doctorImage":
-            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjduXBTnBVs-4N-tCmYSl1Z8O95GAlK_ZnUg&s",
-      },
-    ],
-    // Dentist
-    [
-      {
-        "doctorName": "Dr. Shreya Patel",
-        "specialty": "Dentist",
-        "condition": "Root Canal Treatment",
-        "date": "15 Feb '25",
-        "clinic": "Smile Dental Clinic",
-        "status": "ACTIVE",
-        "doctorImage":
-            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjduXBTnBVs-4N-tCmYSl1Z8O95GAlK_ZnUg&s",
-      },
-    ],
-    // Ophthalmologist
-    [
-      {
-        "doctorName": "Dr. Neha Gupta",
-        "specialty": "Ophthalmologist",
-        "condition": "Eye Checkup",
-        "date": "12 Feb '25",
-        "clinic": "Vision Care Center",
-        "status": "COMPLETED",
-        "doctorImage":
-            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjduXBTnBVs-4N-tCmYSl1Z8O95GAlK_ZnUg&s",
-      },
-    ],
-    // ENT Specialist
-    [],
-    // Gastroenterologist
-    [],
-    // Neurologist
-    [],
-    // Gynecologist
-    [],
-    // Dermatologist
-    [],
-    // Pediatrician
-    [],
-    // Urologist
-    [],
-    // Oncologist
-    [],
-  ];
+  double get _currentOffset =>
+      _scrollController.hasClients ? _scrollController.offset : 0.0;
 
   @override
   Widget build(BuildContext context) {
@@ -150,73 +49,99 @@ class _DoctorPrescriptionPageState extends State<DoctorPrescriptionPage> {
         "title": "General\nPhysician",
         "color": Color.fromRGBO(0, 99, 247, 0.2),
         "icon": "general.svg",
+        'spec': 'General Physician',
       },
       {
         "title": "Cardiologist",
         "color": Color.fromRGBO(229, 32, 48, 0.2),
         "icon": "cardio.svg",
+        'spec': 'Cardiology',
       },
       {
         "title": "Physio\nTherapist",
         "color": Color.fromRGBO(108, 25, 255, 0.2),
         "icon": "physio.svg",
+        "spec": "Physiotherapy",
       },
       {
         "title": "Orthopedic",
         "color": Color.fromRGBO(253, 204, 78, 0.2),
         "icon": "ortho.svg",
+        "spec": "Orthopedics",
       },
       {
         "title": "Dentist",
         "color": Color.fromRGBO(232, 70, 136, 0.2),
         "icon": "dentist.svg",
+        "spec": "other",
       },
       {
         "title": "Ophthalmo\nLogist",
         "color": Color.fromRGBO(165, 42, 42, 0.2),
         "icon": "eye.svg",
+        "spec": "Ophthalmology",
       },
       {
         "title": "ENT \nSpecialist",
         "color": Color.fromRGBO(0, 110, 0, 0.2),
         "icon": "ent.svg",
+        "spec": "ENT",
       },
       {
         "title": "Gastro\nEnterologist",
         "color": Color(0xffD9D9D9),
         "icon": "gasto.svg",
+        "spec": "Gastroenterology",
       },
       {
         "title": "Neurologist",
         "color": Color.fromRGBO(137, 100, 232, 0.2),
         "icon": "nero.svg",
+        "spec": "Neurology",
       },
       {
         "title": "Gynecologist",
         "color": Color.fromRGBO(255, 0, 0, 0.2),
         "icon": "gynecolo.svg",
+        "spec": "Gynecology",
       },
       {
         "title": "Dermato\nLogist",
         "color": Color.fromRGBO(198, 134, 66, 0.2),
         "icon": "dermato.svg",
+        "spec": "Dermatology",
       },
       {
         "title": "Pediatrician",
         "color": Color.fromRGBO(94, 172, 255, 0.2),
         "icon": "pida.svg",
+        "spec": "Pediatrics",
       },
       {
         "title": "Urologist",
         "color": Color.fromRGBO(255, 191, 0, 0.2),
         "icon": "uro.svg",
+        "spec": "Urology",
       },
       {
         "title": "Oncologist",
         "color": Color.fromRGBO(137, 100, 232, 0.2),
         "icon": "oncolor.svg",
+        "spec": "Oncology",
       },
     ];
+    List<dynamic> getFilteredPrescription(
+      List<PrescriptionModel> allPrescriptions,
+    ) {
+      String selectedTile = categories[_selectedIndex]["spec"];
+      return allPrescriptions.where((prescription) {
+        String spec = prescription.specialization;
+        log(
+          "Checking specialization: $spec against selected tile: $selectedTile",
+        );
+        return spec == selectedTile;
+      }).toList();
+    }
 
     return SizedBox(
       height: size.height,
@@ -224,142 +149,134 @@ class _DoctorPrescriptionPageState extends State<DoctorPrescriptionPage> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // LEFT SIDEBAR
           SizedBox(
-            width: 95.w,
+            width: 110.w,
             height: size.height,
             child: Stack(
               children: [
-                SingleChildScrollView(
+                ListView.builder(
                   controller: _scrollController,
                   physics: const BouncingScrollPhysics(),
-                  child: Column(
-                    children: List.generate(categories.length, (index) {
-                      return GestureDetector(
-                        behavior: HitTestBehavior.opaque,
-                        onTap: () {
-                          setState(() {
-                            _selectedIndex = index;
-                          });
-                        },
-                        child: SizedBox(
-                          height: itemHeight,
-                          width: 130.w,
-                          child: AnimatedScale(
-                            duration: const Duration(milliseconds: 300),
-                            curve: Curves.easeInOut,
-                            scale: _selectedIndex == index ? 1.05 : 1.0,
-                            child: RecordOptionContaineTile(
-                              containerColor: categories[index]["color"],
-                              imagePath: imagePath + categories[index]["icon"],
-                              title: categories[index]["title"],
-                              fontSize: 12,
-                              fontWeight: _selectedIndex == index
-                                  ? FontWeight.w700
-                                  : FontWeight.w600,
-                              textColor: Colors.black,
-                              scale: _selectedIndex == index ? 1.2 : 1.0,
-                            ),
+                  itemCount: categories.length,
+                  itemBuilder: (context, index) {
+                    return GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTap: () {
+                        setState(() {
+                          _selectedIndex = index;
+                        });
+                      },
+                      child: SizedBox(
+                        height: itemHeight,
+                        width: 130.w,
+                        child: AnimatedScale(
+                          duration: const Duration(milliseconds: 300),
+                          curve: Curves.easeInOut,
+                          scale: _selectedIndex == index ? 1.05 : 1.0,
+                          child: RecordOptionContaineTile(
+                            containerColor: categories[index]["color"],
+                            imagePath: imagePath + categories[index]["icon"],
+                            title: categories[index]["title"],
+                            fontSize: 12,
+                            fontWeight: _selectedIndex == index
+                                ? FontWeight.w700
+                                : FontWeight.w600,
+                            textColor: Colors.black,
+                            scale: _selectedIndex == index ? 1.2 : 1.0,
                           ),
                         ),
-                      );
-                    }),
-                  ),
-                ),
-                // Indicator
-                AnimatedPositioned(
-                  duration: const Duration(milliseconds: 300),
-                  curve: Curves.easeInOut,
-                  right: 0,
-                  top:
-                      (_selectedIndex * itemHeight) -
-                      (_scrollController.hasClients
-                          ? _scrollController.offset
-                          : 0.0) +
-                      (itemHeight * 0.125),
-                  child: Container(
-                    width: 6.w,
-                    height: itemHeight * 0.75,
-                    decoration: BoxDecoration(
-                      color: const Color(0xff0063F7),
-                      borderRadius: BorderRadius.horizontal(
-                        left: Radius.circular(20.r),
                       ),
-                    ),
-                  ),
+                    );
+                  },
+                ),
+                //
+                AnimatedBuilder(
+                  animation: _scrollController,
+                  builder: (context, child) {
+                    return Positioned(
+                      right: 0,
+                      top:
+                          (_selectedIndex * itemHeight) -
+                          _currentOffset +
+                          (itemHeight * 0.125),
+                      child: Container(
+                        width: 8.w,
+                        height: itemHeight * 0.75,
+                        decoration: BoxDecoration(
+                          color: const Color(0xff0063F7),
+                          borderRadius: BorderRadius.horizontal(
+                            left: Radius.circular(20.r),
+                          ),
+                        ),
+                      ),
+                    );
+                  },
                 ),
               ],
             ),
           ),
 
-          // RIGHT CONTENT
           Expanded(
-            child: SizedBox(
-              height: size.height,
-              child: prescriptionsByCategory[_selectedIndex].isEmpty
-                  ? Center(
+            child: BlocBuilder<PatientBloc, PatientBlocState>(
+              builder: (context, state) {
+                if (state is Loading) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (state is AllPrescriptionFetched) {
+                  final filerList = getFilteredPrescription(
+                    state.prescriptionList,
+                  );
+                  if (filerList.isEmpty) {
+                    return Center(
                       child: Text(
-                        'No prescriptions found',
+                        'No ${categories[_selectedIndex]["title"].replaceAll('\n', ' ')} prescriptions found',
+                        textAlign: TextAlign.center,
                         style: TextStyle(fontSize: 14.sp, color: Colors.grey),
                       ),
-                    )
-                  : ListView.builder(
-                      padding: EdgeInsets.all(12.w),
-                      itemCount: prescriptionsByCategory[_selectedIndex].length,
+                    );
+                  } else {
+                    return ListView.builder(
+                      physics: const ClampingScrollPhysics(),
+
+                      itemCount: filerList.length,
                       itemBuilder: (context, index) {
-                        final prescription =
-                            prescriptionsByCategory[_selectedIndex][index];
+                        final prescription = filerList[index];
                         return Padding(
                           padding: EdgeInsets.only(bottom: 12.h),
-                          child: BlocBuilder<PatientBloc, PatientBlocState>(
-                            builder: (context, state) {
-                              if (state is AllPrescriptionFetched) {
-                                if (state.prescriptionList.isNotEmpty) {
-                                  return PrescriptionTile(
-                                    doctorName: state
-                                        .prescriptionList[index]
-                                        .doctorName,
-                                    specialty: state
-                                        .prescriptionList[index]
-                                        .specialization,
-                                    condition:
-                                        state.prescriptionList[index].diagnosis,
-                                    date: state
-                                        .prescriptionList[index]
-                                        .prescriptionDate,
-                                    clinic: state
-                                        .prescriptionList[index]
-                                        .hospitalName,
-                                    status:
-                                        state.prescriptionList[index].status,
-                                    doctorImage: '',
-                                    onDownload: () => print('Download tapped'),
-                                    onViewDetails: () =>
-                                        print('View Details tapped'),
-                                  );
-                                } else {
-                                  return Center(
-                                    child: Text(
-                                      'No prescriptions found',
-                                      style: TextStyle(
-                                        fontSize: 14.sp,
-                                        color: Colors.grey,
-                                      ),
-                                    ),
-                                  );
-                                }
-                              }
-                              if (state is Loading) {
-                                return Center(
-                                  child: CircularProgressIndicator(),
-                                );
-                              }
-                              return Container();
+                          child: PrescriptionTile(
+                            doctorName: prescription.doctorName,
+                            specialty: prescription.specialization,
+                            condition: prescription.diagnosis,
+                            date: prescription.prescriptionDate,
+                            clinic: prescription.hospitalName,
+                            status: prescription.status,
+                            doctorImage:
+                                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjduXBTnBVs-4N-tCmYSl1Z8O95GAlK_ZnUg&s",
+                            onDownload: () => print('Download tapped'),
+                            onViewDetails: () {
+                              context.read<PatientBloc>().add(
+                                GetPrescriptionDetail(
+                                  prescriptionId: prescription.prescriptionId,
+                                ),
+                              );
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      DetailPrescriptionPage(),
+                                ),
+                              );
                             },
                           ),
                         );
                       },
-                    ),
+                    );
+                  }
+                } else {
+                  return const Center(
+                    child: Text("Select a category to view records"),
+                  );
+                }
+              },
             ),
           ),
         ],

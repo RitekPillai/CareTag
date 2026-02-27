@@ -11,8 +11,8 @@ import 'package:caretag/Modules/card_registration/data/model/registrationrespons
 import 'package:caretag/Modules/card_registration/data/model/reordRequestModel.dart';
 import 'package:caretag/Modules/card_registration/data/model/shippingRegistration.dart';
 import 'package:caretag/Modules/card_registration/model_view/service/cryptographyservice.dart';
-import 'package:caretag/Modules/home/model/permissionRequestModel.dart';
 import 'package:caretag/Modules/records_module/model/prescriptionModel.dart';
+import 'package:caretag/Modules/records_module/model/prescription_detail_model.dart';
 import 'package:caretag/utils/hiveService.dart';
 import 'package:caretag/utils/storageService.dart';
 import 'package:flutter/material.dart';
@@ -227,7 +227,7 @@ class PaitientRepo {
   Future<List<PrescriptionModel>> getAllPrescription() async {
     try {
       final respons = await authenticationService.get(
-        Uri.parse("$baseUrl/prescription"),
+        Uri.parse("$baseUrl/prescription/list"),
       );
 
       if (respons.statusCode == 200) {
@@ -235,6 +235,25 @@ class PaitientRepo {
         return data.map((e) => PrescriptionModel.fromJson(e)).toList();
       } else {
         throw Exception("Failed to fetch prescriptions");
+      }
+    } catch (e) {
+      log("Error in getAllPrescription: $e");
+      rethrow;
+    }
+  }
+
+  Future<PrescriptionDetail> getPrescriptionDetail(
+    String prescriptionId,
+  ) async {
+    try {
+      final response = await authenticationService.post(
+        Uri.parse("$baseUrl/prescription"),
+        body: prescriptionId,
+      );
+      if (response.statusCode == 200) {
+        return PrescriptionDetail.fromJson(jsonDecode(response.body));
+      } else {
+        throw Exception("Failed to fetch prescription details");
       }
     } catch (e) {
       log("Error in getAllPrescription: $e");

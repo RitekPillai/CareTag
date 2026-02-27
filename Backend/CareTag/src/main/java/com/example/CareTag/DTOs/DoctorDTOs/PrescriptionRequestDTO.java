@@ -27,6 +27,7 @@ public class PrescriptionRequestDTO {
     private  String paitentName;
     private  String doctorName;
     private  String speclization;
+    private String hospitalName;
     private  String clinicName;
 
 

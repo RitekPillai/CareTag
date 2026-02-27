@@ -23,6 +23,12 @@ class GetPatientRecord extends PatientBlocEvent {
   const GetPatientRecord();
 }
 
+class GetPrescriptionDetail extends PatientBlocEvent {
+  final String prescriptionId;
+
+  const GetPrescriptionDetail({required this.prescriptionId});
+}
+
 class GetAllPrescription extends PatientBlocEvent {}
 
 class ReportRequest extends PatientBlocEvent {
