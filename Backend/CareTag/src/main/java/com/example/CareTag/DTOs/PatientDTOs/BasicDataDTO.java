@@ -15,4 +15,16 @@ public class BasicDataDTO {
     private String address;
 
     private String careTagId;
+
+    private String gender;
+
+    private String height;
+
+    private String weight;
+
+    private  String allergies;
+
+    private String image;
+
+
 }

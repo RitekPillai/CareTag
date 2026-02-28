@@ -1,14 +1,18 @@
-import 'package:caretag/Modules/card_registration/data/model/profileModel.dart';
-import 'package:caretag/Modules/home/modelview/homePageService.dart';
-import 'package:caretag/Modules/home/view.dart/sectionPages/careTagPage.dart';
-import 'package:caretag/constants/app_color.dart';
-import 'package:caretag/utils/hiveService.dart';
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'package:caretag/Modules/card_registration/data/model/profileModel.dart';
+import 'package:caretag/Modules/card_registration/model_view/bloc/patient_bloc_bloc.dart';
+import 'package:caretag/Modules/home/modelview/homePageService.dart';
+import 'package:caretag/Modules/home/view.dart/sectionPages/careTagPage.dart';
+import 'package:caretag/constants/app_color.dart';
+
 class CaretagHomepage extends StatefulWidget {
-  const CaretagHomepage({super.key});
+  final Profilemodel profilemodel;
+  const CaretagHomepage({super.key, required this.profilemodel});
 
   @override
   State<CaretagHomepage> createState() => _CaretagHomepageState();
@@ -19,13 +23,13 @@ List<Color> gradientColor = [Color(0xff3B81F6), Colors.white];
 
 class _CaretagHomepageState extends State<CaretagHomepage> {
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    Profilemodel? profileData = Hiveservice().getProfileData();
-    String userName = "";
-    String bloodGroup = "";
-    if (profileData != null) {
-      userName = profileData.fullName;
-    }
+    Profilemodel profilemodel = widget.profilemodel;
     return Scaffold(
       backgroundColor: Colors.white,
       body: Stack(
@@ -53,7 +57,7 @@ class _CaretagHomepageState extends State<CaretagHomepage> {
                         CircleAvatar(
                           maxRadius: 25,
                           backgroundImage: NetworkImage(
-                            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjduXBTnBVs-4N-tCmYSl1Z8O95GAlK_ZnUg&s",
+                            widget.profilemodel.imageUrl,
                           ),
                         ),
                         Padding(
@@ -72,7 +76,7 @@ class _CaretagHomepageState extends State<CaretagHomepage> {
                                 width: 200,
                                 child: Text(
                                   overflow: TextOverflow.ellipsis,
-                                  userName,
+                                  profilemodel.fullName,
                                   style: GoogleFonts.poppins(
                                     fontWeight: FontWeight.w600,
                                     fontSize: 18,
@@ -147,7 +151,13 @@ class _CaretagHomepageState extends State<CaretagHomepage> {
                   ),
                 ),
               ),
-              if (selectedTab == "Home") Expanded(child: Caretagpage()),
+              if (selectedTab == "Home")
+                Expanded(
+                  child: Caretagpage(
+                    name: profilemodel.fullName,
+                    bloodType: profilemodel.bloodGroup,
+                  ),
+                ),
             ],
           ),
         ],

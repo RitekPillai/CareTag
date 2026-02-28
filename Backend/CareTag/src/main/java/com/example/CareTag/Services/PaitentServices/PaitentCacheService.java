@@ -1,23 +1,32 @@
 package com.example.CareTag.Services.PaitentServices;
 
+import com.example.CareTag.Models.Paitent.Patient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
+
 @Service
 public class PaitentCacheService {
+
     @Autowired
-    @Qualifier("paitentTemplate")
-    private RedisTemplate<String,String> paitentRedisTemplate;
+    @Qualifier("patientProfile")
+    private RedisTemplate<Long, Patient> patientProfiletRedisTemplate;
 
-    public static final String KEY = "ID:";
 
-    public void saveCareTagId(String id,String careTagId){
-        paitentRedisTemplate.opsForValue().set(KEY+id,careTagId);
+
+
+
+    public void savePatientProfile(Patient patient){
+        patientProfiletRedisTemplate.opsForValue().set(patient.getId(),patient, Duration.ofHours(24));
     }
 
-    public String getCareTagId(String id){
-        return paitentRedisTemplate.opsForValue().get(KEY+id);
+    public void deleteProfileCache(Long id) {
+        patientProfiletRedisTemplate.delete(id);
+    }
+    public Patient getPatientProfile(Long id){
+     return   patientProfiletRedisTemplate.opsForValue().get(id);
     }
 }

@@ -1,19 +1,28 @@
-import 'package:caretag/Modules/card_registration/data/model/profileModel.dart';
-import 'package:caretag/Modules/home/widgets/profilePageHelpers.dart';
+// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:caretag/Modules/card_registration/model_view/bloc/patient_bloc_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
+import 'package:caretag/Modules/card_registration/data/model/profileModel.dart';
+import 'package:caretag/Modules/home/widgets/profilePageHelpers.dart';
+
 class Profilepage extends StatelessWidget {
-  const Profilepage({super.key});
+  Profilemodel profilemodel;
+  Profilepage({super.key, required this.profilemodel});
 
   @override
   Widget build(BuildContext context) {
-    Profilemodel? profilemodel = Hive.box<Profilemodel>(
-      'profile_records',
-    ).get('profile_record');
-
+    String username = profilemodel.fullName;
+    BlocListener(
+      listener: (context, state) {
+        if (state is ProfileRecordFetched) {
+          username = state.profilemodel.fullName;
+        }
+      },
+    );
     return Scaffold(
       backgroundColor: Colors.white,
       body: Column(
@@ -72,15 +81,13 @@ class Profilepage extends StatelessWidget {
                         child: CircleAvatar(
                           maxRadius: 25.r,
 
-                          backgroundImage: NetworkImage(
-                            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjduXBTnBVs-4N-tCmYSl1Z8O95GAlK_ZnUg&s",
-                          ),
+                          backgroundImage: NetworkImage(profilemodel.imageUrl),
                         ),
                       ),
                       Padding(
                         padding: const EdgeInsets.only(top: 8.0),
                         child: Text(
-                          profilemodel!.fullName,
+                          username,
                           style: GoogleFonts.poppins(
                             fontWeight: FontWeight.w600,
                             fontSize: 18,

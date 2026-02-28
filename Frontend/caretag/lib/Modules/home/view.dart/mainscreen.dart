@@ -1,3 +1,4 @@
+import 'package:caretag/Modules/card_registration/data/model/profileModel.dart';
 import 'package:caretag/Modules/home/view.dart/caretag_homepage.dart';
 import 'package:caretag/Modules/home/view.dart/profilepage.dart';
 import 'package:caretag/Modules/news/view/newsPage.dart';
@@ -6,7 +7,8 @@ import 'package:caretag/widgets/custom_navigatoion_bar.dart';
 import 'package:flutter/material.dart';
 
 class Mainscreen extends StatefulWidget {
-  const Mainscreen({super.key});
+  Profilemodel profilemodel;
+  Mainscreen({super.key, required this.profilemodel});
 
   @override
   State<Mainscreen> createState() => _MainscreenState();
@@ -44,11 +46,11 @@ class _MainscreenState extends State<Mainscreen> {
         onPageChanged: _onPageChanged,
         physics: const NeverScrollableScrollPhysics(),
         children: [
-          const CaretagHomepage(),
+          CaretagHomepage(profilemodel: widget.profilemodel),
           const Records(),
           const Scaffold(body: Center(child: Text("Care"))),
           const Newspage(),
-          const Profilepage(),
+          Profilepage(profilemodel: widget.profilemodel),
         ],
       ),
       bottomNavigationBar: CustomNavigatoionBar(

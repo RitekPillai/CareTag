@@ -33,7 +33,7 @@ public class PaitentController {
     }
 
     @GetMapping("/profile")
-    public ResponseEntity<BasicDataDTO>  getProfileData(){
+    public ResponseEntity<ProfileDataResponseDTO>  getProfileData(){
         return  paitentService.getProfileData();
     }
     @PostMapping("/record")
@@ -81,22 +81,12 @@ public class PaitentController {
     @PostMapping(value = "/update", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public void profileEdit(@ModelAttribute ProfileEditPaitentDTO dto) throws Exception {
 
+        paitentService.updateProfilePage(dto);
 
-        if (dto.getImage() != null && !dto.getImage().isEmpty()) {
-            // Here is where the "String Path" from Flutter turns into real bytes
-            byte[] imageBytes = dto.getImage().getBytes();
-            String contentType = dto.getImage().getContentType(); // e.g. "image/jpeg"
 
-            log.info("Received image: {}, Size: {}, contenttyp:{}",
-                    dto.getImage().getOriginalFilename(),
-                    dto.getImage().getSize(),
-            dto.getImage().getContentType());
-            ;
 
-            // TODO: Save the bytes to your file system or S3
-        }
 
-        log.info("done");
+
 
     }
 

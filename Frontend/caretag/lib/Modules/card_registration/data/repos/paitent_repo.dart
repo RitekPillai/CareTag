@@ -82,7 +82,6 @@ class PaitientRepo {
         Profilemodel profilemodel = Profilemodel.formJson(
           jsonDecode(response.body),
         );
-        await hiveservice.saveProfileData(profilemodel);
         return profilemodel;
       } else {
         throw AuthException(
@@ -270,13 +269,13 @@ class PaitientRepo {
 
     var request = http.MultipartRequest("POST", uri);
 
-    request.fields['fullname'] = model.fullName ?? "";
-    request.fields['dabo'] = model.dob ?? "";
+    request.fields['fullName'] = model.fullName ?? "";
+    request.fields['dob'] = model.dob ?? "";
     request.fields['gender'] = model.gender ?? "";
     request.fields['bloodGroup'] = model.bloodGroup ?? "";
     request.fields['height'] = model.height ?? "";
     request.fields['weight'] = model.weight ?? "";
-    request.fields['alregies'] = model.allergies ?? "";
+    request.fields['allergies'] = model.allergies ?? "";
 
     if (model.imagePath != null && model.imagePath!.isNotEmpty) {
       request.files.add(
@@ -290,7 +289,7 @@ class PaitientRepo {
       if (streamedResponse.statusCode == 200) {
         log("Profile updated successfully on server!");
       } else {
-        log("Upload failed with status: ${streamedResponse.statusCode}");
+        log("Upload failed with status: ${streamedResponse.statusCode} ");
       }
     } catch (e) {
       log("Error sending multipart request: $e");

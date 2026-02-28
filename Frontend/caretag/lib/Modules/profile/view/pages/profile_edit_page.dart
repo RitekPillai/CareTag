@@ -1,6 +1,8 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:caretag/Modules/card_registration/model_view/bloc/patient_bloc_bloc.dart';
+import 'package:caretag/Modules/home/view.dart/homePage.dart';
 import 'package:caretag/Modules/profile/model/profile_edit_model.dart';
 import 'package:caretag/Modules/profile/view/widgets/personal_detail_container_tile.dart';
 import 'package:caretag/constants/app_color.dart';
@@ -19,8 +21,9 @@ class ProfileEditPage extends StatefulWidget {
 }
 
 class _ProfileEditPageState extends State<ProfileEditPage> {
-  String selectedGenderValue = "Male";
-  String selectedBloodGroup = "O+";
+  bool _isUpdating = false;
+  String? selectedGenderValue;
+  String? selectedBloodGroup;
   final List<String> bloodGroupOptions = [
     "O+",
     "O-",
@@ -61,311 +64,348 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
     height.dispose();
     weight.dispose();
     allergies.dispose();
+
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     const Color blueTextColor = Color(0xff137FEC);
-    return Scaffold(
-      backgroundColor: Colors.white,
+    return BlocListener<PatientBloc, PatientBlocState>(
+      listener: (context, state) {
+        if (state is ProfileUpdateSuccess) {
+          log("Update successful. Triggering fresh data fetch...");
+          context.read<PatientBloc>().add(GetProfileData());
+        }
 
-      appBar: AppBar(
-        leading: GestureDetector(
-          onTap: () => Navigator.pop(context),
-          child: Icon(Icons.arrow_back),
-        ),
+        if (state is ProfileRecordFetched && _isUpdating) {
+          log("New data arrived. Navigating to Homepage.");
+          _isUpdating = false;
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const Homepage()),
+          );
+        }
+
+        if (state is Failed && _isUpdating) {
+          _isUpdating = false;
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Update failed. Please try again.")),
+          );
+        }
+      },
+      child: Scaffold(
         backgroundColor: Colors.white,
-        shadowColor: AppColor.getShadowColor(0.05),
-        centerTitle: true,
 
-        title: Text(
-          "Edit Profile",
-          style: GoogleFonts.inter(
-            fontWeight: FontWeight.w700,
-            fontSize: 18.sp,
-            color: Colors.black,
+        appBar: AppBar(
+          leading: GestureDetector(
+            onTap: () => Navigator.pop(context),
+            child: Icon(Icons.arrow_back),
+          ),
+          backgroundColor: Colors.white,
+          shadowColor: AppColor.getShadowColor(0.05),
+          centerTitle: true,
+
+          title: Text(
+            "Edit Profile",
+            style: GoogleFonts.inter(
+              fontWeight: FontWeight.w700,
+              fontSize: 18.sp,
+              color: Colors.black,
+            ),
           ),
         ),
-      ),
-      body: SingleChildScrollView(
-        scrollDirection: Axis.vertical,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Center(
-              child: Container(
-                width: 128.w,
-                height: 128.h,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: AppColor.lightBlueSmallContainerColor,
-                  image: _profileImage != null
-                      ? DecorationImage(
-                          image: FileImage(_profileImage!),
-                          fit: BoxFit.cover,
+        body: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Center(
+                child: Container(
+                  width: 128.w,
+                  height: 128.h,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: AppColor.lightBlueSmallContainerColor,
+                    image: _profileImage != null
+                        ? DecorationImage(
+                            image: FileImage(_profileImage!),
+                            fit: BoxFit.cover,
+                          )
+                        : null,
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColor.getShadowColor(0.1),
+                        blurRadius: 4,
+                        spreadRadius: -2,
+                        offset: const Offset(0, 2),
+                      ),
+                      BoxShadow(
+                        offset: Offset(0, 4),
+                        blurRadius: 6,
+                        spreadRadius: -1,
+                        color: AppColor.getShadowColor(0.1),
+                      ),
+                    ],
+                  ),
+                  child: _profileImage == null
+                      ? Icon(
+                          Icons.person,
+                          size: 64.sp,
+                          color: Color(0xff137FEC),
                         )
                       : null,
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppColor.getShadowColor(0.1),
-                      blurRadius: 4,
-                      spreadRadius: -2,
-                      offset: const Offset(0, 2),
+                ),
+              ),
+              SizedBox(height: 12.h),
+
+              Center(
+                child: TextButton(
+                  onPressed: () {
+                    _pickImage();
+                  },
+                  child: Text(
+                    textAlign: TextAlign.center,
+                    "Change Profile Photo",
+                    style: GoogleFonts.inter(
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w500,
+                      color: blueTextColor,
                     ),
-                    BoxShadow(
-                      offset: Offset(0, 4),
-                      blurRadius: 6,
-                      spreadRadius: -1,
-                      color: AppColor.getShadowColor(0.1),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.only(left: 20.0.w, bottom: 12.h),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 50.w,
+                      height: 50.h,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: AppColor.lightBlueSmallContainerColor,
+                      ),
+                      child: Center(
+                        child: Icon(
+                          Icons.person_4_outlined,
+                          color: Colors.blue,
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 8.w),
+                    Text(
+                      "Personal Details",
+                      style: GoogleFonts.inter(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 18.sp,
+                        color: AppColor.darkishBlueTextColor,
+                      ),
                     ),
                   ],
                 ),
-                child: _profileImage == null
-                    ? Icon(Icons.person, size: 64.sp, color: Color(0xff137FEC))
-                    : null,
               ),
-            ),
-            SizedBox(height: 12.h),
+              Container(
+                width: 335.w,
+                height: 230.h,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16.r),
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      offset: Offset(0, 1),
+                      blurRadius: 2,
+                      spreadRadius: 0,
+                      color: AppColor.getShadowColor(0.05),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  children: [
+                    CustomProfileEditTile(
+                      TextInputType.text,
+                      header: 'Full Name',
+                      hintText: 'Ritek Pillai',
+                      controller: name,
+                    ),
+                    SizedBox(height: 16.w),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          width: 151.w,
+                          child: CustomProfileEditTile(
+                            TextInputType.text,
+                            header: 'Date of Birth',
+                            hintText: '01/01/1990',
+                            controller: dob,
+                          ),
+                        ),
+                        SizedBox(width: 12.w),
+                        customDropDownButton(
+                          selectedGenderValue,
+                          genderOptions,
+                          48.h,
+                          151.w,
 
-            Center(
-              child: TextButton(
-                onPressed: () {
-                  _pickImage();
-                },
-                child: Text(
-                  textAlign: TextAlign.center,
-                  "Change Profile Photo",
-                  style: GoogleFonts.inter(
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.w500,
-                    color: blueTextColor,
-                  ),
+                          "Gender",
+                          "Select Gender",
+                          (value) {
+                            setState(() {
+                              selectedGenderValue = value!;
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 10.h),
+                  ],
                 ),
               ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(left: 20.0.w, bottom: 12.h),
-              child: Row(
-                children: [
-                  Container(
-                    width: 50.w,
-                    height: 50.h,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: AppColor.lightBlueSmallContainerColor,
-                    ),
-                    child: Center(
-                      child: Icon(Icons.person_4_outlined, color: Colors.blue),
-                    ),
-                  ),
-                  SizedBox(width: 8.w),
-                  Text(
-                    "Personal Details",
-                    style: GoogleFonts.inter(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 18.sp,
-                      color: AppColor.darkishBlueTextColor,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              width: 335.w,
-              height: 230.h,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(16.r),
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    offset: Offset(0, 1),
-                    blurRadius: 2,
-                    spreadRadius: 0,
-                    color: AppColor.getShadowColor(0.05),
-                  ),
-                ],
-              ),
-              child: Column(
-                children: [
-                  CustomProfileEditTile(
-                    TextInputType.text,
-                    header: 'Full Name',
-                    hintText: 'Ritek Pillai',
-                    controller: name,
-                  ),
-                  SizedBox(height: 16.w),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SizedBox(
-                        width: 151.w,
-                        child: CustomProfileEditTile(
-                          TextInputType.text,
-                          header: 'Date of Birth',
-                          hintText: '01/01/1990',
-                          controller: dob,
+              SizedBox(height: 24.h),
+              Padding(
+                padding: EdgeInsets.only(left: 20.0.w, bottom: 12.h),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 50.w,
+                      height: 50.h,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: AppColor.lightBlueSmallContainerColor,
+                      ),
+                      child: Center(
+                        child: Icon(
+                          Icons.local_hospital_outlined,
+                          color: Colors.blue,
                         ),
                       ),
-                      SizedBox(width: 12.w),
-                      customDropDownButton(
-                        selectedGenderValue,
-                        genderOptions,
-                        48.h,
-                        151.w,
-                        "Gender",
-                        (value) {
-                          setState(() {
-                            selectedGenderValue = value!;
-                          });
-                        },
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 10.h),
-                ],
-              ),
-            ),
-            SizedBox(height: 24.h),
-            Padding(
-              padding: EdgeInsets.only(left: 20.0.w, bottom: 12.h),
-              child: Row(
-                children: [
-                  Container(
-                    width: 50.w,
-                    height: 50.h,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: AppColor.lightBlueSmallContainerColor,
                     ),
-                    child: Center(
-                      child: Icon(
-                        Icons.local_hospital_outlined,
-                        color: Colors.blue,
+                    SizedBox(width: 8.w),
+                    Text(
+                      "Medical Details",
+                      style: GoogleFonts.inter(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 18.sp,
+                        color: AppColor.darkishBlueTextColor,
                       ),
                     ),
-                  ),
-                  SizedBox(width: 8.w),
-                  Text(
-                    "Medical Details",
-                    style: GoogleFonts.inter(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 18.sp,
-                      color: AppColor.darkishBlueTextColor,
+                  ],
+                ),
+              ),
+              Container(
+                width: 335.w,
+                height: 320.h,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16.r),
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      offset: Offset(0, 1),
+                      blurRadius: 2,
+                      spreadRadius: 0,
+                      color: AppColor.getShadowColor(0.05),
                     ),
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              width: 335.w,
-              height: 320.h,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(16.r),
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    offset: Offset(0, 1),
-                    blurRadius: 2,
-                    spreadRadius: 0,
-                    color: AppColor.getShadowColor(0.05),
-                  ),
-                ],
-              ),
-              child: Column(
-                children: [
-                  SizedBox(height: 8.h),
-                  customDropDownButton(
-                    selectedBloodGroup,
-                    bloodGroupOptions,
-                    48.h,
-                    300.w,
-                    "Blood Group",
-                    (value) {
-                      setState(() {
-                        selectedBloodGroup = value!;
-                      });
-                    },
-                  ),
-                  SizedBox(height: 15.5.h),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      SizedBox(
-                        width: 151.w,
-                        child: CustomProfileEditTile(
-                          TextInputType.number,
-                          header: "Height (cm)",
-                          hintText: "182",
-                          controller: height,
+                  ],
+                ),
+                child: Column(
+                  children: [
+                    SizedBox(height: 8.h),
+                    customDropDownButton(
+                      selectedBloodGroup,
+                      bloodGroupOptions,
+                      48.h,
+                      300.w,
+                      "Blood Group",
+                      "Select Blood Group",
+                      (value) {
+                        setState(() {
+                          selectedBloodGroup = value!;
+                        });
+                      },
+                    ),
+                    SizedBox(height: 15.5.h),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        SizedBox(
+                          width: 151.w,
+                          child: CustomProfileEditTile(
+                            TextInputType.number,
+                            header: "Height (cm)",
+                            hintText: "182",
+                            controller: height,
+                          ),
                         ),
-                      ),
-                      SizedBox(
-                        width: 151.w,
-                        child: CustomProfileEditTile(
-                          TextInputType.number,
-                          header: "Weight (kg)",
-                          hintText: "75",
-                          controller: weight,
+                        SizedBox(
+                          width: 151.w,
+                          child: CustomProfileEditTile(
+                            TextInputType.number,
+                            header: "Weight (kg)",
+                            hintText: "75",
+                            controller: weight,
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 15.5.h),
-                  SizedBox(
-                    width: 318.w,
+                      ],
+                    ),
+                    SizedBox(height: 15.5.h),
+                    SizedBox(
+                      width: 318.w,
 
-                    child: CustomProfileEditTile(
-                      TextInputType.text,
-                      header: "Allergies",
-                      hintText: "Peanuts, Penicillin",
-                      controller: allergies,
+                      child: CustomProfileEditTile(
+                        TextInputType.text,
+                        header: "Allergies",
+                        hintText: "Peanuts, Penicillin",
+                        controller: allergies,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
 
-            SizedBox(height: 12.h),
-            customElevatedButton(
-              56.h,
-              318.w,
-              "Save Changes",
-              18.sp,
-              FontWeight.w700,
-              () {
-                context.read<PatientBloc>().add(
-                  ProfileEditEvent(
-                    profileEditModel: ProfileEditModel(
-                      fullName: name.text,
-                      dob: dob.text,
-                      gender: selectedGenderValue,
-                      bloodGroup: selectedBloodGroup,
-                      height: height.text,
-                      weight: weight.text,
-                      allergies: allergies.text,
-                      imagePath: _profileImage == null
-                          ? ""
-                          : _profileImage!.path,
+              SizedBox(height: 12.h),
+              customElevatedButton(
+                56.h,
+                318.w,
+                "Save Changes",
+                18.sp,
+                FontWeight.w700,
+                () {
+                  setState(() => _isUpdating = true);
+                  context.read<PatientBloc>().add(
+                    ProfileEditEvent(
+                      profileEditModel: ProfileEditModel(
+                        fullName: name.text,
+                        dob: dob.text,
+                        gender: selectedGenderValue,
+                        bloodGroup: selectedBloodGroup,
+                        height: height.text,
+                        weight: weight.text,
+                        allergies: allergies.text,
+                        imagePath: _profileImage == null
+                            ? ""
+                            : _profileImage!.path,
+                      ),
                     ),
-                  ),
-                );
-              },
-            ),
-            SizedBox(height: 12.h),
-          ],
+                  );
+                },
+              ),
+              SizedBox(height: 12.h),
+            ],
+          ),
         ),
       ),
     );
   }
 
   Widget customDropDownButton(
-    String selectedValue,
+    String? selectedValue,
     List<String> options,
     double height,
     double width,
     String text,
+    String hint,
     ValueChanged<String?> onChanged,
   ) {
     return Column(
@@ -391,6 +431,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
           ),
           child: DropdownButtonHideUnderline(
             child: DropdownButton<String>(
+              hint: Text(hint, style: TextStyle(fontSize: 14.sp)),
               value: selectedValue,
               isExpanded: true,
               dropdownColor: Colors.white,
@@ -404,6 +445,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
               items: options.map<DropdownMenuItem<String>>((String value) {
                 return DropdownMenuItem<String>(
                   value: value,
+
                   child: Text(
                     value,
                     style: GoogleFonts.inter(

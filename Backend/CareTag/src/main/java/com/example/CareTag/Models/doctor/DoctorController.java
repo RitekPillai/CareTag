@@ -1,4 +1,4 @@
-package com.example.CareTag.controllers;
+package com.example.CareTag.Models.doctor;
 
 import com.example.CareTag.DTOs.DoctorDTOs.PaitentSearchDTO;
 import com.example.CareTag.DTOs.DoctorDTOs.PrescriptionRequestDTO;

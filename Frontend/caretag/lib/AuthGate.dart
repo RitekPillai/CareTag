@@ -28,13 +28,6 @@ class Authgate extends StatelessWidget {
         if (state is NewUser) {
           return const Intropage1();
         } else if (state is Authenticated) {
-          final box = Hive.box<Profilemodel>('profile_records');
-          final profileData = box.get('profile_record');
-
-          if (profileData != null) {
-            return const Homepage();
-          }
-
           context.read<PatientBloc>().add(GetProfileData());
 
           return const Homepage();

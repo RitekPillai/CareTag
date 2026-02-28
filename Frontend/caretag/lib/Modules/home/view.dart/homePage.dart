@@ -1,18 +1,13 @@
 import 'package:caretag/Modules/card_registration/data/model/profileModel.dart';
 import 'package:caretag/Modules/card_registration/model_view/bloc/patient_bloc_bloc.dart';
-import 'package:caretag/Modules/home/model/permissionRequestModel.dart';
 import 'package:caretag/Modules/home/modelview/homePageService.dart';
-import 'package:caretag/Modules/home/view.dart/caretag_homepage.dart';
 import 'package:caretag/Modules/home/view.dart/mainscreen.dart';
-import 'package:caretag/Modules/home/widgets/careTagHome/dialogBox.dart';
-import 'package:caretag/utils/hiveService.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hive/hive.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 
 class Homepage extends StatelessWidget {
   const Homepage({super.key});
@@ -25,193 +20,182 @@ class Homepage extends StatelessWidget {
 
     Color circleColor = Color.fromRGBO(20, 50, 78, 0.2);
 
-    Widget getUserName() {
-      Hiveservice hiveservice = Hiveservice();
-      final profileData = hiveservice.getProfileData();
-      if (profileData != null) {
-        Profilemodel profilemodel = profileData;
-        return Text(
-          profilemodel.fullName,
-          style: GoogleFonts.poppins(fontWeight: FontWeight.w600, fontSize: 18),
-        );
-      } else {
-        return BlocBuilder<PatientBloc, PatientBlocState>(
-          builder: (context, state) {
-            if (state is Loading) {
-              return Text("...");
-            } else if (state is ProfileRecordFetched) {
-              return Text(
-                state.profilemodel.fullName,
-                style: GoogleFonts.poppins(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 18,
-                ),
-              );
-            }
-            return SizedBox.shrink();
-          },
-        );
-      }
-    }
-
     return Scaffold(
-      body: Column(
-        children: [
-          const SizedBox(height: 50),
-          Row(
-            children: [
-              Padding(
-                padding: EdgeInsetsGeometry.only(left: 10, right: 10),
-                child: SizedBox(
-                  height: 55,
-                  width: 55,
-                  child: CircleAvatar(
-                    backgroundImage: NetworkImage(
-                      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjduXBTnBVs-4N-tCmYSl1Z8O95GAlK_ZnUg&s",
-                    ),
-                  ),
-                ),
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "${Homepageservice().getTime()}👋",
-                    style: GoogleFonts.poppins(
-                      fontWeight: FontWeight.w300,
-                      fontSize: 14,
-                    ),
-                  ),
-                  ValueListenableBuilder(
-                    valueListenable: Hive.box<Profilemodel>(
-                      'profile_records',
-                    ).listenable(),
-                    builder: (context, value, child) {
-                      return getUserName();
-                    },
-                  ),
-                ],
-              ),
-              const SizedBox(width: 100),
-              Align(
-                alignment: Alignment.centerRight,
-                child: GestureDetector(
-                  onTap: () {
-                    // showDialogBox(
-                    //   Permissionrequestmodel(
-                    //     docName: "Ritek Abhishek",
-                    //     placeName: "Pillai Hospital",
-                    //     publicKey: "6767",
-                    //   ),
-                    // );
-                  },
-                  child: SvgPicture.asset("assets/images/home/bell.svg"),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 40),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              selectionTile(
-                "CareTag\nHome",
-                "Your Health Hub – Always Connected, Always Protected.",
-                "assets/images/home/careTag.png",
-                () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => Mainscreen()),
-                  );
-                },
-                blueGradient,
-              ),
-              const SizedBox(width: 20),
-              selectionTile(
-                "CareTag\nPharmacy",
-                "Medicines Delivered Fast,\nWhen You Need Them Most.",
-                "assets/images/home/pharmacy.png",
-                () {},
-                greenGradient,
-                20,
-              ),
-            ],
-          ),
-          const SizedBox(height: 20),
-          Container(
-            width: 355,
-            height: 174,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
+      body: BlocBuilder<PatientBloc, PatientBlocState>(
+        builder: (context, state) {
+          if (state is Loading) {
+            return Center(child: CircularProgressIndicator());
+          } else if (state is Failed) {
+            return Center(child: Text("Failed to load profile data"));
+          } else if (state is ProfileRecordFetched) {
+            Profilemodel profilemodel = state.profilemodel;
 
-              gradient: LinearGradient(
-                colors: orangeGradient,
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-              ),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
+            return Column(
               children: [
-                Stack(
-                  alignment: Alignment.centerRight,
+                const SizedBox(height: 50),
+                Row(
                   children: [
-                    Container(
-                      height: 300,
-                      width: 100,
-                      decoration: BoxDecoration(
-                        color: circleColor,
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.elliptical(200, 200),
-                          bottomLeft: Radius.elliptical(200, 200),
-                          bottomRight: Radius.circular(42),
-                          topRight: Radius.circular(42),
+                    Padding(
+                      padding: EdgeInsetsGeometry.only(left: 10, right: 10),
+                      child: SizedBox(
+                        height: 55,
+                        width: 55,
+                        child: CircleAvatar(
+                          backgroundImage: NetworkImage(profilemodel.imageUrl),
                         ),
                       ),
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const SizedBox(height: 29),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-
-                          children: [
-                            Text(
-                              textAlign: TextAlign.center,
-                              "CareTag\nMy Journey",
-                              style: GoogleFonts.poppins(
-                                fontWeight: FontWeight.w900,
-                                fontSize: 20,
-                                color: Colors.white,
-                              ),
-                            ),
-                            const SizedBox(height: 10),
-                            Text(
-                              textAlign: TextAlign.center,
-                              "Track, Improve, Transform –\nYour Fitness Companion.",
-                              style: GoogleFonts.poppins(
-                                fontWeight: FontWeight.w600,
-                                fontSize: 12,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ],
+                        Text(
+                          "${Homepageservice().getTime()}👋",
+                          style: GoogleFonts.poppins(
+                            fontWeight: FontWeight.w300,
+                            fontSize: 14,
+                          ),
                         ),
-                        Image.asset(
-                          "assets/images/home/gym.png",
-                          width: 160.w,
-                          height: 120.h,
-                          fit: BoxFit.fill,
+                        SizedBox(
+                          width: 170,
+                          child: Text(
+                            profilemodel.fullName,
+
+                            style: GoogleFonts.poppins(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 18,
+                            ),
+                          ),
                         ),
                       ],
                     ),
+                    const SizedBox(width: 100),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: GestureDetector(
+                        onTap: () {
+                          // showDialogBox(
+                          //   Permissionrequestmodel(
+                          //     docName: "Ritek Abhishek",
+                          //     placeName: "Pillai Hospital",
+                          //     publicKey: "6767",
+                          //   ),
+                          // );
+                        },
+                        child: SvgPicture.asset("assets/images/home/bell.svg"),
+                      ),
+                    ),
                   ],
                 ),
+                const SizedBox(height: 40),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    selectionTile(
+                      "CareTag\nHome",
+                      "Your Health Hub – Always Connected, Always Protected.",
+                      "assets/images/home/careTag.png",
+                      () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                Mainscreen(profilemodel: profilemodel),
+                          ),
+                        );
+                      },
+                      blueGradient,
+                    ),
+                    const SizedBox(width: 20),
+                    selectionTile(
+                      "CareTag\nPharmacy",
+                      "Medicines Delivered Fast,\nWhen You Need Them Most.",
+                      "assets/images/home/pharmacy.png",
+                      () {},
+                      greenGradient,
+                      20,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                Container(
+                  width: 355,
+                  height: 174,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+
+                    gradient: LinearGradient(
+                      colors: orangeGradient,
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Stack(
+                        alignment: Alignment.centerRight,
+                        children: [
+                          Container(
+                            height: 300,
+                            width: 100,
+                            decoration: BoxDecoration(
+                              color: circleColor,
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.elliptical(200, 200),
+                                bottomLeft: Radius.elliptical(200, 200),
+                                bottomRight: Radius.circular(42),
+                                topRight: Radius.circular(42),
+                              ),
+                            ),
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const SizedBox(height: 29),
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+
+                                children: [
+                                  Text(
+                                    textAlign: TextAlign.center,
+                                    "CareTag\nMy Journey",
+                                    style: GoogleFonts.poppins(
+                                      fontWeight: FontWeight.w900,
+                                      fontSize: 20,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 10),
+                                  Text(
+                                    textAlign: TextAlign.center,
+                                    "Track, Improve, Transform –\nYour Fitness Companion.",
+                                    style: GoogleFonts.poppins(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 12,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Image.asset(
+                                "assets/images/home/gym.png",
+                                width: 160.w,
+                                height: 120.h,
+                                fit: BoxFit.fill,
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
               ],
-            ),
-          ),
-        ],
+            );
+          } else {
+            return Container();
+          }
+        },
       ),
     );
   }

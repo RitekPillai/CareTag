@@ -203,6 +203,7 @@ class PatientBloc extends Bloc<PatientBlocEvent, PatientBlocState> {
     emit(Loading());
     try {
       _paitentRepo.profileEdit(event.profileEditModel);
+      emit(ProfileUpdateSuccess());
     } catch (e) {
       emit(Failed(message: e.toString()));
     }

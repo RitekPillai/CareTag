@@ -222,18 +222,11 @@ Widget detailsTile(String title) {
 }
 
 Widget dataUI(String title, Medicarecordmodel record) {
-  Profilemodel? profilemodel = Hiveservice().getProfileData();
   String fullName = "";
   String bloodGroup = "";
   String dob = "";
   String address = "";
 
-  if (profilemodel != null) {
-    fullName = profilemodel.fullName;
-    bloodGroup = profilemodel.bloodGroup;
-    dob = profilemodel.dob;
-    address = profilemodel.address;
-  }
   switch (title) {
     case "Personal Details":
       return Column(

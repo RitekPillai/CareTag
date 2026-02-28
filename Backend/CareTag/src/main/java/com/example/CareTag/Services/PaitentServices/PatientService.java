@@ -19,6 +19,7 @@ import com.example.CareTag.Repos.common.UserRepo;
 import com.example.CareTag.Repos.doctor.DoctorRepo;
 import com.example.CareTag.Repos.doctor.PrescriptionRepo;
 import com.example.CareTag.Services.AuthServices.CryptographicService;
+import com.example.CareTag.Services.FileService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -34,6 +35,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -68,6 +70,10 @@ private MongoTemplate  mongoTemplate;
 @Autowired
 private PrescriptionRepo prescriptionRepo;
 
+
+
+@Autowired
+private FileService fileService;
     @Value("${crpytographic.aes-key}")
     private String aesKey;
 @Autowired
@@ -131,7 +137,7 @@ private PaitentCacheService paitentCacheService;
         paitentRecordsRepo.save(patientRecords);
         log.info("Paitent Records has been Saved Successfully");
 
-        paitentCacheService.saveCareTagId(String.valueOf(paitent.getId()),careTagId);
+      ///  paitentCacheService.saveCareTagId(String.valueOf(paitent.getId()),careTagId);
         return careTagId;
 
 
@@ -144,6 +150,9 @@ private PaitentCacheService paitentCacheService;
         Authentication   authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
         Optional<PatientRecords> req = paitentRecordsRepo.findById(user.getId());
+        if(req.isEmpty()){
+            throw new RuntimeException("Patient Record Not Found");
+        }
         final PatientRecords record = req.get();
     MedicalRecordResponseDTO requestDTO  = MedicalRecordResponseDTO.builder()
             .iv(record.getIv())
@@ -170,7 +179,11 @@ return ResponseEntity.ok(requestDTO);
     public void setSubscriber(SubscriberRequestDTO req) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
+        Optional<Patient> patient =  paitentRepo.findById(user.getId());
 
+        if(patient.isEmpty()){
+            throw new RuntimeException("Patient Not Found");
+        }
 
     Subscription subscriber = Subscription.builder()
 
@@ -188,12 +201,12 @@ return ResponseEntity.ok(requestDTO);
         mongoTemplate.updateFirst(query,update, PatientRecords.class);
 
 
-        String careTagId = paitentCacheService.getCareTagId(String.valueOf(user.getId()));
+       /// String careTagId = paitentCacheService.getCareTagId(String.valueOf(user.getId()));
 
 
         ShippingDetails details = ShippingDetails.builder()
                 .city(req.getCity())
-                .careTagID(careTagId)
+                .careTagID(patient.get().getCareTagId())
                 .fullname(req.getFullname())
                 .phoneNumber(req.getPhoneNumber())
                 .postalCode(req.getPostalcode())
@@ -204,23 +217,31 @@ return ResponseEntity.ok(requestDTO);
         log.info("Subscriber info and shipping info has been saved");
     }
 
-    public ResponseEntity<BasicDataDTO> getProfileData() {
+    public ResponseEntity<ProfileDataResponseDTO> getProfileData() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
+        log.info(user.toString());
+
+        Patient patientRedis = paitentCacheService.getPatientProfile(user.getId());
+
+        if(patientRedis==null){
+           log.info("Paitent Profile data is not in the Redis");
+        }
+
 
         Optional<Patient>  patient = paitentRepo.findById(user.getId());
-            if(patient.isEmpty()){
-                throw new RuntimeException("Patient Not Found");
-            }
+        if(patient.isEmpty()){
+            throw  new RuntimeException("Paitent Record not Found");
+        }
             Patient profileData = patient.get();
+        paitentCacheService.savePatientProfile(profileData);
 
-             return ResponseEntity.ok(BasicDataDTO.builder()
-                     .dob(profileData.getDob())
-                     .bloodGroup(profileData.getBloodGroup())
-                     .fullName(profileData.getFullName())
-                     .address(profileData.getAddress())
-                     .careTagId(profileData.getCareTagId())
-                     .build());
+             return ResponseEntity.ok(
+                     ProfileDataResponseDTO.builder()
+                             .fullName(profileData.getFullName()).bloodGroup(profileData.getBloodGroup()).careTagId(profileData.getCareTagId()).imageUrl(profileData.getImageUrl()).build()
+
+
+             );
 
 
     }
@@ -310,4 +331,46 @@ return ResponseEntity.ok(requestDTO);
 
 return prescriptionDetail;
     }
-}
+
+    public void updateProfilePage(ProfileEditPaitentDTO dto) throws IOException {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Patient patient = paitentRepo.findByEmail(email);
+
+        if (patient == null) {
+            throw new RuntimeException("Patient not found");
+        }
+
+        if (dto.getFullName() != null && !dto.getFullName().isEmpty()) {
+            patient.setFullName(dto.getFullName());
+        }
+        if (dto.getDob() != null && !dto.getDob().isEmpty()) {
+            patient.setDob(dto.getDob());
+        }
+        if (dto.getGender() != null && !dto.getGender().isEmpty()) {
+            patient.setGender(dto.getGender());
+        }
+        if (dto.getBloodGroup() != null && !dto.getBloodGroup().isEmpty()) {
+            patient.setBloodGroup(dto.getBloodGroup());
+        }
+        if (dto.getHeight() != null && !dto.getHeight().isEmpty()) {
+            patient.setHeight(dto.getHeight());
+        }
+        if (dto.getWeight() != null && !dto.getWeight().isEmpty()) {
+            patient.setWeight(dto.getWeight());
+        }
+        if (dto.getAllergies() != null && !dto.getAllergies().isEmpty()) {
+            patient.setAllergies(dto.getAllergies());
+        }
+
+        if (dto.getImage() != null && !dto.getImage().isEmpty()) {
+            if(patient.getImageUrl()!=null){
+                fileService.deleteOldImage(patient.getImageUrl());
+
+            }
+            String imageUrl = fileService.uploadProfilePhoto(dto.getImage());
+            patient.setImageUrl(imageUrl);
+        }
+paitentCacheService.deleteProfileCache(patient.getId());
+        paitentRepo.save(patient);
+
+}}

@@ -1,6 +1,7 @@
 package com.example.CareTag.configs;
 
 import com.example.CareTag.DTOs.authDTOs.PendingUser;
+import com.example.CareTag.Models.Paitent.Patient;
 import com.example.CareTag.Models.doctor.Prescription;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -10,6 +11,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.GenericToStringSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import java.util.List;
@@ -46,12 +48,13 @@ public class RedisConfig {
 
         return template;
     }
-    @Bean(name="paitentTemplate")
-    public RedisTemplate<String,String>  paitentRedisTemplate(RedisConnectionFactory factory) {
-        RedisTemplate<String,String> template = new RedisTemplate<>();
+
+    @Bean(name="patientProfile")
+    public RedisTemplate<Long, Patient> paitentRedisTemplate(RedisConnectionFactory factory) {
+        RedisTemplate<Long, Patient> template = new RedisTemplate<>();
         template.setConnectionFactory(factory);
-        template.setKeySerializer(new StringRedisSerializer());
-        template.setValueSerializer(new StringRedisSerializer());
+        template.setKeySerializer(new GenericToStringSerializer<Long>(Long.class));
+        template.setValueSerializer(new GenericJackson2JsonRedisSerializer());
         return template;
     }
 

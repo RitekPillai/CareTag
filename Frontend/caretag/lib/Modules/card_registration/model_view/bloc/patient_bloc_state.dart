@@ -34,6 +34,8 @@ final class ProfileRecordFetched extends PatientBlocState {
   const ProfileRecordFetched({required this.profilemodel});
 }
 
+final class ProfileUpdateSuccess extends PatientBlocState {}
+
 final class RecordFetched extends PatientBlocState {
   final Medicarecordmodel medicalRecord;
   const RecordFetched(this.medicalRecord);

@@ -4,9 +4,11 @@ import com.example.CareTag.Models.common.User;
 import com.example.CareTag.Models.type.AuthProvider;
 import com.example.CareTag.Repos.common.UserRepo;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -50,7 +52,11 @@ public String generateToken(User user){
                 .expiration(new Date(System.currentTimeMillis()+1000*60*10))
                 .compact();
 }
-public String getUsernameFromToken(String Token){
+
+
+
+
+public String getUsernameFromToken(String Token)throws Exception{
     Claims claims = Jwts.parser()
             .verifyWith(getSecretkey())
             .build()

@@ -26,5 +26,17 @@ public class Patient {
 
     private String email;
 
+    private String male;
+
+    private String gender;
+
+    private String height;
+
+    private String weight;
+
+    private  String allergies;
+
+
+    private String imageUrl;
 
 }

@@ -18,17 +18,9 @@ class Hiveservice {
   final cryptographyService = Cryptographyservice();
   Future<void> setupHive() async {
     await Hive.initFlutter();
-    // 1. Register the adapter first
-    if (!Hive.isAdapterRegistered(1)) {
-      Hive.registerAdapter(ProfilemodelAdapter());
-    }
 
     if (!Hive.isBoxOpen('health_vault')) {
       await Hive.openBox('health_vault');
-    }
-
-    if (!Hive.isBoxOpen('profile_records')) {
-      await Hive.openBox<Profilemodel>('profile_records');
     }
 
     if (!Hive.isBoxOpen('decrypted_records')) {
@@ -52,24 +44,6 @@ class Hiveservice {
     } catch (e) {
       log("Error:$e");
     }
-  }
-
-  Future<void> saveProfileData(Profilemodel model) async {
-    try {
-      final profilebox = Hive.box<Profilemodel>('profile_records');
-      profilebox.put('profile_record', model);
-      log("Profile Saved To Hive SuccessFully");
-    } catch (e) {
-      log("Error:$e");
-    }
-  }
-
-  Profilemodel? getProfileData() {
-    if (Hive.isBoxOpen('profile_records')) {
-      final profileBox = Hive.box<Profilemodel>('profile_records');
-      return profileBox.get('profile_record');
-    }
-    return null;
   }
 
   Future<void> initializeService() async {
@@ -124,9 +98,6 @@ class Hiveservice {
     DartPluginRegistrant.ensureInitialized();
     await Hive.initFlutter();
 
-    if (!Hive.isAdapterRegistered(1)) {
-      Hive.registerAdapter(ProfilemodelAdapter());
-    }
     final box = await Hive.openBox('health_vault');
     final bluetooth = Bluetooothservice();
 
