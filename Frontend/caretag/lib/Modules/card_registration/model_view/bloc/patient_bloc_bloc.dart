@@ -10,6 +10,7 @@ import 'package:caretag/Modules/card_registration/data/model/shippingRegistratio
 import 'package:caretag/Modules/card_registration/data/repos/paitent_repo.dart';
 import 'package:caretag/Modules/card_registration/model_view/service/cryptographyservice.dart';
 import 'package:caretag/Modules/home/model/permissionRequestModel.dart';
+import 'package:caretag/Modules/profile/model/profile_edit_model.dart';
 import 'package:caretag/Modules/records_module/model/prescriptionModel.dart';
 import 'package:caretag/Modules/records_module/model/prescription_detail_model.dart';
 import 'package:caretag/constants/messagingService.dart';
@@ -36,6 +37,7 @@ class PatientBloc extends Bloc<PatientBlocEvent, PatientBlocState> {
     on<ReportRequest>(_onReportRequest);
     on<GetAllPrescription>(_onGetAllPrescription);
     on<GetPrescriptionDetail>(_onGetPrescriptionDetail);
+    on<ProfileEditEvent>(_onProfileEdit);
   }
   Future<void> _onPatientRegistration(
     PatientRegistration event,
@@ -191,6 +193,18 @@ class PatientBloc extends Bloc<PatientBlocEvent, PatientBlocState> {
       emit(PrescriptionDetailFetched(prescriptionDetail: prescriptionDetail));
     } catch (e) {
       log("Error in _onGetPrescriptionDetail: $e");
+    }
+  }
+
+  FutureOr<void> _onProfileEdit(
+    ProfileEditEvent event,
+    Emitter<PatientBlocState> emit,
+  ) {
+    emit(Loading());
+    try {
+      _paitentRepo.profileEdit(event.profileEditModel);
+    } catch (e) {
+      emit(Failed(message: e.toString()));
     }
   }
 }

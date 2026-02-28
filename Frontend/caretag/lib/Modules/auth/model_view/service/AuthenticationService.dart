@@ -39,7 +39,9 @@ class Authenticationservice extends http.BaseClient {
     }
     request.headers['Authorization'] = 'Bearer $accessToken';
 
-    request.headers['Content-Type'] = 'application/json';
+    if (request is! http.MultipartRequest) {
+      request.headers['Content-Type'] = 'application/json';
+    }
 
     // send the request
     http.StreamedResponse response = await _inner.send(request);

@@ -4,13 +4,12 @@ import 'dart:developer';
 import 'package:bloc/bloc.dart';
 import 'package:caretag/Modules/auth/data/auth/forgot_password_request.dart';
 import 'package:caretag/Modules/auth/data/auth/login_request.dart';
-import 'package:caretag/Modules/auth/data/auth/login_response.dart';
+
 import 'package:caretag/Modules/auth/data/auth/signup_request.dart';
 import 'package:caretag/Modules/auth/data/model/authException.dart';
 import 'package:caretag/Modules/auth/data/model/otpVerifyRequest.dart';
-import 'package:caretag/Modules/auth/data/model/tokenModel.dart';
+
 import 'package:caretag/Modules/auth/data/repo/auth_repo.dart';
-import 'package:caretag/Modules/card_registration/model_view/bloc/patient_bloc_bloc.dart';
 import 'package:caretag/utils/storageService.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/rendering.dart';
@@ -170,7 +169,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   ) async {
     emit(AuthLoading());
     try {
-      Tokenmodel tokenmodel = await _authRepo.GoogleOauthSignUp();
+      //   Tokenmodel tokenmodel = await _authRepo.GoogleOauthSignUp();
       // if (tokenmodel.isNew) {
       //   emit(SignUpCOmpleted());
       // } else {

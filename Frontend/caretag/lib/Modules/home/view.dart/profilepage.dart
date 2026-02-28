@@ -104,49 +104,13 @@ class Profilepage extends StatelessWidget {
               ),
             ],
           ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              children: [
-                infoTitle(
-                  "assets/images/profilePage/done.svg",
-                  "10",
-                  "Appointments\nDone",
-                  185,
-                ),
-                SizedBox(width: 10.w),
-                infoTitle(
-                  "assets/images/profilePage/group.svg",
-                  "79",
-                  "Health Score",
-                ),
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              children: [
-                infoTitle(
-                  "assets/images/profilePage/done.svg",
-                  "23",
-                  " Active \n  Records",
-                ),
-                SizedBox(width: 10.w),
-                infoTitle(
-                  "assets/images/profilePage/coins.svg",
-                  "2000",
-                  "CareTag\nCoins",
-                ),
-              ],
-            ),
-          ),
+
           Expanded(
             child: SingleChildScrollView(
               scrollDirection: Axis.vertical,
               child: Column(
                 children: [
-                  accountSettingSection(),
+                  accountSettingSection(context),
                   earningUsageSection(),
                   supportHelpSection(),
                   appLeagalSection(),

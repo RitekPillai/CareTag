@@ -29,7 +29,7 @@ class _OtpPageState extends State<OtpPage> {
   final List<FocusNode> focusNodes = List.generate(6, (index) => FocusNode());
 
   int _start = 32;
-  Timer? _timer;
+  late Timer? _timer;
   @override
   void initState() {
     // TODO: implement initState

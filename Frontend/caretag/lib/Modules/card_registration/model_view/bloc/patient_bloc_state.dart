@@ -17,6 +17,8 @@ final class Failed extends PatientBlocState {
   const Failed({required this.message});
 }
 
+final class ProfileUpdated extends PatientBlocState {}
+
 final class PrescriptionDetailFetched extends PatientBlocState {
   final PrescriptionDetail prescriptionDetail;
   const PrescriptionDetailFetched({required this.prescriptionDetail});

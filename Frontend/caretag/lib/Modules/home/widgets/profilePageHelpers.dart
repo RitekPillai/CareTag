@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:caretag/Modules/profile/view/pages/profile_edit_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -98,7 +99,7 @@ Widget infoTitle(
   );
 }
 
-Widget accountSettingSection() {
+Widget accountSettingSection(BuildContext context) {
   return Padding(
     padding: const EdgeInsets.only(top: 10.0),
     child: Column(
@@ -115,11 +116,24 @@ Widget accountSettingSection() {
             ),
           ),
         ),
-        profileRowTile("assets/images/profilePage/user.svg", "Edit profile"),
-        profileRowTile("assets/images/profilePage/card.svg", "Payment methods"),
-        profileRowTile("$path/settings.svg", "App settings"),
-        profileRowTile("$path/bell.svg", "Notification Preference"),
-        profileRowTile("$path/lock.svg", "Security & Login"),
+        profileRowTile(
+          "assets/images/profilePage/user.svg",
+          "Edit profile",
+          () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => ProfileEditPage()),
+            );
+          },
+        ),
+        profileRowTile(
+          "assets/images/profilePage/card.svg",
+          "Payment methods",
+          () {},
+        ),
+        profileRowTile("$path/settings.svg", "App settings", () {}),
+        profileRowTile("$path/bell.svg", "Notification Preference", () {}),
+        profileRowTile("$path/lock.svg", "Security & Login", () {}),
       ],
     ),
   );
@@ -143,9 +157,9 @@ Widget earningUsageSection() {
           ),
         ),
 
-        profileRowTile("$path/dashboard.svg", "My DashBoard"),
-        profileRowTile("$path/lock.svg", "Subscriptions"),
-        profileRowTile("$path/history.svg", "Transcation History"),
+        profileRowTile("$path/dashboard.svg", "My DashBoard", () {}),
+        profileRowTile("$path/lock.svg", "Subscriptions", () {}),
+        profileRowTile("$path/history.svg", "Transcation History", () {}),
       ],
     ),
   );
@@ -169,9 +183,9 @@ Widget supportHelpSection() {
           ),
         ),
 
-        profileRowTile("$path/help.svg", "Help Center"),
-        profileRowTile("$path/call.svg", "Contact Support"),
-        profileRowTile("$path/report.svg", "Report a Problem"),
+        profileRowTile("$path/help.svg", "Help Center", () {}),
+        profileRowTile("$path/call.svg", "Contact Support", () {}),
+        profileRowTile("$path/report.svg", "Report a Problem", () {}),
       ],
     ),
   );
@@ -195,49 +209,52 @@ Widget appLeagalSection() {
           ),
         ),
 
-        profileRowTile("$path/app.svg", "App Preference"),
-        profileRowTile("$path/terms.svg", "Terms & Conditions Support"),
-        profileRowTile("$path/privacy.svg", "privacy policy"),
-        profileRowTile("$path/laboutApp.svg", "About App"),
+        profileRowTile("$path/app.svg", "App Preference", () {}),
+        profileRowTile("$path/terms.svg", "Terms & Conditions Support", () {}),
+        profileRowTile("$path/privacy.svg", "privacy policy", () {}),
+        profileRowTile("$path/laboutApp.svg", "About App", () {}),
       ],
     ),
   );
 }
 
-Widget profileRowTile(String Imagepath, String value) {
+Widget profileRowTile(String Imagepath, String value, VoidCallback onPressed) {
   Color textColor = Color(0xff415762);
   return Padding(
     padding: const EdgeInsets.only(left: 10.0, top: 5, bottom: 5),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Row(
-          children: [
-            SvgPicture.asset(Imagepath, width: 32, height: 35),
-            const SizedBox(width: 5),
-            Text(
-              value,
-              style: GoogleFonts.poppins(
-                fontWeight: FontWeight.w500,
-                fontSize: 16.sp,
-                color: textColor,
-              ),
-            ),
-          ],
-        ),
-        Padding(
-          padding: const EdgeInsets.only(right: 10.0),
-          child: Row(
+    child: GestureDetector(
+      onTap: onPressed,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
             children: [
-              SvgPicture.asset(
-                "assets/images/profilePage/arrow.svg",
-                width: 30,
-                height: 30,
+              SvgPicture.asset(Imagepath, width: 32, height: 35),
+              const SizedBox(width: 5),
+              Text(
+                value,
+                style: GoogleFonts.poppins(
+                  fontWeight: FontWeight.w500,
+                  fontSize: 16.sp,
+                  color: textColor,
+                ),
               ),
             ],
           ),
-        ),
-      ],
+          Padding(
+            padding: const EdgeInsets.only(right: 10.0),
+            child: Row(
+              children: [
+                SvgPicture.asset(
+                  "assets/images/profilePage/arrow.svg",
+                  width: 30,
+                  height: 30,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     ),
   );
 }

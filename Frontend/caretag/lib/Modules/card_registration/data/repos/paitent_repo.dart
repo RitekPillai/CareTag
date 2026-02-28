@@ -11,12 +11,14 @@ import 'package:caretag/Modules/card_registration/data/model/registrationrespons
 import 'package:caretag/Modules/card_registration/data/model/reordRequestModel.dart';
 import 'package:caretag/Modules/card_registration/data/model/shippingRegistration.dart';
 import 'package:caretag/Modules/card_registration/model_view/service/cryptographyservice.dart';
+import 'package:caretag/Modules/profile/model/profile_edit_model.dart';
 import 'package:caretag/Modules/records_module/model/prescriptionModel.dart';
 import 'package:caretag/Modules/records_module/model/prescription_detail_model.dart';
 import 'package:caretag/utils/hiveService.dart';
 import 'package:caretag/utils/storageService.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:http/http.dart' as http;
 
 class PaitientRepo {
   final Cryptographyservice cryptographyservice = Cryptographyservice();
@@ -257,6 +259,41 @@ class PaitientRepo {
       }
     } catch (e) {
       log("Error in getAllPrescription: $e");
+      rethrow;
+    }
+  }
+
+  Future<void> profileEdit(ProfileEditModel model) async {
+    final authService = Authenticationservice();
+
+    var uri = Uri.parse("$baseUrl/update");
+
+    var request = http.MultipartRequest("POST", uri);
+
+    request.fields['fullname'] = model.fullName ?? "";
+    request.fields['dabo'] = model.dob ?? "";
+    request.fields['gender'] = model.gender ?? "";
+    request.fields['bloodGroup'] = model.bloodGroup ?? "";
+    request.fields['height'] = model.height ?? "";
+    request.fields['weight'] = model.weight ?? "";
+    request.fields['alregies'] = model.allergies ?? "";
+
+    if (model.imagePath != null && model.imagePath!.isNotEmpty) {
+      request.files.add(
+        await http.MultipartFile.fromPath('image', model.imagePath!),
+      );
+    }
+
+    try {
+      final streamedResponse = await authService.send(request);
+
+      if (streamedResponse.statusCode == 200) {
+        log("Profile updated successfully on server!");
+      } else {
+        log("Upload failed with status: ${streamedResponse.statusCode}");
+      }
+    } catch (e) {
+      log("Error sending multipart request: $e");
       rethrow;
     }
   }

@@ -1,328 +1,278 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Skeleton } from '@/components/ui/skeleton';
-import { User, Heart, AlertTriangle, FileText, Pill, Activity, Calendar, Phone, Mail, MapPin, Clock, FlaskConical, UserCheck, Plus, ShieldAlert, ShieldCheck, ScanLine, LogOut } from 'lucide-react';
-import { format, differenceInYears } from 'date-fns';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
-import { AIHealthInsights } from '@/components/patients/AIHealthInsights';
-import { SmartDiagnosis } from '@/components/patients/SmartDiagnosis';
-import { Telemedicine } from '@/components/telemedicine/Telemedicine';
-import { MedicalHistoryTimeline } from '@/components/patients/MedicalHistoryTimeline';
-import { VoiceToText } from '@/components/voice/VoiceToText';
-import { VoiceNotesHistory } from '@/components/voice/VoiceNotesHistory';
-import { LabResultsPanel } from '@/components/lab-results/LabResultsPanel';
-import { ReferralManagement } from '@/components/referrals/ReferralManagement';
-import { NewPrescriptionForm } from '@/components/prescriptions/NewPrescriptionForm';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Textarea } from '@/components/ui/textarea';
-import { useState } from 'react';
+import { ArrowLeft, Phone, User, Droplets, Pill, AlertTriangle, Stethoscope, FileText, Heart } from 'lucide-react';
 
-// ─── HARDCODED MOCK DATA ───────────────────────────────────────────────────────
-const MOCK_PATIENT = {
-  id: 'mock-001',
-  full_name: 'Ahmed Ali Khan',
-  caretag_id: 'CT-2024-00123',
-  date_of_birth: '1990-05-15',
-  gender: 'Male',
-  blood_group: 'B+',
-  phone: '+92 300 1234567',
-  email: 'ahmed.khan@email.com',
-  address: 'House 12, Block C, Gulberg III, Lahore',
-  allergies: ['Penicillin', 'Aspirin'],
-  chronic_conditions: ['Type 2 Diabetes', 'Hypertension'],
-  current_medications: ['Metformin 500mg', 'Amlodipine 5mg', 'Lisinopril 10mg'],
-  emergency_contact_name: 'Sara Khan (Wife)',
-  emergency_contact_phone: '+92 301 7654321',
-  insurance_provider: 'State Life Insurance',
-  insurance_id: 'SLI-9988776',
-};
-
-const MOCK_VITALS = [
-  { id: '1', recorded_at: '2024-11-01T08:00:00Z', heart_rate: 78, blood_pressure_systolic: 130, blood_pressure_diastolic: 85, spo2: 97, temperature: '98.6' },
-  { id: '2', recorded_at: '2024-11-15T09:00:00Z', heart_rate: 82, blood_pressure_systolic: 128, blood_pressure_diastolic: 82, spo2: 98, temperature: '98.4' },
-  { id: '3', recorded_at: '2024-12-01T10:00:00Z', heart_rate: 76, blood_pressure_systolic: 125, blood_pressure_diastolic: 80, spo2: 99, temperature: '98.7' },
-  { id: '4', recorded_at: '2024-12-15T11:00:00Z', heart_rate: 80, blood_pressure_systolic: 122, blood_pressure_diastolic: 78, spo2: 98, temperature: '98.5' },
-];
-
-const MOCK_MEDICAL_RECORDS = [
-  {
-    id: 'r1', record_type: 'Consultation', created_at: '2024-12-10T00:00:00Z',
-    diagnosis: 'Type 2 Diabetes - Follow Up',
-    symptoms: ['Increased thirst', 'Fatigue'],
-    notes: 'Blood sugar levels improving. Continue current medication.',
-  },
-  {
-    id: 'r2', record_type: 'Emergency Visit', created_at: '2024-11-05T00:00:00Z',
-    diagnosis: 'Hypertensive Episode',
-    symptoms: ['Severe headache', 'Dizziness', 'Nausea'],
-    notes: 'BP was 160/100. Administered IV medication. Stabilized within 2 hours.',
-  },
-];
-
-const MOCK_PRESCRIPTIONS = [
-  {
-    id: 'p1', status: 'active', created_at: '2024-12-10T00:00:00Z',
-    diagnosis: 'Type 2 Diabetes',
-    medications: [
-      { name: 'Metformin', dosage: '500mg', frequency: 'Twice daily', duration: '3 months' },
-      { name: 'Glucophage', dosage: '1000mg', frequency: 'Once at night', duration: '3 months' },
+// ── MOCK FULL PATIENT RECORDS ──────────────────────────────────────────────
+// Backend TODO: SELECT * FROM patients
+//               JOIN medical_records ON patients.id = medical_records.patient_id
+//               WHERE patients.id = :id
+const MOCK_PATIENT_RECORDS: Record<string, any> = {
+  'patient-001': {
+    full_name: 'Ali Hassan', caretag_id: 'CT-1001',
+    date_of_birth: '1985-03-12', gender: 'Male', blood_type: 'O+', phone: '+60-12-1234567',
+    emergency_contact_name: 'Sara Hassan', emergency_contact_phone: '+60-12-3456789',
+    allergies: ['Penicillin', 'Shellfish'],
+    chronic_conditions: ['Type 2 Diabetes', 'Hypertension'],
+    current_medications: [
+      { name: 'Metformin', dose: '500mg', frequency: 'Twice daily' },
+      { name: 'Amlodipine', dose: '5mg', frequency: 'Once daily' },
     ],
-    notes: 'Take with meals. Monitor blood sugar daily.',
-  },
-  {
-    id: 'p2', status: 'completed', created_at: '2024-10-01T00:00:00Z',
-    diagnosis: 'Hypertension',
-    medications: [
-      { name: 'Amlodipine', dosage: '5mg', frequency: 'Once daily', duration: '1 month' },
+    past_surgeries: ['Appendectomy (2010)', 'Knee arthroscopy (2018)'],
+    recent_visits: [
+      { date: '2024-11-20', reason: 'Routine checkup', doctor: 'Dr. Lim' },
+      { date: '2024-09-05', reason: 'Blood sugar review', doctor: 'Dr. Lim' },
     ],
-    notes: 'Completed. Switched to Lisinopril.',
+    notes: 'Patient is compliant with medication. Monitor HbA1c every 3 months.',
   },
-];
-
-const MOCK_SESSION = {
-  id: 'session-001',
-  started_at: new Date().toISOString(),
-  patient_id: 'mock-001',
+  'patient-002': {
+    full_name: 'Nurul Aina', caretag_id: 'CT-1002',
+    date_of_birth: '1992-07-25', gender: 'Female', blood_type: 'A+', phone: '+60-11-9876543',
+    emergency_contact_name: 'Ahmad Aina', emergency_contact_phone: '+60-11-9876543',
+    allergies: ['Latex'],
+    chronic_conditions: ['Asthma'],
+    current_medications: [{ name: 'Salbutamol inhaler', dose: '100mcg', frequency: 'As needed' }],
+    past_surgeries: [],
+    recent_visits: [{ date: '2024-12-01', reason: 'Asthma review', doctor: 'Dr. Tan' }],
+    notes: 'Carry inhaler at all times. Avoid cold air triggers.',
+  },
+  'patient-003': {
+    full_name: 'Ravi Kumar', caretag_id: 'CT-1003',
+    date_of_birth: '1978-01-30', gender: 'Male', blood_type: 'B+', phone: '+60-16-1112233',
+    emergency_contact_name: 'Priya Kumar', emergency_contact_phone: '+60-16-1112233',
+    allergies: [],
+    chronic_conditions: ['Chronic back pain'],
+    current_medications: [{ name: 'Ibuprofen', dose: '400mg', frequency: 'As needed' }],
+    past_surgeries: ['Lumbar discectomy (2020)'],
+    recent_visits: [{ date: '2024-10-15', reason: 'Pain management consult', doctor: 'Dr. Singh' }],
+    notes: 'Referred to physiotherapy. Avoid heavy lifting.',
+  },
+  'patient-004': {
+    full_name: 'Mei Ling Tan', caretag_id: 'CT-1004',
+    date_of_birth: '2001-05-18', gender: 'Female', blood_type: 'AB-', phone: '+60-14-5556677',
+    emergency_contact_name: null, emergency_contact_phone: null,
+    allergies: ['Pollen', 'Dust mites'],
+    chronic_conditions: ['Allergic rhinitis'],
+    current_medications: [{ name: 'Cetirizine', dose: '10mg', frequency: 'Once daily' }],
+    past_surgeries: [],
+    recent_visits: [{ date: '2024-11-10', reason: 'Allergy review', doctor: 'Dr. Wong' }],
+    notes: 'Consider allergy immunotherapy.',
+  },
+  'patient-005': {
+    full_name: 'John Doe', caretag_id: 'CT-1005',
+    date_of_birth: '1965-11-02', gender: 'Male', blood_type: 'O-', phone: '+60-17-5554444',
+    emergency_contact_name: 'Jane Doe', emergency_contact_phone: '+60-17-5554444',
+    allergies: ['Aspirin', 'Codeine'],
+    chronic_conditions: ['Coronary artery disease', 'Hyperlipidaemia'],
+    current_medications: [
+      { name: 'Atorvastatin', dose: '40mg', frequency: 'Once daily at night' },
+      { name: 'Clopidogrel', dose: '75mg', frequency: 'Once daily' },
+    ],
+    past_surgeries: ['Coronary angioplasty (2019)'],
+    recent_visits: [
+      { date: '2024-12-10', reason: 'Cardiology follow-up', doctor: 'Dr. Rajan' },
+      { date: '2024-08-22', reason: 'Lipid panel review', doctor: 'Dr. Rajan' },
+    ],
+    notes: 'High cardiac risk. Strict low-fat diet advised.',
+  },
 };
-// ──────────────────────────────────────────────────────────────────────────────
+// ──────────────────────────────────────────────────────────────────────────
 
 export default function PatientDetail() {
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [sessionNotes, setSessionNotes] = useState('');
-  const [showEndDialog, setShowEndDialog] = useState(false);
 
-  // ── Using mock data instead of Supabase ──
-  const patient = MOCK_PATIENT;
-  const vitals = MOCK_VITALS;
-  const medicalRecords = MOCK_MEDICAL_RECORDS;
-  const prescriptions = MOCK_PRESCRIPTIONS;
-  const activeSession = MOCK_SESSION;
-  const hasActiveSession = true;
-  const patientLoading = false;
-  const sessionLoading = false;
-  const recordsLoading = false;
-  const prescriptionsLoading = false;
-  const vitalsLoading = false;
-  const isEnding = false;
+  const patient = id ? MOCK_PATIENT_RECORDS[id] : null;
 
-  const handleEndSession = () => {
-    setShowEndDialog(false);
-    navigate('/patients');
-  };
-
-  const age = differenceInYears(new Date(), new Date(patient.date_of_birth));
-
-  const vitalsChartData = vitals.map(v => ({
-    date: format(new Date(v.recorded_at), 'MMM d'),
-    heartRate: v.heart_rate,
-    systolic: v.blood_pressure_systolic,
-    diastolic: v.blood_pressure_diastolic,
-    spo2: v.spo2,
-    temperature: v.temperature ? Number(v.temperature) : null,
-  }));
+  if (!patient) {
+    return (
+      <div className="flex flex-col items-center justify-center py-24 gap-4">
+        <p className="text-muted-foreground">Patient record not found.</p>
+        <Button variant="outline" onClick={() => navigate('/patients')}>
+          <ArrowLeft className="h-4 w-4 mr-2" /> Back to Patients
+        </Button>
+      </div>
+    );
+  }
 
   return (
-    <div className="space-y-6">
-      {/* Active Session Banner */}
-      <Card className="border-primary/30 bg-primary/5">
-        <CardContent className="p-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <ShieldCheck className="h-5 w-5 text-primary" />
-            <div>
-              <p className="font-medium text-sm">Active Access Session</p>
-              <p className="text-xs text-muted-foreground">
-                Started {format(new Date(activeSession.started_at), 'h:mm a')}
-              </p>
-            </div>
-          </div>
-          <Dialog open={showEndDialog} onOpenChange={setShowEndDialog}>
-            <DialogTrigger asChild>
-              <Button variant="outline" size="sm" className="gap-2">
-                <LogOut className="h-4 w-4" />
-                End Session
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>End Access Session</DialogTitle>
-                <DialogDescription>
-                  This will end your access to {patient.full_name}'s records.
-                </DialogDescription>
-              </DialogHeader>
-              <Textarea
-                placeholder="Optional session notes..."
-                value={sessionNotes}
-                onChange={(e) => setSessionNotes(e.target.value)}
-                rows={4}
-              />
-              <DialogFooter>
-                <Button variant="outline" onClick={() => setShowEndDialog(false)}>Cancel</Button>
-                <Button onClick={handleEndSession}>End Session</Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
-        </CardContent>
-      </Card>
+    <div className="space-y-6 max-w-4xl mx-auto">
+      <Button variant="ghost" className="gap-2 -ml-2" onClick={() => navigate('/patients')}>
+        <ArrowLeft className="h-4 w-4" /> Back to Patients
+      </Button>
 
       {/* Patient Header */}
-      <div className="flex items-start justify-between">
-        <div className="flex items-center gap-4">
-          <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center">
-            <User className="h-8 w-8 text-primary" />
+      <Card>
+        <CardContent className="p-6">
+          <div className="flex items-start gap-4">
+            <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+              <span className="text-primary font-bold text-xl">
+                {patient.full_name.split(' ').map((n: string) => n[0]).join('')}
+              </span>
+            </div>
+            <div className="flex-1">
+              <div className="flex items-start justify-between flex-wrap gap-2">
+                <div>
+                  <h1 className="text-2xl font-bold">{patient.full_name}</h1>
+                  <p className="text-muted-foreground font-mono text-sm">{patient.caretag_id}</p>
+                </div>
+                <Badge variant="outline">{patient.gender}</Badge>
+              </div>
+              <div className="mt-3 flex flex-wrap gap-4 text-sm text-muted-foreground">
+                <span><strong>DOB:</strong> {patient.date_of_birth}</span>
+                <span className="flex items-center gap-1">
+                  <Droplets className="h-3.5 w-3.5 text-red-500" />
+                  <strong>Blood:</strong> {patient.blood_type}
+                </span>
+                {patient.phone && (
+                  <span className="flex items-center gap-1">
+                    <Phone className="h-3.5 w-3.5" /> {patient.phone}
+                  </span>
+                )}
+              </div>
+            </div>
           </div>
-          <div>
-            <h1 className="text-3xl font-bold">{patient.full_name}</h1>
-            <p className="text-muted-foreground">{patient.caretag_id} • Age {age} • {patient.gender}</p>
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          <Badge variant="secondary">{patient.chronic_conditions?.length ? 'Has Conditions' : 'Healthy'}</Badge>
-        </div>
-      </div>
-
-      {/* Emergency Info Card */}
-      <Card className="border-destructive/30 bg-destructive/5">
-        <CardHeader className="pb-2">
-          <CardTitle className="text-destructive flex items-center gap-2">
-            <AlertTriangle className="h-5 w-5" />Emergency Info
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="flex flex-wrap gap-6 text-sm">
-          <div><span className="text-muted-foreground">Blood:</span> <strong>{patient.blood_group}</strong></div>
-          <div><span className="text-muted-foreground">Allergies:</span> <strong className="text-destructive">{patient.allergies.join(', ')}</strong></div>
-          <div><span className="text-muted-foreground">Conditions:</span> <strong>{patient.chronic_conditions.join(', ')}</strong></div>
-          <div><span className="text-muted-foreground">Emergency Contact:</span> <strong>{patient.emergency_contact_name} ({patient.emergency_contact_phone})</strong></div>
         </CardContent>
       </Card>
 
-      {/* Tabs */}
-      <Tabs defaultValue="overview">
-        <TabsList className="h-auto gap-1 bg-muted/50 p-1.5 flex-wrap">
-          <TabsTrigger value="overview" className="rounded-full px-4 py-1.5 text-xs font-medium data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">Overview</TabsTrigger>
-          <TabsTrigger value="history" className="rounded-full px-4 py-1.5 text-xs font-medium data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">Medical History</TabsTrigger>
-          <TabsTrigger value="prescriptions" className="rounded-full px-4 py-1.5 text-xs font-medium data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">Prescriptions</TabsTrigger>
-          <TabsTrigger value="vitals" className="rounded-full px-4 py-1.5 text-xs font-medium data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">Vitals Timeline</TabsTrigger>
-        </TabsList>
-
-        {/* Overview Tab */}
-        <TabsContent value="overview" className="space-y-4 mt-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Card>
-              <CardHeader><CardTitle className="text-base flex items-center gap-2"><Phone className="h-4 w-4" /> Contact Info</CardTitle></CardHeader>
-              <CardContent className="text-sm space-y-2">
-                <p className="flex items-center gap-2"><Phone className="h-3 w-3 text-muted-foreground" /> {patient.phone}</p>
-                <p className="flex items-center gap-2"><Mail className="h-3 w-3 text-muted-foreground" /> {patient.email}</p>
-                <p className="flex items-center gap-2"><MapPin className="h-3 w-3 text-muted-foreground" /> {patient.address}</p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader><CardTitle className="text-base flex items-center gap-2"><Pill className="h-4 w-4" /> Current Medications</CardTitle></CardHeader>
-              <CardContent className="text-sm space-y-1">
-                {patient.current_medications.map((med, i) => <p key={i}>• {med}</p>)}
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader><CardTitle className="text-base">Insurance</CardTitle></CardHeader>
-              <CardContent className="text-sm space-y-1">
-                <p>Provider: {patient.insurance_provider}</p>
-                <p>ID: {patient.insurance_id}</p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader><CardTitle className="text-base">Latest Vitals</CardTitle></CardHeader>
-              <CardContent className="text-sm">
-                <div className="grid grid-cols-2 gap-2">
-                  <p>HR: <strong>{vitals[vitals.length - 1].heart_rate} bpm</strong></p>
-                  <p>BP: <strong>{vitals[vitals.length - 1].blood_pressure_systolic}/{vitals[vitals.length - 1].blood_pressure_diastolic}</strong></p>
-                  <p>SpO2: <strong>{vitals[vitals.length - 1].spo2}%</strong></p>
-                  <p>Temp: <strong>{vitals[vitals.length - 1].temperature}°F</strong></p>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </TabsContent>
-
-        {/* Medical History Tab */}
-        <TabsContent value="history" className="mt-4">
-          <Card>
-            <CardHeader><CardTitle className="flex items-center gap-2"><FileText className="h-5 w-5" /> Medical Records</CardTitle></CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {medicalRecords.map((record) => (
-                  <div key={record.id} className="border rounded-lg p-4 space-y-2">
-                    <div className="flex items-center justify-between">
-                      <Badge variant="outline">{record.record_type}</Badge>
-                      <span className="text-sm text-muted-foreground flex items-center gap-1">
-                        <Calendar className="h-3 w-3" /> {format(new Date(record.created_at), 'MMM d, yyyy')}
-                      </span>
-                    </div>
-                    {record.diagnosis && <p><strong>Diagnosis:</strong> {record.diagnosis}</p>}
-                    {record.symptoms?.length > 0 && <p><strong>Symptoms:</strong> {record.symptoms.join(', ')}</p>}
-                    {record.notes && <p className="text-sm text-muted-foreground">{record.notes}</p>}
-                  </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Allergies */}
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm flex items-center gap-2">
+              <AlertTriangle className="h-4 w-4 text-destructive" /> Allergies
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {patient.allergies.length > 0 ? (
+              <div className="flex flex-wrap gap-2">
+                {patient.allergies.map((a: string) => (
+                  <Badge key={a} variant="destructive">{a}</Badge>
                 ))}
               </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
+            ) : (
+              <p className="text-sm text-muted-foreground">No known allergies</p>
+            )}
+          </CardContent>
+        </Card>
 
-        {/* Prescriptions Tab */}
-        <TabsContent value="prescriptions" className="mt-4">
-          <Card>
-            <CardHeader><CardTitle className="flex items-center gap-2"><Pill className="h-5 w-5" /> Prescriptions</CardTitle></CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {prescriptions.map((rx) => (
-                  <div key={rx.id} className="border rounded-lg p-4 space-y-2">
-                    <div className="flex items-center justify-between">
-                      <Badge variant={rx.status === 'active' ? 'default' : 'secondary'}>{rx.status}</Badge>
-                      <span className="text-sm text-muted-foreground flex items-center gap-1">
-                        <Clock className="h-3 w-3" /> {format(new Date(rx.created_at), 'MMM d, yyyy')}
-                      </span>
-                    </div>
-                    {rx.diagnosis && <p><strong>For:</strong> {rx.diagnosis}</p>}
-                    <div className="space-y-1">
-                      {rx.medications.map((med, i) => (
-                        <p key={i} className="text-sm bg-muted/50 rounded px-2 py-1">
-                          <strong>{med.name}</strong> - {med.dosage}, {med.frequency} for {med.duration}
-                        </p>
-                      ))}
-                    </div>
-                    {rx.notes && <p className="text-sm text-muted-foreground">{rx.notes}</p>}
-                  </div>
+        {/* Chronic Conditions */}
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm flex items-center gap-2">
+              <Heart className="h-4 w-4 text-orange-500" /> Chronic Conditions
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {patient.chronic_conditions.length > 0 ? (
+              <div className="flex flex-wrap gap-2">
+                {patient.chronic_conditions.map((c: string) => (
+                  <Badge key={c} variant="secondary">{c}</Badge>
                 ))}
               </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
+            ) : (
+              <p className="text-sm text-muted-foreground">None</p>
+            )}
+          </CardContent>
+        </Card>
 
-        {/* Vitals Timeline Tab */}
-        <TabsContent value="vitals" className="mt-4">
-          <Card>
-            <CardHeader><CardTitle className="flex items-center gap-2"><Activity className="h-5 w-5" /> Vitals Timeline</CardTitle></CardHeader>
-            <CardContent>
-              <div className="h-80">
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={vitalsChartData}>
-                    <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-                    <XAxis dataKey="date" className="text-xs" />
-                    <YAxis className="text-xs" />
-                    <Tooltip contentStyle={{ backgroundColor: 'hsl(var(--card))', border: '1px solid hsl(var(--border))' }} />
-                    <Legend />
-                    <Line type="monotone" dataKey="heartRate" stroke="hsl(var(--destructive))" name="Heart Rate" strokeWidth={2} dot={{ r: 3 }} />
-                    <Line type="monotone" dataKey="systolic" stroke="hsl(var(--primary))" name="Systolic BP" strokeWidth={2} dot={{ r: 3 }} />
-                    <Line type="monotone" dataKey="spo2" stroke="#22c55e" name="SpO2" strokeWidth={2} dot={{ r: 3 }} />
-                  </LineChart>
-                </ResponsiveContainer>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+        {/* Current Medications */}
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm flex items-center gap-2">
+              <Pill className="h-4 w-4 text-blue-500" /> Current Medications
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {patient.current_medications.length > 0 ? (
+              <ul className="space-y-2">
+                {patient.current_medications.map((m: any, i: number) => (
+                  <li key={i} className="flex items-center justify-between text-sm">
+                    <span className="font-medium">{m.name}</span>
+                    <span className="text-muted-foreground text-xs">{m.dose} · {m.frequency}</span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-sm text-muted-foreground">None</p>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Past Surgeries */}
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm flex items-center gap-2">
+              <Stethoscope className="h-4 w-4 text-purple-500" /> Past Surgeries
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {patient.past_surgeries.length > 0 ? (
+              <ul className="space-y-1">
+                {patient.past_surgeries.map((s: string, i: number) => (
+                  <li key={i} className="text-sm">{s}</li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-sm text-muted-foreground">None</p>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Recent Visits */}
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm flex items-center gap-2">
+            <FileText className="h-4 w-4 text-green-500" /> Recent Visits
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {patient.recent_visits.length > 0 ? (
+            <ul className="divide-y">
+              {patient.recent_visits.map((v: any, i: number) => (
+                <li key={i} className="py-2 flex items-center justify-between text-sm">
+                  <div>
+                    <p className="font-medium">{v.reason}</p>
+                    <p className="text-xs text-muted-foreground">{v.doctor}</p>
+                  </div>
+                  <span className="text-xs text-muted-foreground">{v.date}</span>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-sm text-muted-foreground">No visits recorded</p>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Emergency Contact */}
+      {patient.emergency_contact_name && (
+        <Card className="border-orange-300">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm flex items-center gap-2">
+              <Phone className="h-4 w-4 text-orange-500" /> Emergency Contact
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="text-sm">
+            <p className="font-medium">{patient.emergency_contact_name}</p>
+            <p className="text-muted-foreground">{patient.emergency_contact_phone}</p>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Doctor Notes */}
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm flex items-center gap-2">
+            <User className="h-4 w-4" /> Doctor Notes
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-sm text-muted-foreground">{patient.notes}</p>
+        </CardContent>
+      </Card>
     </div>
   );
 }

@@ -6,6 +6,7 @@ import com.example.CareTag.Repos.Paitent.PaitentRepo;
 import com.example.CareTag.Services.PaitentServices.PatientService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -75,6 +76,27 @@ public class PaitentController {
     @PostMapping("/prescription")
     public PrescriptionDetailDTO getPrescriptionDetail(@RequestBody  String prescriptionId) throws Exception {
         return paitentService.getPrescriptionDetails(prescriptionId);
+
+    }
+    @PostMapping(value = "/update", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public void profileEdit(@ModelAttribute ProfileEditPaitentDTO dto) throws Exception {
+
+
+        if (dto.getImage() != null && !dto.getImage().isEmpty()) {
+            // Here is where the "String Path" from Flutter turns into real bytes
+            byte[] imageBytes = dto.getImage().getBytes();
+            String contentType = dto.getImage().getContentType(); // e.g. "image/jpeg"
+
+            log.info("Received image: {}, Size: {}, contenttyp:{}",
+                    dto.getImage().getOriginalFilename(),
+                    dto.getImage().getSize(),
+            dto.getImage().getContentType());
+            ;
+
+            // TODO: Save the bytes to your file system or S3
+        }
+
+        log.info("done");
 
     }
 

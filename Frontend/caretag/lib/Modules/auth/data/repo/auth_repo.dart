@@ -114,7 +114,7 @@ class AuthRepo {
         );
       }
 
-      final bool isNewUser = queryParams['isNewUser'] == 'true';
+      //   final bool isNewUser = queryParams['isNewUser'] == 'true';
 
       final response = await http.post(
         Uri.parse("$baseUrl/exchange"),

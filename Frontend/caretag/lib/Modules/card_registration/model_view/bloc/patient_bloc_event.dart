@@ -37,6 +37,12 @@ class ReportRequest extends PatientBlocEvent {
   const ReportRequest({required this.blockReqModel});
 }
 
+class ProfileEditEvent extends PatientBlocEvent {
+  final ProfileEditModel profileEditModel;
+
+  const ProfileEditEvent({required this.profileEditModel});
+}
+
 class DenyPermission extends PatientBlocEvent {
   final String docId;
 

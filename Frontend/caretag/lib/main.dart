@@ -1,9 +1,5 @@
 import 'dart:developer';
 
-import 'package:caretag/Modules/home/view.dart/homePage.dart';
-import 'package:caretag/Modules/home/view.dart/mainscreen.dart';
-import 'package:caretag/Modules/records_module/view/pages/detail_prescription_page.dart';
-import 'package:caretag/Modules/records_module/view/pages/doctor_prescription_page.dart';
 import 'package:caretag/constants/messagingService.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -17,7 +13,7 @@ import 'package:caretag/Modules/auth/data/repo/auth_repo.dart';
 import 'package:caretag/Modules/auth/model_view/bloc/auth_bloc.dart';
 import 'package:caretag/Modules/card_registration/data/repos/paitent_repo.dart';
 import 'package:caretag/Modules/card_registration/model_view/bloc/patient_bloc_bloc.dart';
-import 'package:caretag/Modules/records_module/view/pages/records.dart';
+
 import 'package:caretag/constants/appsize.dart';
 import 'package:caretag/utils/hiveService.dart';
 import 'package:caretag/utils/storageService.dart';
