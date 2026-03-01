@@ -56,6 +56,8 @@ public class SecurityConfig {
             .requestMatchers("/websocket/**", "/websocket", "/websocket/*").permitAll() // Allow WebSocket handshake
                         .requestMatchers("/webscoket/**").permitAll() // SockJS handshake needs to get through
                         .requestMatchers("/auth/**", "/exchange", "/login/**", "/oauth2/**", "/error").permitAll()
+                        .requestMatchers("/blockchain/seal").hasRole("DOCTOR")
+                        .requestMatchers("/blockchain/validate", "/blockchain/chain").hasAnyRole("DOCTOR", "PATIENT")
                         .requestMatchers("/doctor/**").hasRole("DOCTOR")
                         .requestMatchers("/paitent/**").hasRole("PATIENT")
                         .requestMatchers("/auth/me").authenticated()
