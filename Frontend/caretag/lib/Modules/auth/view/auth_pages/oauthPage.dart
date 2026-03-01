@@ -1,7 +1,7 @@
 import 'package:caretag/Modules/auth/model_view/bloc/auth_bloc.dart';
 import 'package:caretag/Modules/auth/view/auth_pages/auth.dart';
 import 'package:caretag/constants/app_color.dart';
-import 'package:caretag/widgets/animatedRoute.dart';
+import 'package:caretag/widgets/animated_route.dart';
 import 'package:caretag/widgets/custombutton.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart' show ReadContext, BlocProvider;

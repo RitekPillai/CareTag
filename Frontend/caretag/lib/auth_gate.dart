@@ -1,15 +1,11 @@
 import 'package:caretag/Modules/auth/model_view/bloc/auth_bloc.dart';
 import 'package:caretag/Modules/auth/view/Intro_page&permisson_page/introPage1.dart';
 import 'package:caretag/Modules/auth/view/auth_pages/oauthPage.dart';
-import 'package:caretag/Modules/card_registration/data/model/profileModel.dart';
 import 'package:caretag/Modules/card_registration/model_view/bloc/patient_bloc_bloc.dart';
 import 'package:caretag/Modules/card_registration/view/registration/registration_intro_page.dart';
-import 'package:caretag/Modules/home/view.dart/caretag_homepage.dart';
 import 'package:caretag/Modules/home/view.dart/homePage.dart';
-import 'package:caretag/Modules/home/view.dart/mainscreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hive_flutter/adapters.dart';
 
 class Authgate extends StatelessWidget {
   const Authgate({super.key});

@@ -4,14 +4,11 @@ import 'package:caretag/Modules/home/model/permissionRequestModel.dart';
 import 'package:caretag/Modules/home/widgets/careTagHome/dialogBox.dart';
 import 'package:caretag/Modules/home/widgets/report/doc_report_conatiner_tile.dart';
 import 'package:caretag/constants/app_color.dart';
-import 'package:caretag/widgets/custombutton.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart' show ReadContext;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hive_flutter/adapters.dart';
-import 'package:http/http.dart' as context;
 
 class Reportpage extends StatefulWidget {
   final Permissionrequestmodel permissionrequestmodel;

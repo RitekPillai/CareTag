@@ -30,14 +30,14 @@ class PrescriptionModel {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['prescriptionId'] = this.prescriptionId;
-    data['doctorName'] = this.doctorName;
-    data['specialization'] = this.specialization;
-    data['hospitalName'] = this.hospitalName;
-    data['prescriptionDate'] = this.prescriptionDate;
-    data['diagnosis'] = this.diagnosis;
-    data['status'] = this.status;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['prescriptionId'] = prescriptionId;
+    data['doctorName'] = doctorName;
+    data['specialization'] = specialization;
+    data['hospitalName'] = hospitalName;
+    data['prescriptionDate'] = prescriptionDate;
+    data['diagnosis'] = diagnosis;
+    data['status'] = status;
     return data;
   }
 }

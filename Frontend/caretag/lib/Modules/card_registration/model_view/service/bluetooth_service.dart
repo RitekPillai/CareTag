@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:caretag/Modules/card_registration/model_view/bloc/patient_bloc_bloc.dart';
 import 'package:caretag/Modules/card_registration/view/watch/watchpairing.dart';
-import 'package:caretag/widgets/animatedRoute.dart';
+import 'package:caretag/widgets/animated_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -132,14 +132,14 @@ class Bluetooothservice {
 
   Future<void> startScanning() async {
     debugPrint("Starting Scan...");
-    var subscription = FlutterBluePlus.onScanResults.listen((results) {
-      for (ScanResult r in results) {
-        String name = r.advertisementData.advName.isEmpty
-            ? "Unknown"
-            : r.advertisementData.advName;
-        print('${r.device.remoteId}: "$name" found!');
-      }
-    }, onError: (e) => print("Scan Error: $e"));
+    // var subscription = FlutterBluePlus.onScanResults.listen((results) {
+    //   for (ScanResult r in results) {
+    //     String name = r.advertisementData.advName.isEmpty
+    //         ? "Unknown"
+    //         : r.advertisementData.advName;
+    //     print('${r.device.remoteId}: "$name" found!');
+    //   }
+    // }, onError: (e) => print("Scan Error: $e"));
 
     await FlutterBluePlus.startScan(
       timeout: const Duration(seconds: 15),

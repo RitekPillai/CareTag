@@ -2,7 +2,7 @@ import 'package:caretag/Modules/card_registration/data/model/shippingRegistratio
 import 'package:caretag/Modules/card_registration/model_view/bloc/patient_bloc_bloc.dart';
 import 'package:caretag/Modules/card_registration/view/subscription/success_page.dart';
 import 'package:caretag/constants/app_color.dart';
-import 'package:caretag/widgets/animatedRoute.dart';
+import 'package:caretag/widgets/animated_route.dart';
 import 'package:caretag/widgets/custombutton.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

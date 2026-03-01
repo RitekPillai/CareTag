@@ -99,7 +99,7 @@ class Homepage extends StatelessWidget {
                           context,
                           MaterialPageRoute(
                             builder: (context) =>
-                                Mainscreen(profilemodel: profilemodel),
+                                MainScreen(profilemodel: profilemodel),
                           ),
                         );
                       },

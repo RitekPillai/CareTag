@@ -32,14 +32,14 @@ class Medications {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['name'] = this.name;
-    data['dosage'] = this.dosage;
-    data['frequency'] = this.frequency;
-    data['duration'] = this.duration;
-    data['morning'] = this.morning;
-    data['afternoon'] = this.afternoon;
-    data['night'] = this.night;
-    data['mealTiming'] = this.mealTiming;
+    data['name'] = name;
+    data['dosage'] = dosage;
+    data['frequency'] = frequency;
+    data['duration'] = duration;
+    data['morning'] = morning;
+    data['afternoon'] = afternoon;
+    data['night'] = night;
+    data['mealTiming'] = mealTiming;
     return data;
   }
 }

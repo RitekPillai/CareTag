@@ -10,7 +10,7 @@ import 'package:caretag/Modules/auth/data/model/authException.dart';
 import 'package:caretag/Modules/auth/data/model/otpVerifyRequest.dart';
 
 import 'package:caretag/Modules/auth/data/repo/auth_repo.dart';
-import 'package:caretag/utils/storageService.dart';
+import 'package:caretag/utils/storage_service.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/rendering.dart';
 import 'package:meta/meta.dart';

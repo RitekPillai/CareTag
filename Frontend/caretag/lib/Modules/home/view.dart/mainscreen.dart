@@ -1,20 +1,20 @@
 import 'package:caretag/Modules/card_registration/data/model/profileModel.dart';
 import 'package:caretag/Modules/home/view.dart/caretag_homepage.dart';
-import 'package:caretag/Modules/home/view.dart/profilepage.dart';
 import 'package:caretag/Modules/news/view/newsPage.dart';
+import 'package:caretag/Modules/profile/view/pages/new_profile_page.dart';
 import 'package:caretag/Modules/records_module/view/pages/records.dart';
 import 'package:caretag/widgets/custom_navigatoion_bar.dart';
 import 'package:flutter/material.dart';
 
-class Mainscreen extends StatefulWidget {
-  Profilemodel profilemodel;
-  Mainscreen({super.key, required this.profilemodel});
+class MainScreen extends StatefulWidget {
+  final Profilemodel profilemodel;
+  const MainScreen({super.key, required this.profilemodel});
 
   @override
-  State<Mainscreen> createState() => _MainscreenState();
+  State<MainScreen> createState() => _MainScreenState();
 }
 
-class _MainscreenState extends State<Mainscreen> {
+class _MainScreenState extends State<MainScreen> {
   int _currentIndex = 0;
   final PageController _pageController = PageController(initialPage: 0);
   @override
@@ -50,7 +50,7 @@ class _MainscreenState extends State<Mainscreen> {
           const Records(),
           const Scaffold(body: Center(child: Text("Care"))),
           const Newspage(),
-          Profilepage(profilemodel: widget.profilemodel),
+          ProfilePage(profilemodel: widget.profilemodel),
         ],
       ),
       bottomNavigationBar: CustomNavigatoionBar(

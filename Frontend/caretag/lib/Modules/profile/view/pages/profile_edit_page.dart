@@ -14,6 +14,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ProfileEditPage extends StatefulWidget {
+  static const routeName = '/edit-profile';
+
   const ProfileEditPage({super.key});
 
   @override

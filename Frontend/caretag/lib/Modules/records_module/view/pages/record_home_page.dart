@@ -12,7 +12,6 @@ class RecordHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const Color recentFilesColor = Color(0xff111827);
-    const Color blueTextColor = Color(0xff0063F7);
     const Color blueContainerColor = Color.fromRGBO(13, 127, 242, 0.1);
     const Color orangeContainerColor = Color.fromRGBO(249, 115, 22, 0.1);
     const Color purpleContainerColor = Color.fromRGBO(168, 85, 247, 0.1);

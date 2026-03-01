@@ -1,5 +1,4 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'package:caretag/Modules/card_registration/data/model/bloc_req_model.dart';
 import 'package:caretag/Modules/home/view.dart/reportPage.dart';
 import 'package:caretag/Modules/home/widgets/careTagHome/acceptPage.dart';
 import 'package:caretag/Modules/home/widgets/careTagHome/denyPage.dart';
@@ -8,7 +7,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 import 'package:caretag/Modules/card_registration/model_view/bloc/patient_bloc_bloc.dart';
 import 'package:caretag/Modules/home/model/permissionRequestModel.dart';

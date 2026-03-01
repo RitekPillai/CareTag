@@ -3,7 +3,6 @@ import 'package:caretag/Modules/home/widgets/profilePageHelpers.dart';
 import 'package:caretag/Modules/records_module/model/prescription_detail_model.dart';
 import 'package:caretag/Modules/records_module/view/widgets/diagonsis_container_tile.dart';
 import 'package:caretag/Modules/records_module/view/widgets/medicine_container_tile.dart';
-import 'package:caretag/Modules/records_module/view/widgets/notes_container_tile.dart';
 import 'package:caretag/Modules/records_module/view/widgets/prescription_conatiner_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

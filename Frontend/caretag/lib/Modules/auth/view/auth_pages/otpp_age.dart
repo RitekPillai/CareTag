@@ -6,7 +6,7 @@ import 'package:caretag/Modules/card_registration/model_view/bloc/patient_bloc_b
 import 'package:caretag/Modules/card_registration/view/registration/registration_intro_page.dart';
 import 'package:caretag/Modules/home/view.dart/homePage.dart';
 import 'package:caretag/constants/app_color.dart';
-import 'package:caretag/widgets/animatedRoute.dart';
+import 'package:caretag/widgets/animated_route.dart';
 import 'package:caretag/widgets/custombutton.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

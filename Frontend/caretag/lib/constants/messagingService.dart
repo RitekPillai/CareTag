@@ -5,7 +5,6 @@ import 'package:caretag/Modules/home/model/permissionRequestModel.dart';
 import 'package:caretag/Modules/home/widgets/careTagHome/dialogBox.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 
 class NotificationService {
   final FirebaseMessaging _fcm = FirebaseMessaging.instance;

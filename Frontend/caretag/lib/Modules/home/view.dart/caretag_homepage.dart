@@ -1,11 +1,9 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:caretag/Modules/card_registration/data/model/profileModel.dart';
-import 'package:caretag/Modules/card_registration/model_view/bloc/patient_bloc_bloc.dart';
 import 'package:caretag/Modules/home/modelview/homePageService.dart';
 import 'package:caretag/Modules/home/view.dart/sectionPages/careTagPage.dart';
 import 'package:caretag/constants/app_color.dart';

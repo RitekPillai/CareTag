@@ -237,7 +237,7 @@ class _PatientsPageState extends State<PatientsPage> {
                                       backgroundColor: isActive
                                           ? Theme.of(
                                               context,
-                                            ).primaryColor.withOpacity(0.1)
+                                            ).primaryColor.withAlpha(100)
                                           : Colors.grey.shade200,
                                       child: Text(
                                         patient.fullName

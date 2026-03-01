@@ -3,11 +3,10 @@ import 'package:caretag/Modules/card_registration/model_view/bloc/patient_bloc_b
 import 'package:caretag/Modules/card_registration/view/registration/registration_intro_page.dart';
 import 'package:caretag/Modules/card_registration/view/registration/registration_loading_screen.dart';
 import 'package:caretag/constants/app_color.dart';
-import 'package:caretag/widgets/animatedRoute.dart';
-import 'package:caretag/widgets/customController.dart';
+import 'package:caretag/widgets/animated_route.dart';
+import 'package:caretag/widgets/custom_controller.dart';
 import 'package:caretag/widgets/custombutton.dart';
-import 'package:caretag/widgets/helpPage.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:caretag/widgets/help_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart' show ReadContext;
 import 'package:google_fonts/google_fonts.dart';
@@ -86,7 +85,6 @@ class _RegistrationPageState extends State<RegistrationPage> {
   @override
   Widget build(BuildContext context) {
     final bloc = context.read<PatientBloc>();
-    TextEditingController addressController = TextEditingController();
     debugPrint(title.length.toString());
     debugPrint("hint Text length:${hintText.length.toString()}");
     debugPrint(_controllers.length.toString());

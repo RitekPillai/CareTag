@@ -73,6 +73,7 @@ dependencies:
   firebase_messaging: ^16.1.1
   encrypt: ^5.0.3
   stomp_dart_client: ^3.0.1
+  external_app_launcher: ^4.0.3
 
   
  
@@ -129,6 +130,7 @@ flutter:
     - assets/images/navigation/
     - assets/images/home/dialog/
     - assets/images/records/prescription/
+    - assets/images/setting/
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

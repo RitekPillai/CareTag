@@ -12,10 +12,10 @@ import 'package:caretag/Modules/card_registration/data/model/reordRequestModel.d
 import 'package:caretag/Modules/card_registration/data/model/shippingRegistration.dart';
 import 'package:caretag/Modules/card_registration/model_view/service/cryptographyservice.dart';
 import 'package:caretag/Modules/profile/model/profile_edit_model.dart';
-import 'package:caretag/Modules/records_module/model/prescriptionModel.dart';
+import 'package:caretag/Modules/records_module/model/prescription_model.dart';
 import 'package:caretag/Modules/records_module/model/prescription_detail_model.dart';
 import 'package:caretag/utils/hiveService.dart';
-import 'package:caretag/utils/storageService.dart';
+import 'package:caretag/utils/storage_service.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:http/http.dart' as http;

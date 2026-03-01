@@ -1,7 +1,7 @@
 import 'package:caretag/Modules/auth/data/auth/forgot_password_request.dart';
 import 'package:caretag/Modules/auth/model_view/bloc/auth_bloc.dart';
 import 'package:caretag/constants/app_color.dart';
-import 'package:caretag/widgets/customController.dart';
+import 'package:caretag/widgets/custom_controller.dart';
 import 'package:caretag/widgets/custombutton.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

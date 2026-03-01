@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import 'package:stomp_dart_client/stomp_dart_client.dart';
 
@@ -45,7 +44,7 @@ class _ScanCareTagPageState extends State<ScanCareTagPage> {
   Timer? _demoTimerRef;
   StompClient? _stompClient;
   bool _processing = false;
-  String? _scanError;
+  late String? _scanError;
 
   @override
   void initState() {

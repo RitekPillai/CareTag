@@ -11,7 +11,7 @@ import 'package:caretag/Modules/card_registration/data/repos/paitent_repo.dart';
 import 'package:caretag/Modules/card_registration/model_view/service/cryptographyservice.dart';
 import 'package:caretag/Modules/home/model/permissionRequestModel.dart';
 import 'package:caretag/Modules/profile/model/profile_edit_model.dart';
-import 'package:caretag/Modules/records_module/model/prescriptionModel.dart';
+import 'package:caretag/Modules/records_module/model/prescription_model.dart';
 import 'package:caretag/Modules/records_module/model/prescription_detail_model.dart';
 import 'package:caretag/constants/messagingService.dart';
 

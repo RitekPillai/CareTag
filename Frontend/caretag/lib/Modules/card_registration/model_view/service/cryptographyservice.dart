@@ -6,7 +6,7 @@ import 'dart:typed_data';
 import 'package:caretag/Modules/card_registration/data/model/medicarecordmodel.dart';
 import 'package:caretag/Modules/card_registration/data/model/registrationresponsemodel.dart';
 import 'package:caretag/Modules/card_registration/data/model/reordRequestModel.dart';
-import 'package:caretag/utils/storageService.dart';
+import 'package:caretag/utils/storage_service.dart';
 import 'package:cryptography/cryptography.dart' hide KeyPair, Hash;
 import 'package:fast_rsa/fast_rsa.dart';
 import 'package:flutter/cupertino.dart';

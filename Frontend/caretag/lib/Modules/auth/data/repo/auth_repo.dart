@@ -10,7 +10,7 @@ import 'package:caretag/Modules/auth/data/model/otpVerifyRequest.dart';
 import 'package:caretag/Modules/auth/data/model/signupresponse.dart';
 import 'package:caretag/Modules/auth/data/model/tokenModel.dart';
 import 'package:caretag/Modules/auth/model_view/service/AuthenticationService.dart';
-import 'package:caretag/utils/storageService.dart';
+import 'package:caretag/utils/storage_service.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter/rendering.dart';

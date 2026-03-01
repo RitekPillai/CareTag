@@ -4,9 +4,9 @@ import 'dart:ui';
 
 import 'package:caretag/Modules/card_registration/data/model/profileModel.dart';
 import 'package:caretag/Modules/card_registration/data/model/registrationresponsemodel.dart';
-import 'package:caretag/Modules/card_registration/model_view/service/bluetoothService.dart';
+import 'package:caretag/Modules/card_registration/model_view/service/bluetooth_service.dart';
 import 'package:caretag/Modules/card_registration/model_view/service/cryptographyservice.dart';
-import 'package:caretag/utils/storageService.dart';
+import 'package:caretag/utils/storage_service.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:hive/hive.dart';

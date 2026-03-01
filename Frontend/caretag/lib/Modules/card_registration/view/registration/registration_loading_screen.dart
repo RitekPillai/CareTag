@@ -3,7 +3,7 @@ import 'dart:async';
 
 import 'package:caretag/Modules/card_registration/data/model/medicarecordmodel.dart';
 import 'package:caretag/Modules/card_registration/view/registration/successpage.dart';
-import 'package:caretag/widgets/animatedRoute.dart';
+import 'package:caretag/widgets/animated_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -11,7 +11,7 @@ import 'package:lottie/lottie.dart';
 
 import 'package:caretag/Modules/card_registration/model_view/bloc/patient_bloc_bloc.dart';
 import 'package:caretag/constants/app_color.dart';
-import 'package:caretag/widgets/helpPage.dart';
+import 'package:caretag/widgets/help_page.dart';
 
 class RegistrationLoadingScreen extends StatefulWidget {
   final Medicarecordmodel medicalDetails;

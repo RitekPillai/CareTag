@@ -1,7 +1,7 @@
 import 'dart:developer';
 
 import 'package:caretag/Modules/card_registration/model_view/bloc/patient_bloc_bloc.dart';
-import 'package:caretag/Modules/records_module/model/prescriptionModel.dart';
+import 'package:caretag/Modules/records_module/model/prescription_model.dart';
 import 'package:caretag/Modules/records_module/view/pages/detail_prescription_page.dart';
 import 'package:caretag/Modules/records_module/view/widgets/prescription_tile.dart';
 import 'package:caretag/Modules/records_module/view/widgets/record_option_containe_tile.dart';
@@ -251,7 +251,7 @@ class _DoctorPrescriptionPageState extends State<DoctorPrescriptionPage> {
                             status: prescription.status,
                             doctorImage:
                                 "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjduXBTnBVs-4N-tCmYSl1Z8O95GAlK_ZnUg&s",
-                            onDownload: () => print('Download tapped'),
+                            onDownload: () => debugPrint('Download tapped'),
                             onViewDetails: () {
                               context.read<PatientBloc>().add(
                                 GetPrescriptionDetail(

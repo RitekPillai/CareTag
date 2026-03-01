@@ -1,6 +1,6 @@
 import 'package:caretag/Modules/auth/data/intro/ImageModel.dart';
-import 'package:caretag/utils/storageService.dart';
-import 'package:caretag/widgets/animatedRoute.dart';
+import 'package:caretag/utils/storage_service.dart';
+import 'package:caretag/widgets/animated_route.dart';
 import 'package:caretag/Modules/auth/view/Intro_page&permisson_page/permission_page.dart';
 import 'package:caretag/constants/app_color.dart';
 import 'package:flutter/material.dart';

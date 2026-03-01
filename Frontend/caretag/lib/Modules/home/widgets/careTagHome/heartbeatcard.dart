@@ -1,6 +1,6 @@
-import 'package:caretag/Modules/card_registration/model_view/service/bluetoothService.dart';
+import 'package:caretag/Modules/card_registration/model_view/service/bluetooth_service.dart';
 import 'package:caretag/Modules/home/widgets/careTagHome/currentdate.dart';
-import 'package:caretag/utils/storageService.dart';
+import 'package:caretag/utils/storage_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
