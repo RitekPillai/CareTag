@@ -1,19 +1,25 @@
-package com.example.CareTag.Models.doctor;
+package com.example.CareTag.controllers;
 
 import com.example.CareTag.DTOs.DoctorDTOs.PaitentSearchDTO;
 import com.example.CareTag.DTOs.DoctorDTOs.PrescriptionRequestDTO;
 import com.example.CareTag.DTOs.DoctorDTOs.PrescriptionListDTO;
 import com.example.CareTag.DTOs.DoctorDTOs.SignUpRequest;
 import com.example.CareTag.DTOs.authDTOs.LoginRequestDTO;
+import com.example.CareTag.DTOs.commonDTOs.RecordRequestAcceptDTO;
+import com.example.CareTag.DTOs.commonDTOs.RecordResponseAcceptDTO;
+import com.example.CareTag.Models.common.EncounterModel;
 import com.example.CareTag.Services.doctorService.DoctorAuthService;
 import com.example.CareTag.Services.doctorService.DoctorService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController()
@@ -23,6 +29,9 @@ public class DoctorController
 {
 @Autowired
 DoctorAuthService doctorAuthService;
+
+@Autowired
+SimpMessagingTemplate simpMessagingTemplate;
 
 @Autowired
     DoctorService doctorService;
@@ -63,17 +72,63 @@ log.info("paitentSearch:{}",query);
 
     }
     @PostMapping("/prescription")
-    public void createPrecription(@RequestBody PrescriptionRequestDTO requestDTO) throws Exception {
-        log.info("createPrecription:{}",requestDTO);
+    public void createPrescription(@RequestBody PrescriptionRequestDTO requestDTO) throws Exception {
+        log.info("createPrescription:{}",requestDTO);
         doctorService.createPrecription(requestDTO);
 
     }
 
     @GetMapping("/prescription/list")
-    public List<PrescriptionListDTO> getAllPrescription(){
-         return doctorService.getPrecriptionList();
+    public List<PrescriptionListDTO> getAllPrescription() {
+        return doctorService.getPrecriptionList();
     }
-//
 
 
-}
+
+
+    @PostMapping("/record/request")
+    public void requestRecordAcess(@RequestBody String careTagId){
+
+         doctorService.requestRecordAccess(careTagId);
+
+        }
+
+        @PostMapping("/record/accept")
+    public void recordAccept(@RequestBody RecordRequestAcceptDTO dto){
+
+
+      RecordResponseAcceptDTO recordResponseAcceptDTO =   doctorService.recordAccept(dto);
+      //id is email
+            simpMessagingTemplate.convertAndSendToUser(recordResponseAcceptDTO.getDocEmail(), "/queue/record/approval", recordResponseAcceptDTO);
+
+
+        }
+
+
+    @PostMapping("/record/deny")
+    public ResponseEntity<String> deny(@RequestBody Map<String,String> payload) {
+        String   docId = payload.get("docId");
+        String encounterId = payload.get("encounterId");
+        doctorService.denyRequest(encounterId);
+
+
+
+
+        simpMessagingTemplate.convertAndSendToUser(
+                docId,
+                "/queue/record/approval",
+                Map.of("status", "DENIED")
+        );
+        return ResponseEntity.ok("Denial pushed to doctor");
+    }
+
+    @PostMapping("/session-end")
+    public void sessionEnd(@RequestBody EncounterModel encounterModel)  {
+        doctorService.endSession(encounterModel);
+    }
+
+    }
+
+
+
+

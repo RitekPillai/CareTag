@@ -8,17 +8,15 @@ import 'package:caretag/Modules/card_registration/data/model/medicarecordmodel.d
 import 'package:caretag/Modules/card_registration/data/model/profileModel.dart';
 import 'package:caretag/Modules/card_registration/data/model/shippingRegistration.dart';
 import 'package:caretag/Modules/card_registration/data/repos/paitent_repo.dart';
-import 'package:caretag/Modules/card_registration/model_view/service/cryptographyservice.dart';
+
 import 'package:caretag/Modules/home/model/permissionRequestModel.dart';
 import 'package:caretag/Modules/profile/model/profile_edit_model.dart';
 import 'package:caretag/Modules/records_module/model/prescription_model.dart';
 import 'package:caretag/Modules/records_module/model/prescription_detail_model.dart';
 import 'package:caretag/constants/messagingService.dart';
 
-import 'package:cryptography/cryptography.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/widgets.dart';
-import 'package:hive_flutter/adapters.dart';
 
 part 'patient_bloc_event.dart';
 part 'patient_bloc_state.dart';
@@ -116,28 +114,7 @@ class PatientBloc extends Bloc<PatientBlocEvent, PatientBlocState> {
   ) async {
     emit(Loading());
     try {
-      final recordBox = Hive.box('decrypted_records');
-      final List<int>? aesKeyBytes = recordBox.get('aesKeyBytes');
-
-      if (aesKeyBytes == null) {
-        throw Exception("AES Key not found in local storage!");
-      }
-
-      debugPrint("rsa key :${event.permissionRequestModel.publicKey}");
-
-      final SecretKey aesKey = SecretKey(aesKeyBytes);
-      Cryptographyservice cryptographyservice = Cryptographyservice();
-
-      final String encrytedAesBlob = await cryptographyservice.reEncrytion(
-        aesKey,
-        event.permissionRequestModel.publicKey,
-      );
-      _paitentRepo.requestAccept(
-        Acceptreqmodel(
-          docId: event.permissionRequestModel.docId,
-          encryptedAesBlob: encrytedAesBlob,
-        ),
-      );
+      _paitentRepo.requestAccept(event.permissionRequestModel.docId);
     } catch (e) {
       debugPrint(" erorr:$e");
     }

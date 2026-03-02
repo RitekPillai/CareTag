@@ -1,17 +1,21 @@
 package com.example.CareTag.Services;
 
-import com.example.CareTag.DTOs.EncounterSealDTO;
 import com.example.CareTag.Models.common.Block;
+import com.example.CareTag.Models.common.EncounterModel;
+import com.example.CareTag.Models.doctor.Prescription;
+import com.example.CareTag.Models.type.Ecounterstatus;
 import com.example.CareTag.Repos.common.BlockRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -43,17 +47,27 @@ public class BlockchainService {
     }
 
 
-    public Block sealEncounter(EncounterSealDTO dto) {
+    public Block sealEncounter(EncounterModel dto) {
         try {
             String encounterJson = objectMapper.writeValueAsString(new EncounterFingerprint(
-                    dto.getEncounterId(),
+                    dto.getId(),
                     dto.getPatientId(),
-                    dto.getDoctorId(),
-                    dto.getInvoiceId(),
-                    dto.getPrescriptionId(),
-                    dto.getFileUrls() != null
-                            ? dto.getFileUrls().stream().map(this::sha256).toList()
-                            : List.of()
+                    dto.getDocId(),
+                    dto.getEcounterstatus(),
+                    dto.getEncrptedAESKey(),
+                    dto.getEnvrpytedBlob(),
+                    dto.getXrayUrls() != null
+                            ? dto.getXrayUrls().stream().map(this::sha256).toList()
+                            : List.of(),
+                    dto.getPrescription(),
+                    dto.getInvoice(),
+                    dto.getCreatedAt(),
+                    dto.getSealAt()
+
+
+
+
+
             ));
 
             Block lastBlock = blockRepository.findTopByOrderByIndexDesc()
@@ -136,11 +150,19 @@ public class BlockchainService {
 
 
     private record EncounterFingerprint(
-            String encounterId,
-            Long patientId,
-            Long doctorId,
-            String invoiceId,
-            String prescriptionId,
-            List<String> fileHashes
+             String id,
+             Long patientId,
+             Long docId,
+             Ecounterstatus ecounterstatus,
+
+             String encrptedAESKey,
+
+             String envrpytedBlob,
+             List<String> fileUrls,
+             Prescription prescription,
+             String invoice,
+
+             LocalDateTime createdAt,
+             LocalDateTime sealAt
     ) {}
 }

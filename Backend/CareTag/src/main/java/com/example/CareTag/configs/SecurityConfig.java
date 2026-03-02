@@ -53,8 +53,8 @@ public class SecurityConfig {
                                 .requestMatchers("/ws/**", "/ws", "/websocket/**,/wss/**").permitAll()
                         .requestMatchers("/doctor/signup","/doctor/login").permitAll()
 
-            .requestMatchers("/websocket/**", "/websocket", "/websocket/*").permitAll() // Allow WebSocket handshake
-                        .requestMatchers("/webscoket/**").permitAll() // SockJS handshake needs to get through
+            .requestMatchers("/websocket/**", "/websocket", "/websocket/*").permitAll()
+                        .requestMatchers("/webscoket/**").permitAll()
                         .requestMatchers("/auth/**", "/exchange", "/login/**", "/oauth2/**", "/error").permitAll()
                         .requestMatchers("/blockchain/seal").hasRole("DOCTOR")
                         .requestMatchers("/blockchain/validate", "/blockchain/chain").hasAnyRole("DOCTOR", "PATIENT")
@@ -64,7 +64,6 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session ->
-                        // Change to IF_REQUIRED to allow the OAuth handshake to happen
                         session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 )
                 .authenticationProvider(authenticationProvider())

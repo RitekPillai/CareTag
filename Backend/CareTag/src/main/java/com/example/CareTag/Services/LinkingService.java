@@ -6,6 +6,7 @@ import com.example.CareTag.Models.doctor.Doctor;
 import com.example.CareTag.Models.Paitent.Patient;
 import com.example.CareTag.Models.common.Link;
 import com.example.CareTag.Models.common.Report;
+import com.example.CareTag.Models.type.Status;
 import com.example.CareTag.Repos.common.LinkRepo;
 import com.example.CareTag.Repos.Paitent.PaitentRepo;
 import com.example.CareTag.Repos.common.ReportRepo;
@@ -17,6 +18,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.nio.file.Files;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -41,7 +43,16 @@ public class LinkingService {
 
 
 
+public static boolean isLinkedVaild(Link link){
+    if(link.getStatus() == Status.APPROVED) return true;
+    if(link.getStatus() == Status.EXPIRED) return false;
+    if(link.getStatus() == Status.BLOCKED) return false;
+    if(LocalDateTime.now().isAfter(link.getExpiryDate())){
+        return  false;
 
+    }
+    return link.getStatus() == Status.APPROVED;
+}
 
 
 
@@ -59,10 +70,9 @@ public class LinkingService {
 
         Link isLinked = linkRepo.findByDocIdAndPaitentId(doctor.getId(),patient.getId());
         log.info(" isLinked:{}",isLinked);
-        if(isLinked!=null){
-           // simpMessagingTemplate.convertAndSendToUser(doctor.getEmail(),"/queue/approval", Map.of("status", "ALREADY SCANNED"));
-            log.info("Both are Already Linked");
+        if(isLinked!=null){  log.info("It is already linked there is no  need to link it");
             return;
+
         }
         boolean isBlocked =  reportRepo.existsByDocIdAndPatientId(doctor.getId(),patient.getId());
 if(isBlocked){
@@ -79,7 +89,7 @@ if(isBlocked){
                 .hospitalName(doctor.getClinicName())
                 .docId(doctor.getId())
                 .careTagId(careTagId)
-                .publicKey(doctor.getPublicKey())
+                .isRecord(false)
                 .build();
         log.info(permissionRequestDTO.toString()+"careated");
         sendMessage(permissionRequestDTO, patient.getFcmToken());
@@ -89,8 +99,9 @@ log.info("done");
 
 
     }
+
     @Transactional
-public void createLink(String docId,String aesEncryptedKey){
+public void createLink(String docId){
 
         Optional<Doctor> doctorData = doctorRepo.findById(Long.parseLong(docId));
         if(doctorData.isEmpty()){
@@ -105,8 +116,9 @@ public void createLink(String docId,String aesEncryptedKey){
         log.info("exsistanceLink:{}",exsistanceLink);
         if(exsistanceLink!=null){
           exsistanceLink.setExpiryDate(LocalDateTime.now().plusDays(7));
-          exsistanceLink.setEncryptedData(aesEncryptedKey);
+          exsistanceLink.setStatus(Status.APPROVED);
           linkRepo.save(exsistanceLink);
+
           return;
 
         }
@@ -115,7 +127,7 @@ public void createLink(String docId,String aesEncryptedKey){
             .docId(doctor.getId())
             .paitentId(patient.getId())
             .expiryDate(LocalDateTime.now().plusDays(7))
-            .encryptedData(aesEncryptedKey)
+            .status(Status.APPROVED)
             .build();
         log.info("newLink:{}",newLink );
 Link  save = linkRepo.save(newLink);
@@ -128,8 +140,8 @@ log.info("Link has been Established");
                 .setToken(token)
                 .putData("docName", permissionRequestDTO.getDocName())
                 .putData("placeName", permissionRequestDTO.getHospitalName())
-                .putData("publicKey", permissionRequestDTO.getPublicKey())
                 .putData("docId",permissionRequestDTO.getDocId().toString())
+                .putData("isRecord",permissionRequestDTO.getIsRecord().toString())
                 .setNotification(Notification.builder()
                         .setTitle("Access Request")
 
@@ -145,8 +157,7 @@ log.info("Link has been Established");
         }catch (FirebaseMessagingException e){
             if (e.getMessagingErrorCode() == MessagingErrorCode.UNREGISTERED) {
                 log.error("Token is no longer valid. Deleting from database...");
-                // patient.setFcmToken(null);
-                // paitentRepo.save(patient);
+
             } else {
                 log.error("Failed to send FCM message", e);
             }

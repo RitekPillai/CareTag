@@ -9,9 +9,11 @@ import lombok.NoArgsConstructor;
 
 @Builder
 public class PermissionRequestDTO {
-        private     String publicKey;
+
     private String docName;
     private Long docId;
     private String hospitalName;
     private String careTagId;
+    private String encounterId;
+    private Boolean isRecord;
 }

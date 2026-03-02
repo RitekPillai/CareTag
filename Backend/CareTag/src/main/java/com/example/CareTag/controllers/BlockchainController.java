@@ -1,7 +1,7 @@
 package com.example.CareTag.controllers;
 
-import com.example.CareTag.DTOs.EncounterSealDTO;
 import com.example.CareTag.Models.common.Block;
+import com.example.CareTag.Models.common.EncounterModel;
 import com.example.CareTag.Services.BlockchainService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +19,7 @@ public class BlockchainController {
 
 
     @PostMapping("/seal")
-    public ResponseEntity<Block> sealEncounter(@RequestBody EncounterSealDTO dto) {
+    public ResponseEntity<Block> sealEncounter(@RequestBody EncounterModel dto) {
         Block sealed = blockchainService.sealEncounter(dto);
         return ResponseEntity.ok(sealed);
     }

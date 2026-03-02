@@ -163,9 +163,9 @@ class PaitientRepo {
     }
   }
 
-  void requestAccept(Acceptreqmodel acceptReqModel) async {
-    log(acceptReqModel.docId);
-    Map<String, dynamic> payload = acceptReqModel.toJson();
+  void requestAccept(String docId) async {
+    log(docId);
+    Map<String, dynamic> payload = {"docId": docId};
     try {
       final response = await authenticationService.post(
         Uri.parse(

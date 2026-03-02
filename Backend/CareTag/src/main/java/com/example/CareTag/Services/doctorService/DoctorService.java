@@ -3,15 +3,29 @@ package com.example.CareTag.Services.doctorService;
 import com.example.CareTag.DTOs.DoctorDTOs.PaitentSearchDTO;
 import com.example.CareTag.DTOs.DoctorDTOs.PrescriptionRequestDTO;
 import com.example.CareTag.DTOs.DoctorDTOs.PrescriptionListDTO;
+import com.example.CareTag.DTOs.PermissionRequestDTO;
+import com.example.CareTag.DTOs.commonDTOs.RecordRequestAcceptDTO;
+import com.example.CareTag.DTOs.commonDTOs.RecordResponseAcceptDTO;
+import com.example.CareTag.Models.Paitent.PatientRecords;
+import com.example.CareTag.Models.common.EncounterModel;
+import com.example.CareTag.Models.common.Session;
 import com.example.CareTag.Models.doctor.Doctor;
 import com.example.CareTag.Models.Paitent.Patient;
 import com.example.CareTag.Models.common.Link;
 import com.example.CareTag.Models.doctor.Prescription;
+import com.example.CareTag.Models.type.Ecounterstatus;
+import com.example.CareTag.Models.type.Status;
 import com.example.CareTag.Repos.Paitent.PaitentRepo;
+import com.example.CareTag.Repos.Paitent.PatientRecordsRepo;
+import com.example.CareTag.Repos.common.EncounterRepo;
 import com.example.CareTag.Repos.common.LinkRepo;
+import com.example.CareTag.Repos.common.SessionRepo;
 import com.example.CareTag.Repos.doctor.DoctorRepo;
 import com.example.CareTag.Repos.doctor.PrescriptionRepo;
 import com.example.CareTag.Services.AuthServices.CryptographicService;
+import com.example.CareTag.Services.BlockchainService;
+import com.example.CareTag.Services.LinkingService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -21,10 +35,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import javax.print.Doc;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -37,10 +54,26 @@ public class DoctorService {
     private PaitentRepo paitentRepo;
 
     @Autowired
+    private LinkingService linkingService;
+
+
+    @Autowired
     private PrescriptionRepo precriptionRepo;
+
+    @Autowired
+    private EncounterRepo encounterRepo;
+
+    @Autowired
+    private PatientRecordsRepo patientRecordsRepo;
 
     @Value("${crpytographic.aes-key}")
    private String aesKey;
+
+    @Autowired
+    private BlockchainService blockchainService;
+
+    @Autowired
+    private SessionRepo sessionRepo;
 
 
     public ResponseEntity<?> getPaitents() {
@@ -83,6 +116,16 @@ return  ResponseEntity.ok().body(doctor);
         if(link==null){
             throw new RuntimeException("Link is not yet established");
         }
+    boolean isLinkVaild =     LinkingService.isLinkedVaild(link);
+
+        if(!isLinkVaild){
+            link.setStatus(Status.EXPIRED);
+            linkRepo.save(link);
+
+            throw new RuntimeException("THE LINK HAS BEEN EXPIRED ");
+        }
+
+
 
 
 
@@ -147,4 +190,110 @@ log.info("Precription Created Successfully");
 
     }
 
+    public void requestRecordAccess(String careTagId) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Doctor doctor = doctorRepo.findByEmail(email);
+        Patient patient = paitentRepo.findByCareTagId(careTagId);
+        Link link = linkRepo.findByDocIdAndPaitentId(doctor.getId(), patient.getId());
+        if(link==null){
+            throw new RuntimeException("Link is not yet established");
+        }
+        if(!LinkingService.isLinkedVaild(link)){
+            throw new RuntimeException("Link is Expired or it has been blocked");
+        }
+
+
+
+        EncounterModel encounter = EncounterModel.builder()
+                .docId(doctor.getId())
+                .patientId(patient.getId())
+                .ecounterstatus(Ecounterstatus.PENDING)
+                .createdAt(LocalDateTime.now())
+                .build();
+
+
+encounterRepo.save(encounter);
+log.info("Encounter Created Successfully");
+
+        PermissionRequestDTO dto = PermissionRequestDTO.builder()
+                .encounterId(encounter.getId())
+                .docName(doctor.getFullName()).docId(doctor.getId()).hospitalName(doctor.getClinicName()).careTagId(careTagId).isRecord(true).build();
+        linkingService.sendMessage(dto,patient.getFcmToken());
+        log.info("Message has been send to the user");
+
+
+    }
+
+    public RecordResponseAcceptDTO recordAccept(RecordRequestAcceptDTO dto) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Patient patient = paitentRepo.findByEmail(email);
+        Optional<Doctor> doctorData = doctorRepo.findById(dto.getDocId());
+        if(doctorData.isEmpty()){
+            throw new RuntimeException("Doctor  is not present");
+
+        }
+        Doctor doctor = doctorData.get();
+
+        Link link = linkRepo.findByDocIdAndPaitentId(doctor.getId(), patient.getId());
+        if(link==null){
+            throw new RuntimeException("Link is not yet established");
+        }
+        if(!LinkingService.isLinkedVaild(link)){
+            throw new RuntimeException("Link is Expired or it has been blocked");
+        }
+        /// getting the paitent encrpyted blob
+
+
+     Optional<PatientRecords> patientRecordsData  =  patientRecordsRepo.findById(patient.getId());
+
+     if(patientRecordsData.isEmpty()){
+         throw  new RuntimeException("PaitentRecords is not present");
+
+     }
+        PatientRecords  patientRecords =    patientRecordsData.get();
+
+
+        Optional<EncounterModel> ecounterData = encounterRepo.findById(dto.getEncounterId());
+        if(ecounterData.isEmpty()){
+            throw new RuntimeException("Encounter  is not present");
+        }
+        EncounterModel encounter = ecounterData.get();
+        encounter.setEncrptedAESKey(dto.getAesCrptedkey());
+        encounter.setEnvrpytedBlob(patientRecords.getCipherText());
+        encounter.setEcounterstatus(Ecounterstatus.ACTIVE);
+
+
+        encounterRepo.save(encounter);
+        log.info("Encounter Updated Successfully");
+
+        return RecordResponseAcceptDTO.builder().docEmail(doctor.getEmail()).encounterId(encounter.getId()).patientId(patient.getId()).encrptedAesKey(dto.getAesCrptedkey()).ciphyerText(encounter.getEnvrpytedBlob()).build();
+
+    }
+
+    public void denyRequest(String encounterId) {
+        Optional<EncounterModel> encounter = encounterRepo.findById(encounterId);
+        if(encounter.isEmpty()){
+            throw new RuntimeException("Encounter  is not present");
+        }
+        encounterRepo.delete(encounter.get());
+        log.info("Reqeust Has been denied");
+    }
+@Transactional
+    public void endSession(EncounterModel encounterModel)  {
+
+
+
+        precriptionRepo.save(encounterModel.getPrescription());
+        ///TODO:Work on invoice
+        Session session = Session.builder().docId(encounterModel.getDocId()).patientId(encounterModel.getPatientId()).sessionAt(encounterModel.getCreatedAt()).nestSessionDate(encounterModel.getNestSessionDate()).discription(encounterModel.getDiscription()).build();
+
+        sessionRepo.save(session);
+        encounterModel.setSealAt(LocalDateTime.now());
+     blockchainService.sealEncounter(encounterModel);
+
+
+     encounterRepo.delete(encounterModel);
+     log.info("Session has been ended successfully");
+
+    }
 }

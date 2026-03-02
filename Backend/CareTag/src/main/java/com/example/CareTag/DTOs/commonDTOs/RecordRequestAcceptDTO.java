@@ -1,0 +1,14 @@
+package com.example.CareTag.DTOs.commonDTOs;
+
+import lombok.Builder;
+import lombok.Data;
+
+@Builder
+@Data
+
+public class RecordRequestAcceptDTO {
+    private Long docId;
+    private String encounterId;
+    private String aesCrptedkey;
+
+}

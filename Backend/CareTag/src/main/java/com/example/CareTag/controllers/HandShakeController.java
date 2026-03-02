@@ -1,9 +1,9 @@
-package com.example.CareTag.Services;
+package com.example.CareTag.controllers;
 
 import com.example.CareTag.DTOs.BlockRequestDTO;
+import com.example.CareTag.Services.LinkingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
@@ -26,17 +26,18 @@ private  final LinkingService linkingService;
         log.info("Received request to accept link{}",payload);
         String doctor = payload.get("docId");
         log.info("doctor: " + doctor);
-        String encryptedKeyBundle = payload.get("encryptedAesBlob");
+
         Map<String, String> response = Map.of(
-                "status", "APPROVED",
-                "encryptedAesBlob", encryptedKeyBundle
+                "status", "APPROVED"
         );
 
 
         simpMessagingTemplate.convertAndSendToUser(doctor, "/queue/approval", response);
-        linkingService.createLink( doctor, encryptedKeyBundle );
+        linkingService.createLink( doctor );
         return ResponseEntity.ok("Handshake pushed to doctor");
     }
+
+
     @PostMapping("/deny")
     public ResponseEntity<String> deny(@RequestBody String docId) {
         log.info("docId: " + docId);
