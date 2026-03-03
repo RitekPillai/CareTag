@@ -88,8 +88,10 @@ if(isBlocked){
                 .docName(doctor.getFullName())
                 .hospitalName(doctor.getClinicName())
                 .docId(doctor.getId())
+                .encounterId("")
                 .careTagId(careTagId)
                 .isRecord(false)
+                .publicKey("")
                 .build();
         log.info(permissionRequestDTO.toString()+"careated");
         sendMessage(permissionRequestDTO, patient.getFcmToken());
@@ -142,6 +144,8 @@ log.info("Link has been Established");
                 .putData("placeName", permissionRequestDTO.getHospitalName())
                 .putData("docId",permissionRequestDTO.getDocId().toString())
                 .putData("isRecord",permissionRequestDTO.getIsRecord().toString())
+                .putData("encounterId",permissionRequestDTO.getEncounterId())
+                .putData("publicKey",permissionRequestDTO.getPublicKey())
                 .setNotification(Notification.builder()
                         .setTitle("Access Request")
 

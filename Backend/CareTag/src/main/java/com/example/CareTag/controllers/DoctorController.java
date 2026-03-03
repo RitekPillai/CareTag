@@ -87,40 +87,13 @@ log.info("paitentSearch:{}",query);
 
 
     @PostMapping("/record/request")
-    public void requestRecordAcess(@RequestBody String careTagId){
+    public void requestRecordAcess(@RequestBody String  careTagId){
+
 
          doctorService.requestRecordAccess(careTagId);
 
         }
 
-        @PostMapping("/record/accept")
-    public void recordAccept(@RequestBody RecordRequestAcceptDTO dto){
-
-
-      RecordResponseAcceptDTO recordResponseAcceptDTO =   doctorService.recordAccept(dto);
-      //id is email
-            simpMessagingTemplate.convertAndSendToUser(recordResponseAcceptDTO.getDocEmail(), "/queue/record/approval", recordResponseAcceptDTO);
-
-
-        }
-
-
-    @PostMapping("/record/deny")
-    public ResponseEntity<String> deny(@RequestBody Map<String,String> payload) {
-        String   docId = payload.get("docId");
-        String encounterId = payload.get("encounterId");
-        doctorService.denyRequest(encounterId);
-
-
-
-
-        simpMessagingTemplate.convertAndSendToUser(
-                docId,
-                "/queue/record/approval",
-                Map.of("status", "DENIED")
-        );
-        return ResponseEntity.ok("Denial pushed to doctor");
-    }
 
     @PostMapping("/session-end")
     public void sessionEnd(@RequestBody EncounterModel encounterModel)  {

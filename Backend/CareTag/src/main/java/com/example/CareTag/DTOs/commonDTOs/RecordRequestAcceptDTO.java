@@ -7,7 +7,7 @@ import lombok.Data;
 @Data
 
 public class RecordRequestAcceptDTO {
-    private Long docId;
+    private String docId;
     private String encounterId;
     private String aesCrptedkey;
 

@@ -1,13 +1,18 @@
 package com.example.CareTag.controllers;
 
 import com.example.CareTag.DTOs.PatientDTOs.*;
+import com.example.CareTag.DTOs.commonDTOs.RecordRequestAcceptDTO;
+import com.example.CareTag.DTOs.commonDTOs.RecordResponseAcceptDTO;
 import com.example.CareTag.Models.Paitent.Patient;
 import com.example.CareTag.Repos.Paitent.PaitentRepo;
 import com.example.CareTag.Services.PaitentServices.PatientService;
+import com.example.CareTag.Services.RecordService;
+import com.example.CareTag.Services.doctorService.DoctorService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,6 +27,13 @@ public class PaitentController {
     private PatientService paitentService;
     @Autowired
     private PaitentRepo paitentRepo;
+
+    @Autowired
+    private SimpMessagingTemplate simpMessagingTemplate;
+
+    @Autowired
+    private RecordService recordService;
+
     @PostMapping("/register")
     public String medicalRegistration(
            @RequestBody RegistrationRequestDTO requestDTOp
@@ -89,5 +101,35 @@ public class PaitentController {
 
 
     }
+    @PostMapping("/record/accept")
+    public void recordAccept(@RequestBody RecordRequestAcceptDTO dto){
+
+    log.info(dto.toString());
+        RecordResponseAcceptDTO recordResponseAcceptDTO =   recordService.recordAccept(dto);
+        //id is email
+        simpMessagingTemplate.convertAndSendToUser(recordResponseAcceptDTO.getDocEmail(), "/queue/record/approval", recordResponseAcceptDTO);
+
+
+    }
+
+
+    @PostMapping("/record/deny")
+    public ResponseEntity<String> deny(@RequestBody Map<String,String> payload) {
+        String docId = payload.get("docId");
+        String encounterId = payload.get("encounterId");
+        recordService.denyRequest(encounterId);
+
+
+
+        simpMessagingTemplate.convertAndSendToUser(
+                docId,
+                "/queue/record/approval",
+                Map.of("status", "DENIED")
+        );
+        return ResponseEntity.ok("Denial pushed to doctor");
+    }
+
+
+
 
 }

@@ -21,7 +21,9 @@ class Profilemodel extends HiveObject {
       bloodGroup: json['bloodGroup'],
 
       careTagId: json['careTagId'],
-      imageUrl: json['imageUrl'],
+      imageUrl:
+          json['imageUrl'] ??
+          'https://i.pinimg.com/736x/2c/19/70/2c19700f986189e2f61d60f003edce74.jpg',
     );
   }
 }

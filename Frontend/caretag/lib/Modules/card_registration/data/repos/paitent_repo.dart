@@ -11,6 +11,7 @@ import 'package:caretag/Modules/card_registration/data/model/registrationrespons
 import 'package:caretag/Modules/card_registration/data/model/reordRequestModel.dart';
 import 'package:caretag/Modules/card_registration/data/model/shippingRegistration.dart';
 import 'package:caretag/Modules/card_registration/model_view/service/cryptographyservice.dart';
+import 'package:caretag/Modules/home/model/RecordAccessAcceptModel.dart';
 import 'package:caretag/Modules/profile/model/profile_edit_model.dart';
 import 'package:caretag/Modules/records_module/model/prescription_model.dart';
 import 'package:caretag/Modules/records_module/model/prescription_detail_model.dart';
@@ -293,6 +294,44 @@ class PaitientRepo {
       }
     } catch (e) {
       log("Error sending multipart request: $e");
+      rethrow;
+    }
+  }
+
+  void recordAccessAccept(
+    Recordaccessacceptmodel recordAccessAcceptModel,
+  ) async {
+    final paylaod = recordAccessAcceptModel.toJson();
+    try {
+      final response = await authenticationService.post(
+        Uri.parse("$baseUrl/record/accept"),
+        body: jsonEncode(paylaod),
+      );
+      if (response.statusCode == 200) {
+        log("Request has been send successfully");
+      } else {
+        throw Exception("Failed to accept record access request");
+      }
+    } catch (e) {
+      log("Some error has been occured From repo:$e");
+      rethrow;
+    }
+  }
+
+  void recordAccessDeny(String encounterId, String docId) async {
+    Map<String, String> payload = {"docId": docId, "encounterId": encounterId};
+    try {
+      final response = await authenticationService.post(
+        Uri.parse("$baseUrl/record/deny"),
+        body: jsonEncode(payload),
+      );
+      if (response.statusCode == 200) {
+        log("Record access denied successfully");
+      } else {
+        throw Exception("Failed to deny record access request");
+      }
+    } catch (e) {
+      log("Error denying record access: $e");
       rethrow;
     }
   }

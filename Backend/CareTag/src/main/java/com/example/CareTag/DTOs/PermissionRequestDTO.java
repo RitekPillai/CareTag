@@ -16,4 +16,5 @@ public class PermissionRequestDTO {
     private String careTagId;
     private String encounterId;
     private Boolean isRecord;
+    private String publicKey;
 }

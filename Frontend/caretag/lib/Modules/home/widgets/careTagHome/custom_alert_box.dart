@@ -1,4 +1,5 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:caretag/Modules/home/model/RecordAccessAcceptModel.dart';
+import 'package:caretag/Modules/home/model/permssionAcceptModel.dart';
 import 'package:caretag/Modules/home/view.dart/reportPage.dart';
 import 'package:caretag/Modules/home/widgets/careTagHome/acceptPage.dart';
 import 'package:caretag/Modules/home/widgets/careTagHome/denyPage.dart';
@@ -117,11 +118,23 @@ class CustomAlertBox extends StatelessWidget {
                 FontWeight.w700,
                 () {
                   Navigator.pop(context);
-                  context.read<PatientBloc>().add(
-                    RequestAccept(
-                      permissionRequestModel: permissionRequestModel,
-                    ),
-                  );
+                  if (permissionRequestModel.isRecord == "true") {
+                    context.read<PatientBloc>().add(
+                      RecordAccessAccept(
+                        permissionAcceptModel: PermissionAcceptModel(
+                          docId: permissionRequestModel.docId,
+                          encounterId: permissionRequestModel.encounterId,
+                          publicKey: permissionRequestModel.publicKey,
+                        ),
+                      ),
+                    );
+                  } else {
+                    context.read<PatientBloc>().add(
+                      RequestAccept(
+                        permissionRequestModel: permissionRequestModel,
+                      ),
+                    );
+                  }
                   Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -140,9 +153,20 @@ class CustomAlertBox extends StatelessWidget {
                   TextButton(
                     onPressed: () {
                       Navigator.pop(context);
-                      context.read<PatientBloc>().add(
-                        DenyPermission(docId: permissionRequestModel.docId),
-                      );
+
+                      if (permissionRequestModel.isRecord == "true") {
+                        context.read<PatientBloc>().add(
+                          RecordAcessDeny(
+                            docId: permissionRequestModel.docId,
+                            encounterId: permissionRequestModel.encounterId,
+                          ),
+                        );
+                      } else {
+                        context.read<PatientBloc>().add(
+                          DenyPermission(docId: permissionRequestModel.docId),
+                        );
+                      }
+
                       Navigator.push(
                         context,
                         MaterialPageRoute(

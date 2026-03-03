@@ -20,7 +20,7 @@ public class LinkingController {
 
     @PostMapping("/request")
     public void requestPaitentPermission(@RequestBody String careTagId){
-
+log.info("called");
         linkingService.PermissionRequest(careTagId);
 
 

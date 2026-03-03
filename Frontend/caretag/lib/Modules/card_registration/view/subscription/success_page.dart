@@ -46,21 +46,11 @@ class SuccessPage extends StatelessWidget {
           ),
           const SizedBox(height: 25),
           customElevatedButton(48, 343, "Next", 20, FontWeight.bold, () {
-            final box = Hive.box<Profilemodel>('profile_records');
-            final profileData = box.get('profile_record');
-
-            if (profileData != null) {
-              Navigator.pushReplacement(
-                context,
-                customRoute(Homepage(), context.read<PatientBloc>()),
-              );
-            } else {
-              context.read<PatientBloc>().add(GetProfileData());
-              Navigator.pushReplacement(
-                context,
-                customRoute(Homepage(), context.read<PatientBloc>()),
-              );
-            }
+            context.read<PatientBloc>().add(GetProfileData());
+            Navigator.pushReplacement(
+              context,
+              customRoute(Homepage(), context.read<PatientBloc>()),
+            );
           }, 12),
         ],
       ),

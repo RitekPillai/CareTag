@@ -2,21 +2,25 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
-import 'package:caretag/Modules/card_registration/data/model/acceptReqModel.dart';
 import 'package:caretag/Modules/card_registration/data/model/bloc_req_model.dart';
 import 'package:caretag/Modules/card_registration/data/model/medicarecordmodel.dart';
 import 'package:caretag/Modules/card_registration/data/model/profileModel.dart';
 import 'package:caretag/Modules/card_registration/data/model/shippingRegistration.dart';
 import 'package:caretag/Modules/card_registration/data/repos/paitent_repo.dart';
+import 'package:caretag/Modules/card_registration/model_view/service/cryptographyservice.dart';
+import 'package:caretag/Modules/home/model/RecordAccessAcceptModel.dart';
 
 import 'package:caretag/Modules/home/model/permissionRequestModel.dart';
+import 'package:caretag/Modules/home/model/permssionAcceptModel.dart';
 import 'package:caretag/Modules/profile/model/profile_edit_model.dart';
 import 'package:caretag/Modules/records_module/model/prescription_model.dart';
 import 'package:caretag/Modules/records_module/model/prescription_detail_model.dart';
 import 'package:caretag/constants/messagingService.dart';
+import 'package:cryptography/cryptography.dart';
 
 import 'package:equatable/equatable.dart';
 import 'package:flutter/widgets.dart';
+import 'package:hive/hive.dart';
 
 part 'patient_bloc_event.dart';
 part 'patient_bloc_state.dart';
@@ -36,6 +40,8 @@ class PatientBloc extends Bloc<PatientBlocEvent, PatientBlocState> {
     on<GetAllPrescription>(_onGetAllPrescription);
     on<GetPrescriptionDetail>(_onGetPrescriptionDetail);
     on<ProfileEditEvent>(_onProfileEdit);
+    on<RecordAccessAccept>(_onRecordAccessAccept);
+    on<RecordAcessDeny>(_onRecordAccessDeny);
   }
   Future<void> _onPatientRegistration(
     PatientRegistration event,
@@ -181,6 +187,47 @@ class PatientBloc extends Bloc<PatientBlocEvent, PatientBlocState> {
     try {
       _paitentRepo.profileEdit(event.profileEditModel);
       emit(ProfileUpdateSuccess());
+    } catch (e) {
+      emit(Failed(message: e.toString()));
+    }
+  }
+
+  FutureOr<void> _onRecordAccessAccept(
+    RecordAccessAccept event,
+    Emitter<PatientBlocState> emit,
+  ) async {
+    emit(Loading());
+    try {
+      final recordBox = Hive.box('decrypted_records');
+      final List<int>? aesKeyBytes = recordBox.get('aesKeyBytes');
+      if (aesKeyBytes == null) {
+        throw Exception("AES Key not found in local storage!");
+      }
+
+      Cryptographyservice cryptographyservice = Cryptographyservice();
+      final String reEncryptedKey = await cryptographyservice.reEncrytion(
+        aesKeyBytes,
+        event.permissionAcceptModel.publicKey,
+      );
+      Recordaccessacceptmodel recordaccessacceptmodel = Recordaccessacceptmodel(
+        aesCrptedkey: reEncryptedKey,
+        docId: event.permissionAcceptModel.docId,
+        encounterId: event.permissionAcceptModel.encounterId,
+      );
+
+      _paitentRepo.recordAccessAccept(recordaccessacceptmodel);
+    } catch (e) {
+      emit(Failed(message: e.toString()));
+    }
+  }
+
+  FutureOr<void> _onRecordAccessDeny(
+    RecordAcessDeny event,
+    Emitter<PatientBlocState> emit,
+  ) {
+    emit(Loading());
+    try {
+      _paitentRepo.recordAccessDeny(event.encounterId, event.docId);
     } catch (e) {
       emit(Failed(message: e.toString()));
     }

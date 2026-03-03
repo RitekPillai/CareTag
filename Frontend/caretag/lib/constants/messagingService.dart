@@ -64,11 +64,8 @@ class NotificationService {
         Permissionrequestmodel model = Permissionrequestmodel.formMap(
           message.data,
         );
-        if (model.isRecord == 'true') {
-          debugPrint("Record Notification Received");
-        } else {
-          showDialogBox(model);
-        }
+
+        showDialogBox(model);
 
         ////-------ui
 

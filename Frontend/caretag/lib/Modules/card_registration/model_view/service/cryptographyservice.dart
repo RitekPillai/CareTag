@@ -83,9 +83,8 @@ class Cryptographyservice {
     return buffer.toString();
   }
 
-  Future<String> reEncrytion(SecretKey aesKey, String rawPublicKey) async {
+  Future<String> reEncrytion(List<int> aesKeyBytes, String rawPublicKey) async {
     try {
-      final aesKeyBytes = await aesKey.extractBytes();
       final uint8keybytes = Uint8List.fromList(aesKeyBytes);
 
       final String formattedKey = formatRSAPublicKey(rawPublicKey);

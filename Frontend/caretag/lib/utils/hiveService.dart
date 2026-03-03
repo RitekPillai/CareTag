@@ -2,8 +2,6 @@ import 'dart:async';
 import 'dart:developer';
 import 'dart:ui';
 
-import 'package:caretag/Modules/card_registration/data/model/profileModel.dart';
-import 'package:caretag/Modules/card_registration/data/model/registrationresponsemodel.dart';
 import 'package:caretag/Modules/card_registration/model_view/service/bluetooth_service.dart';
 import 'package:caretag/Modules/card_registration/model_view/service/cryptographyservice.dart';
 import 'package:caretag/utils/storage_service.dart';

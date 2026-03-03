@@ -217,67 +217,16 @@ log.info("Encounter Created Successfully");
 
         PermissionRequestDTO dto = PermissionRequestDTO.builder()
                 .encounterId(encounter.getId())
-                .docName(doctor.getFullName()).docId(doctor.getId()).hospitalName(doctor.getClinicName()).careTagId(careTagId).isRecord(true).build();
+                .docName(doctor.getFullName()).publicKey(doctor.getPublicKey()).docId(doctor.getId()).hospitalName(doctor.getClinicName()).careTagId(careTagId).isRecord(true).build();
         linkingService.sendMessage(dto,patient.getFcmToken());
         log.info("Message has been send to the user");
 
 
     }
 
-    public RecordResponseAcceptDTO recordAccept(RecordRequestAcceptDTO dto) {
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        Patient patient = paitentRepo.findByEmail(email);
-        Optional<Doctor> doctorData = doctorRepo.findById(dto.getDocId());
-        if(doctorData.isEmpty()){
-            throw new RuntimeException("Doctor  is not present");
-
-        }
-        Doctor doctor = doctorData.get();
-
-        Link link = linkRepo.findByDocIdAndPaitentId(doctor.getId(), patient.getId());
-        if(link==null){
-            throw new RuntimeException("Link is not yet established");
-        }
-        if(!LinkingService.isLinkedVaild(link)){
-            throw new RuntimeException("Link is Expired or it has been blocked");
-        }
-        /// getting the paitent encrpyted blob
 
 
-     Optional<PatientRecords> patientRecordsData  =  patientRecordsRepo.findById(patient.getId());
 
-     if(patientRecordsData.isEmpty()){
-         throw  new RuntimeException("PaitentRecords is not present");
-
-     }
-        PatientRecords  patientRecords =    patientRecordsData.get();
-
-
-        Optional<EncounterModel> ecounterData = encounterRepo.findById(dto.getEncounterId());
-        if(ecounterData.isEmpty()){
-            throw new RuntimeException("Encounter  is not present");
-        }
-        EncounterModel encounter = ecounterData.get();
-        encounter.setEncrptedAESKey(dto.getAesCrptedkey());
-        encounter.setEnvrpytedBlob(patientRecords.getCipherText());
-        encounter.setEcounterstatus(Ecounterstatus.ACTIVE);
-
-
-        encounterRepo.save(encounter);
-        log.info("Encounter Updated Successfully");
-
-        return RecordResponseAcceptDTO.builder().docEmail(doctor.getEmail()).encounterId(encounter.getId()).patientId(patient.getId()).encrptedAesKey(dto.getAesCrptedkey()).ciphyerText(encounter.getEnvrpytedBlob()).build();
-
-    }
-
-    public void denyRequest(String encounterId) {
-        Optional<EncounterModel> encounter = encounterRepo.findById(encounterId);
-        if(encounter.isEmpty()){
-            throw new RuntimeException("Encounter  is not present");
-        }
-        encounterRepo.delete(encounter.get());
-        log.info("Reqeust Has been denied");
-    }
 @Transactional
     public void endSession(EncounterModel encounterModel)  {
 

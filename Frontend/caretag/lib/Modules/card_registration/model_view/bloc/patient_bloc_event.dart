@@ -19,6 +19,12 @@ class RequestAccept extends PatientBlocEvent {
   const RequestAccept({required this.permissionRequestModel});
 }
 
+class RecordAccessAccept extends PatientBlocEvent {
+  final PermissionAcceptModel permissionAcceptModel;
+
+  const RecordAccessAccept({required this.permissionAcceptModel});
+}
+
 class GetPatientRecord extends PatientBlocEvent {
   const GetPatientRecord();
 }
@@ -47,6 +53,13 @@ class DenyPermission extends PatientBlocEvent {
   final String docId;
 
   const DenyPermission({required this.docId});
+}
+
+class RecordAcessDeny extends PatientBlocEvent {
+  final String encounterId;
+  final String docId;
+
+  const RecordAcessDeny({required this.encounterId, required this.docId});
 }
 
 class GetProfileData extends PatientBlocEvent {}
