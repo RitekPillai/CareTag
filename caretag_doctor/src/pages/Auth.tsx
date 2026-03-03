@@ -8,7 +8,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Shield, Stethoscope, AlertCircle, Sparkles, ArrowLeft, ArrowRight, Loader2, Mail, Check, Activity } from 'lucide-react';
 import { z } from 'zod';
 import { useToast } from '@/hooks/use-toast';
-import { supabase } from '@/integrations/supabase/client';
 import logoSvg from '@/assets/logo.svg';
 import { SignupStepper } from '@/components/auth/SignupStepper';
 import { AccountSetupStep } from '@/components/auth/signup-steps/AccountSetupStep';
@@ -150,18 +149,11 @@ window.location.href = "/#/";
     
     setIsLoading(true);
     
-    const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
-      redirectTo: `${window.location.origin}/reset-password`,
-    });
+
     
     setIsLoading(false);
     
-    if (error) {
-      setResetError(error.message);
-      return;
-    }
-    
-    setView('reset-sent');
+
   };
 
   const validateAccountStep = () => {
@@ -303,41 +295,7 @@ window.location.href = "/#/";
     setSignupStep(prev => Math.max(prev - 1, 0));
   };
 
-  const uploadFile = async (file: File, userId: string, folder: string): Promise<string | null> => {
-    const fileExt = file.name.split('.').pop();
-    const fileName = `${userId}/${folder}/${Date.now()}.${fileExt}`;
-    
-    const { error } = await supabase.storage
-      .from('doctor-documents')
-      .upload(fileName, file);
-    
-    if (error) {
-      console.error('Upload error:', error);
-      return null;
-    }
-    
-    return fileName;
-  };
 
-
- const uploadToSupabase = async (file, folder) => {
-  if (!file) return null;
-
-  const fileName = `${Date.now()}_${file.name}`;
-  const filePath = `${folder}/${fileName}`;
-
-  const { data, error } = await supabase.storage
-    .from('doctor-documents') 
-    .upload(filePath, file);
-
-  if (error) throw error;
-
-  const { data: { publicUrl } } = supabase.storage
-    .from('doctor-documents')
-    .getPublicUrl(filePath);
-
-  return publicUrl;
-};
 
 
 
@@ -356,11 +314,6 @@ console.log("Generating RSA Keys...");
   setIsLoading(true);
 
   try {
-    console.log("Uploading files to Supabase...");
-    const degreeUrl = await uploadToSupabase(verificationData.degreeCertificate, 'degrees');
-    const idUrl = await uploadToSupabase(verificationData.idProof, 'identity');
-    const photoUrl = await uploadToSupabase(verificationData.professionalPhoto, 'photos');
-    console.log("Files uploaded successfully:", { degreeUrl, idUrl, photoUrl });
 
     const fullPayload = {
       fullName: accountData.fullName,
@@ -374,9 +327,6 @@ console.log("Generating RSA Keys...");
       medicalCouncilNumber: verificationData.medicalCouncilNumber,
       registeringAuthority: verificationData.registeringAuthority,
       registrationYear: verificationData.registrationYear,
-      degreeCertificateUrl: degreeUrl,
-      idProofUrl: idUrl,
-      professionalPhotoUrl: photoUrl,
       clinicName: practiceData.clinicName,
       clinicAddress: practiceData.clinicAddress,
       city: practiceData.city,

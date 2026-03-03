@@ -4,6 +4,7 @@ import axiosInstance from '@/utils/axiosInstance';
 interface AuthContextType {
   user: any | null;
   loading: boolean;
+  role: string | null;
   signOut: () => void;
 }
 
@@ -19,7 +20,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (token) {
         try {
           // Fetch doctor profile from your Spring Boot /doctor/profile endpoint
-          const response = await axiosInstance.get('/doctor/profile');
+          const response = await axiosInstance.get('/doctor/paitents');
           setUser(response.data);
         } catch (error) {
           console.error("Auth initialization failed:", error);
@@ -41,7 +42,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, signOut }}>
+    <AuthContext.Provider value={{ user, loading, role: user?.role ?? 'doctor', signOut }}>
       {children}
     </AuthContext.Provider>
   );

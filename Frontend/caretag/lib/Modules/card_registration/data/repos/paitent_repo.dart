@@ -302,6 +302,8 @@ class PaitientRepo {
     Recordaccessacceptmodel recordAccessAcceptModel,
   ) async {
     final paylaod = recordAccessAcceptModel.toJson();
+    log("payload: $paylaod");
+
     try {
       final response = await authenticationService.post(
         Uri.parse("$baseUrl/record/accept"),

@@ -14,12 +14,15 @@ import com.example.CareTag.Repos.doctor.DoctorRepo;
 import com.google.firebase.messaging.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.print.Doc;
 import java.nio.file.Files;
 import java.time.LocalDateTime;
+import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
@@ -39,6 +42,9 @@ public class LinkingService {
   @Autowired
   ReportRepo  reportRepo;
 
+  @Autowired
+  SimpMessagingTemplate simpMessagingTemplate;
+
 
 
 
@@ -56,22 +62,28 @@ public static boolean isLinkedVaild(Link link){
 
 
 
-    public  void PermissionRequest(String careTagId){
+    public  void PermissionRequest(String careTagId) throws InterruptedException {
         log.info(" careTagId:{}",careTagId);
         log.info(careTagId);
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         Doctor doctor = doctorRepo.findByEmail(email);
 
 
-
+log.info(email);
         Patient patient =  paitentRepo.findByCareTagId(careTagId);
         log.info(" paitentId:{}",patient.getFullName());
 
 
+
         Link isLinked = linkRepo.findByDocIdAndPaitentId(doctor.getId(),patient.getId());
         log.info(" isLinked:{}",isLinked);
-        if(isLinked!=null){  log.info("It is already linked there is no  need to link it");
-            return;
+        if(isLinked!=null){
+
+
+
+            log.info("It is already linked there is no  need to link it");
+            simpMessagingTemplate.convertAndSendToUser(email,"/queue/approval", Map.of("status", "ALREADY SCANNED"));
+return;
 
         }
         boolean isBlocked =  reportRepo.existsByDocIdAndPatientId(doctor.getId(),patient.getId());
@@ -87,7 +99,7 @@ if(isBlocked){
         PermissionRequestDTO permissionRequestDTO = PermissionRequestDTO.builder()
                 .docName(doctor.getFullName())
                 .hospitalName(doctor.getClinicName())
-                .docId(doctor.getId())
+                .docId(doctor.getEmail())
                 .encounterId("")
                 .careTagId(careTagId)
                 .isRecord(false)
@@ -104,14 +116,15 @@ log.info("done");
 
     @Transactional
 public void createLink(String docId){
+    log.info("docId:{}",docId);
 
-        Optional<Doctor> doctorData = doctorRepo.findById(Long.parseLong(docId));
-        if(doctorData.isEmpty()){
-            throw new IllegalArgumentException("doctor not found");
-        }
-        Doctor doctor = doctorData.get();
+        Doctor doctor= doctorRepo.findByEmail(docId);
+
+        log.info("inisde function");
+
         log.info("doctor:{}",doctor);
         String patientEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+        log.info("patientEmail:{}",patientEmail);
         Patient patient = paitentRepo.findByEmail(patientEmail);
         log.info("patient:{}",patient);
         Link exsistanceLink =  linkRepo.findByDocIdAndPaitentId(doctor.getId(),patient.getId());

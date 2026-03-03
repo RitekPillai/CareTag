@@ -73,7 +73,8 @@ export default function ScanCareTag() {
         headers: { 'Content-Type': 'text/plain' }
       });
       const { docId } = response.data;
-
+      console.log("response data = ")
+      console.log(response.data)
       setScanState('waiting');
 
       // Always read token AFTER the axios call (it may have been refreshed)
@@ -82,8 +83,13 @@ export default function ScanCareTag() {
         brokerURL: 'wss://uncatastrophic-nonobserving-marylyn.ngrok-free.dev/ws',
         connectHeaders: { Authorization: `Bearer ${token}` },
         onConnect: () => {
-          client.subscribe(`/user/queue/approval`, (message) => {
+          client.subscribe('/user/queue/approval', (message) => {
+            console.log(message)
             const data = JSON.parse(message.body);
+            console.log("Data recevied from the websocket:",data)
+            if('DENIED' in  data && data.status === 'DENIED'){
+              console.log("DENIEDDDDDDDDDDDDDDDDDD")
+            }
             if (data.status === 'APPROVED') {
               setScanState('accepted');
               setTimeout(() => {
@@ -97,6 +103,8 @@ export default function ScanCareTag() {
             else if(data.status === 'ALREADY SCANNED') {
               setScanState('already-scanned');
               client.deactivate();
+            }else{
+              console.log("fucl");
             }
           });
         }

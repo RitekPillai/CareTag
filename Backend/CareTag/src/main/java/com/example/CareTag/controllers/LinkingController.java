@@ -19,7 +19,7 @@ public class LinkingController {
     LinkingService linkingService;
 
     @PostMapping("/request")
-    public void requestPaitentPermission(@RequestBody String careTagId){
+    public void requestPaitentPermission(@RequestBody String careTagId) throws InterruptedException {
 log.info("called");
         linkingService.PermissionRequest(careTagId);
 

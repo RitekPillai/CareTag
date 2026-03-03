@@ -1,5 +1,6 @@
 package com.example.CareTag.Models.common;
 
+import com.example.CareTag.DTOs.PatientDTOs.BasicDataDTO;
 import com.example.CareTag.Models.doctor.Prescription;
 import com.example.CareTag.Models.type.Ecounterstatus;
 import lombok.AllArgsConstructor;
@@ -26,6 +27,8 @@ public class EncounterModel {
 
     private String envrpytedBlob;
     private List<String> xrayUrls;
+
+    private BasicDataDTO basicDataDTO;
 
     private Prescription prescription;
     private String invoice;

@@ -217,7 +217,7 @@ log.info("Encounter Created Successfully");
 
         PermissionRequestDTO dto = PermissionRequestDTO.builder()
                 .encounterId(encounter.getId())
-                .docName(doctor.getFullName()).publicKey(doctor.getPublicKey()).docId(doctor.getId()).hospitalName(doctor.getClinicName()).careTagId(careTagId).isRecord(true).build();
+                .docName(doctor.getFullName()).publicKey(doctor.getPublicKey()).docId(doctor.getEmail()).hospitalName(doctor.getClinicName()).careTagId(careTagId).isRecord(true).build();
         linkingService.sendMessage(dto,patient.getFcmToken());
         log.info("Message has been send to the user");
 

@@ -1,5 +1,6 @@
 package com.example.CareTag.DTOs.commonDTOs;
 
+import com.example.CareTag.DTOs.PatientDTOs.BasicDataDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,4 +14,5 @@ public class RecordResponseAcceptDTO {
     private String encrptedAesKey;
     private String ciphyerText;
     private String docEmail;
+    private BasicDataDTO basicDataDTO;
 }

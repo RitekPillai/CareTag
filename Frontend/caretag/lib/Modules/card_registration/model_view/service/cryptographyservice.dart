@@ -93,7 +93,7 @@ class Cryptographyservice {
 
       final aeskeyEncrytion = await RSA.encryptOAEPBytes(
         uint8keybytes,
-        "CareTag-AES-KEY",
+        "",
         Hash.SHA256,
         formattedKey,
       );

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Bell, Moon, Sun, Search, ScanLine, Command, User, Lock } from 'lucide-react';
+import { Bell, Moon, Sun, Search, ScanLine, Command, User, Lock, Timer } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { SidebarTrigger } from '@/components/ui/sidebar';
@@ -15,7 +15,8 @@ import { Badge } from '@/components/ui/badge';
 import { useTheme } from '@/hooks/useTheme';
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
 import { KeyboardShortcutsModal } from '@/components/shortcuts/KeyboardShortcutsModal';
-import { useActiveSessions } from '@/hooks/useAccessSession';
+import { useSession } from '@/context/SessionContext';
+import { useSessionTimer } from '@/hooks/useSessionTimer';
 
 export function AppHeader() {
   const navigate = useNavigate();
@@ -23,10 +24,9 @@ export function AppHeader() {
   const [searchQuery, setSearchQuery] = useState('');
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
   const shortcuts = useKeyboardShortcuts(() => setShortcutsOpen(true));
-  const { data: activeSessions } = useActiveSessions();
 
-  const hasActiveSession = activeSessions && activeSessions.length > 0;
-  const currentSession = hasActiveSession ? activeSessions[0] : null;
+  const { session, isSessionActive } = useSession();
+  const elapsed = useSessionTimer(session?.startedAt ?? null);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -48,17 +48,21 @@ export function AppHeader() {
       <div className="h-5 w-px bg-border hidden md:block" />
 
       {/* Active Session Indicator */}
-      {hasActiveSession && currentSession && (
-        <div 
-          onClick={() => navigate(`/patients/${currentSession.patient_id}`)}
+      {isSessionActive && session && (
+        <div
+          onClick={() => navigate('/session')}
           className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-destructive/10 border border-destructive/20 cursor-pointer hover:bg-destructive/15 transition-colors"
         >
           <div className="h-2 w-2 rounded-full bg-destructive animate-pulse" />
           <div className="flex items-center gap-1.5">
             <User className="h-3.5 w-3.5 text-destructive" />
             <span className="text-sm font-medium text-destructive truncate max-w-[120px] lg:max-w-[180px]">
-              {currentSession.patients?.full_name || 'Patient'}
+              {session.basicDataDTO.fullName || 'Patient'}
             </span>
+          </div>
+          <div className="flex items-center gap-1 text-destructive">
+            <Timer className="h-3 w-3" />
+            <span className="text-[10px] font-mono">{elapsed}</span>
           </div>
           <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-4 border-destructive/30 text-destructive">
             Active
@@ -89,11 +93,11 @@ export function AppHeader() {
         <Button
           variant="ghost"
           size="sm"
-          onClick={() => !hasActiveSession && navigate('/scan')}
-          className={`gap-2 hidden lg:flex ${hasActiveSession ? 'opacity-50 cursor-not-allowed' : ''}`}
-          disabled={hasActiveSession}
+          onClick={() => !isSessionActive && navigate('/scan')}
+          className={`gap-2 hidden lg:flex ${isSessionActive ? 'opacity-50 cursor-not-allowed' : ''}`}
+          disabled={isSessionActive}
         >
-          {hasActiveSession ? (
+          {isSessionActive ? (
             <>
               <Lock className="h-4 w-4" />
               Scan
