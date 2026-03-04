@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -22,7 +23,7 @@ public class EmailService {
     @Value("${spring.mail.username}")
     private String fromEmail;
 
-
+@Async
     public void sendOtpEmail(String toEmail,String otpCode,String subject){
         User user  = userRepo.findByEmail(toEmail);
         SimpleMailMessage simpleMailMessage = new  SimpleMailMessage();
@@ -36,7 +37,7 @@ public class EmailService {
 
         }
 
-
+@Async
     public void sendVerificationEmail(String email, String token) throws MessagingException {
 
         String emailVerificationLink = "https://uncatastrophic-nonobserving-marylyn.ngrok-free.dev/auth/verify?token=" + token+"&email="+email;

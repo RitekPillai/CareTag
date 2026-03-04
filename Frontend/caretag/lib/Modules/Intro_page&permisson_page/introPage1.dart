@@ -1,7 +1,7 @@
 import 'package:caretag/Modules/auth/data/intro/ImageModel.dart';
 import 'package:caretag/utils/storage_service.dart';
 import 'package:caretag/widgets/animated_route.dart';
-import 'package:caretag/Modules/auth/view/Intro_page&permisson_page/permission_page.dart';
+import 'package:caretag/Modules/Intro_page&permisson_page/permission_page.dart';
 import 'package:caretag/constants/app_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart' show ReadContext;
@@ -10,7 +10,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
-import '../../model_view/bloc/auth_bloc.dart' show AuthBloc;
+import '../auth/model_view/bloc/auth_bloc.dart' show AuthBloc;
 
 class Intropage1 extends StatefulWidget {
   const Intropage1({super.key});
@@ -128,7 +128,7 @@ class _Intropage1State extends State<Intropage1> {
                       fontWeight: FontWeight.w900,
                       color: AppColor.darkishBlue,
                       fontSize: index == 0 ? 50.sp : 35.sp,
-                      height: 1,
+                      height: 1.h,
                     ),
                   ),
                 ],
@@ -308,7 +308,7 @@ class _Intropage1State extends State<Intropage1> {
 
                         Container(
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(89),
+                            borderRadius: BorderRadius.circular(89.r),
                             gradient: LinearGradient(
                               colors: [Color(0xff5B8DEF), Color(0xff0063F7)],
                             ),

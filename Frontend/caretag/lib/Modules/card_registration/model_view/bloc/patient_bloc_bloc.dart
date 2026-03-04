@@ -16,7 +16,6 @@ import 'package:caretag/Modules/profile/model/profile_edit_model.dart';
 import 'package:caretag/Modules/records_module/model/prescription_model.dart';
 import 'package:caretag/Modules/records_module/model/prescription_detail_model.dart';
 import 'package:caretag/constants/messagingService.dart';
-import 'package:cryptography/cryptography.dart';
 
 import 'package:equatable/equatable.dart';
 import 'package:flutter/widgets.dart';

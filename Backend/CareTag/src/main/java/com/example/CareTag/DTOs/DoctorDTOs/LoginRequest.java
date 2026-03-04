@@ -8,4 +8,6 @@ import lombok.Data;
 public class LoginRequest {
     private String jwtToken;
     private String responseToken;
+  
+
 }
