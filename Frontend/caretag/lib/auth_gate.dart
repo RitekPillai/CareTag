@@ -1,5 +1,5 @@
+import 'package:caretag/Modules/Intro_page&permisson_page/introPage1.dart';
 import 'package:caretag/Modules/auth/model_view/bloc/auth_bloc.dart';
-import 'package:caretag/Modules/auth/view/Intro_page&permisson_page/introPage1.dart';
 import 'package:caretag/Modules/auth/view/auth_pages/oauthPage.dart';
 import 'package:caretag/Modules/card_registration/model_view/bloc/patient_bloc_bloc.dart';
 import 'package:caretag/Modules/card_registration/view/registration/registration_intro_page.dart';

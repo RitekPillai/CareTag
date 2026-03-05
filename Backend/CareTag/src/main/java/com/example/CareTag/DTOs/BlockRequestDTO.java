@@ -7,7 +7,7 @@ import lombok.Data;
 @Data
 public class BlockRequestDTO {
 
-    final private String docID;
-    final private String reason;
-    final private String description;
+  final private String docID;
+  final private String reason;
+  final private String description;
 }

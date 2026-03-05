@@ -1,6 +1,5 @@
 import 'dart:developer';
 
-import 'package:caretag/Modules/auth/view/auth_pages/emailVerification.dart';
 import 'package:caretag/auth_gate.dart';
 
 import 'package:caretag/constants/messagingService.dart';

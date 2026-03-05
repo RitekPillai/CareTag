@@ -1,20 +1,18 @@
 package com.example.CareTag.DTOs;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
 
 @Builder
 public class PermissionRequestDTO {
 
-    private String docName;
-    private String docId;
-    private String hospitalName;
-    private String careTagId;
-    private String encounterId;
-    private Boolean isRecord;
-    private String publicKey;
+  private String docName;
+  private String docId;
+  private String hospitalName;
+  private String careTagId;
+  private String encounterId;
+  private Boolean isRecord;
+  private String publicKey;
 }
