@@ -1,6 +1,6 @@
 import 'dart:developer';
 
-import 'package:caretag/auth_gate.dart';
+import 'package:caretag/Modules/news/view/newsPage.dart';
 
 import 'package:caretag/constants/messagingService.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -78,7 +78,7 @@ class MyApp extends StatelessWidget {
               ),
               colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
             ),
-            home: Authgate(),
+            home: NewsPage(),
           );
         },
       ),

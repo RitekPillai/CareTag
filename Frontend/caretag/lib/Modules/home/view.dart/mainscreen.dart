@@ -49,7 +49,7 @@ class _MainScreenState extends State<MainScreen> {
           CaretagHomepage(profilemodel: widget.profilemodel),
           const Records(),
           const Scaffold(body: Center(child: Text("Care"))),
-          const Newspage(),
+          const NewsPage(),
           ProfilePage(profilemodel: widget.profilemodel),
         ],
       ),
