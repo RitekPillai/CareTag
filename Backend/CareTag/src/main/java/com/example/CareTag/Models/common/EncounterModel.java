@@ -11,36 +11,33 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
 import java.util.List;
+
 @Data
 @AllArgsConstructor
 @Builder
 @Document(collection = "encounter")
 public class EncounterModel {
-    @Id
-    private String id;
-    private Long patientId;
-    private Long docId;
+  @Id
+  private String id;
+  private Long patientId;
+  private Long docId;
 
-    private Ecounterstatus ecounterstatus;
+  private Ecounterstatus ecounterstatus;
 
-    private String encrptedAESKey;
+  private String encrptedAESKey;
 
-    private String envrpytedBlob;
-    private List<String> xrayUrls;
+  private String envrpytedBlob;
+  private List<String> xrayUrls;
 
-    private BasicDataDTO basicDataDTO;
+  private BasicDataDTO basicDataDTO;
 
-    private Prescription prescription;
-    private String invoice;
+  private Prescription prescription;
+  private Invoice invoice;
 
+  private String discription;
+  private LocalDateTime nestSessionDate;
 
-    private String discription;
-    private LocalDateTime nestSessionDate;
-
-    private LocalDateTime createdAt;
-    private  LocalDateTime sealAt;
-
-
-
+  private LocalDateTime createdAt;
+  private LocalDateTime sealAt;
 
 }
