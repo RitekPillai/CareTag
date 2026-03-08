@@ -86,10 +86,6 @@ export default function ScanCareTag() {
           client.subscribe('/user/queue/approval', (message) => {
             console.log(message)
             const data = JSON.parse(message.body);
-            console.log("Data recevied from the websocket:",data)
-            if('DENIED' in  data && data.status === 'DENIED'){
-              console.log("DENIEDDDDDDDDDDDDDDDDDD")
-            }
             if (data.status === 'APPROVED') {
               setScanState('accepted');
               setTimeout(() => {
@@ -100,11 +96,13 @@ export default function ScanCareTag() {
               setScanState('rejected');
               client.deactivate();
             }
-            else if(data.status === 'ALREADY SCANNED') {
+            else if (data.status === 'ALREADY SCANNED') {
               setScanState('already-scanned');
               client.deactivate();
-            }else{
-              console.log("fucl");
+            } else {
+
+              console.log("somethig Wrong");
+
             }
           });
         }
@@ -188,7 +186,7 @@ export default function ScanCareTag() {
             </p>
           </>
         )}
-   {/* Already Scanned */}
+        {/* Already Scanned */}
         {scanState === 'already-scanned' && (
           <div className="flex flex-col items-center gap-6">
             <div className="relative flex items-center justify-center">
