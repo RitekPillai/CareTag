@@ -16,6 +16,8 @@ import com.example.CareTag.Models.doctor.Prescription;
 import com.example.CareTag.Models.type.Ecounterstatus;
 import com.example.CareTag.Repos.common.BlockRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
@@ -24,13 +26,19 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class BlockchainService {
 
-  private static final int DIFFICULTY = 2;
+  private static final int DIFFICULTY = 3;
   private static final String GENESIS_PREVIOUS_HASH = "0";
 
   @Autowired
   private BlockRepository blockRepository;
 
-  private final ObjectMapper objectMapper = new ObjectMapper();
+  private ObjectMapper objectMapper = new ObjectMapper();
+
+  public BlockchainService() {
+    this.objectMapper = new ObjectMapper();
+    this.objectMapper.registerModule(new JavaTimeModule());
+    this.objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+  }
 
   @PostConstruct
   public void init() {

@@ -24,84 +24,72 @@ import java.util.Map;
 @Slf4j
 @RestController()
 @RequestMapping("/doctor")
-@CrossOrigin(origins = "*", allowedHeaders = "*", methods = {RequestMethod.POST, RequestMethod.OPTIONS})
-public class DoctorController
-{
-@Autowired
-DoctorAuthService doctorAuthService;
+@CrossOrigin(origins = "*", allowedHeaders = "*", methods = { RequestMethod.POST, RequestMethod.OPTIONS })
+public class DoctorController {
+  @Autowired
+  DoctorAuthService doctorAuthService;
 
-@Autowired
-SimpMessagingTemplate simpMessagingTemplate;
+  @Autowired
+  SimpMessagingTemplate simpMessagingTemplate;
 
-@Autowired
-    DoctorService doctorService;
-    @GetMapping
-    @PreAuthorize("hasRole('DOCTOR')")
-    public String testingController(){
-        return "hello";
-    }
+  @Autowired
+  DoctorService doctorService;
 
+  @GetMapping
+  @PreAuthorize("hasRole('DOCTOR')")
+  public String testingController() {
+    return "hello";
+  }
 
-    @PostMapping("/signup")
-    public ResponseEntity<?> signup(@RequestBody SignUpRequest signUpRequest){
-        return doctorAuthService.signup(signUpRequest);
+  @PostMapping("/signup")
+  public ResponseEntity<?> signup(@RequestBody SignUpRequest signUpRequest) {
+    return doctorAuthService.signup(signUpRequest);
 
+  }
 
-    }
+  @PostMapping("/login")
+  public ResponseEntity<?> login(@RequestBody LoginRequestDTO loginRequestDTO) {
+    log.info("loginRequestDTO:{}", loginRequestDTO.getPassword());
+    log.info(loginRequestDTO.getEmail());
 
-    @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequestDTO loginRequestDTO){
-        log.info("loginRequestDTO:{}",loginRequestDTO.getPassword());
-        log.info(loginRequestDTO.getEmail());
+    return doctorAuthService.login(loginRequestDTO);
 
-        return doctorAuthService.login(loginRequestDTO);
+  }
+  //
+  // @GetMapping("/paitents")
+  // public ResponseEntity<?> getPaitents(){
+  // return doctorService.getPaitents();
+  // }
 
-    }
+  @PostMapping("/search")
+  public List<PaitentSearchDTO> paitentSearch(@RequestBody String query) {
+    log.info("paitentSearch:{}", query);
+    return doctorService.paitentSearch(query);
 
-    @GetMapping("/paitents")
-    public ResponseEntity<?> getPaitents(){
-        return doctorService.getPaitents();
-    }
+  }
 
+  @PostMapping("/prescription")
+  public void createPrescription(@RequestBody PrescriptionRequestDTO requestDTO) throws Exception {
+    log.info("createPrescription:{}", requestDTO);
+    doctorService.createPrecription(requestDTO);
 
+  }
 
-    @PostMapping("/search")
-    public List<PaitentSearchDTO>  paitentSearch(@RequestBody String query){
-log.info("paitentSearch:{}",query);
-        return doctorService.paitentSearch(query);
+  @GetMapping("/prescription/list")
+  public List<PrescriptionListDTO> getAllPrescription() {
+    return doctorService.getPrecriptionList();
+  }
 
-    }
-    @PostMapping("/prescription")
-    public void createPrescription(@RequestBody PrescriptionRequestDTO requestDTO) throws Exception {
-        log.info("createPrescription:{}",requestDTO);
-        doctorService.createPrecription(requestDTO);
+  @PostMapping("/record/request")
+  public void requestRecordAcess(@RequestBody String careTagId) {
 
-    }
+    doctorService.requestRecordAccess(careTagId);
 
-    @GetMapping("/prescription/list")
-    public List<PrescriptionListDTO> getAllPrescription() {
-        return doctorService.getPrecriptionList();
-    }
+  }
 
+  @PostMapping("/session-end")
+  public void sessionEnd(@RequestBody EncounterModel encounterModel) {
+    doctorService.endSession(encounterModel);
+  }
 
-
-
-    @PostMapping("/record/request")
-    public void requestRecordAcess(@RequestBody String  careTagId){
-
-
-         doctorService.requestRecordAccess(careTagId);
-
-        }
-
-
-    @PostMapping("/session-end")
-    public void sessionEnd(@RequestBody EncounterModel encounterModel)  {
-        doctorService.endSession(encounterModel);
-    }
-
-    }
-
-
-
-
+}

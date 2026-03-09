@@ -4,9 +4,7 @@ import com.example.CareTag.DTOs.DoctorDTOs.PaitentSearchDTO;
 import com.example.CareTag.DTOs.DoctorDTOs.PrescriptionRequestDTO;
 import com.example.CareTag.DTOs.DoctorDTOs.PrescriptionListDTO;
 import com.example.CareTag.DTOs.PermissionRequestDTO;
-import com.example.CareTag.DTOs.commonDTOs.RecordRequestAcceptDTO;
-import com.example.CareTag.DTOs.commonDTOs.RecordResponseAcceptDTO;
-import com.example.CareTag.Models.Paitent.PatientRecords;
+
 import com.example.CareTag.Models.common.EncounterModel;
 import com.example.CareTag.Models.common.Session;
 import com.example.CareTag.Models.doctor.Doctor;
@@ -16,8 +14,8 @@ import com.example.CareTag.Models.doctor.Prescription;
 import com.example.CareTag.Models.type.Ecounterstatus;
 import com.example.CareTag.Models.type.Status;
 import com.example.CareTag.Repos.Paitent.PaitentRepo;
-import com.example.CareTag.Repos.Paitent.PatientRecordsRepo;
 import com.example.CareTag.Repos.common.EncounterRepo;
+import com.example.CareTag.Repos.common.InvoiceRepo;
 import com.example.CareTag.Repos.common.LinkRepo;
 import com.example.CareTag.Repos.common.SessionRepo;
 import com.example.CareTag.Repos.doctor.DoctorRepo;
@@ -25,23 +23,19 @@ import com.example.CareTag.Repos.doctor.PrescriptionRepo;
 import com.example.CareTag.Services.AuthServices.CryptographicService;
 import com.example.CareTag.Services.BlockchainService;
 import com.example.CareTag.Services.LinkingService;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.print.Doc;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -62,9 +56,6 @@ public class DoctorService {
   @Autowired
   private EncounterRepo encounterRepo;
 
-  @Autowired
-  private PatientRecordsRepo patientRecordsRepo;
-
   @Value("${crpytographic.aes-key}")
   private String aesKey;
 
@@ -74,15 +65,19 @@ public class DoctorService {
   @Autowired
   private SessionRepo sessionRepo;
 
-  public ResponseEntity<?> getPaitents() {
+  @Autowired
+  private InvoiceRepo invoiceRepo;
 
-    String docEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-    Doctor doctor = doctorRepo.findByEmail(docEmail);
-
-    List<Link> links = linkRepo.findByDocId(doctor.getId());
-    return ResponseEntity.ok().body(doctor);
-
-  }
+  // public ResponseEntity<?> getPaitents() {
+  //
+  // String docEmail =
+  // SecurityContextHolder.getContext().getAuthentication().getName();
+  // Doctor doctor = doctorRepo.findByEmail(docEmail);
+  //
+  // List<Link> links = linkRepo.findByDocId(doctor.getId());
+  // return ResponseEntity.ok().body(doctor);
+  //
+  // }
 
   public List<PaitentSearchDTO> paitentSearch(String query) {
 
@@ -211,8 +206,15 @@ public class DoctorService {
   @Transactional
   public void endSession(EncounterModel encounterModel) {
 
-    precriptionRepo.save(encounterModel.getPrescription());
-    /// TODO:Work on invoice
+    if (encounterModel.getPrescription() != null) {
+
+      precriptionRepo.save(encounterModel.getPrescription());
+    }
+
+    if (encounterModel.getInvoice() != null) {
+
+      invoiceRepo.save(encounterModel.getInvoice());
+    }
     Session session = Session.builder().docId(encounterModel.getDocId()).patientId(encounterModel.getPatientId())
         .sessionAt(encounterModel.getCreatedAt()).nestSessionDate(encounterModel.getNestSessionDate())
         .discription(encounterModel.getDiscription()).build();
