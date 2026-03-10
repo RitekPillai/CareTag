@@ -6,6 +6,8 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.MongoId;
 
+import com.example.CareTag.Models.type.InvoiceStatus;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -17,6 +19,8 @@ public class Invoice {
   @Id
   @MongoId
   private String id;
+
+  /// TODO:Need to impelemnt the doctor signature.
 
   private String doctorName;
 
@@ -31,4 +35,13 @@ public class Invoice {
   private double discount;
 
   private double taxRate;
+
+  private String title;
+
+  private InvoiceStatus status;
+
+  private String transcationNumber;
+
+  private String patientEmail;
+
 }

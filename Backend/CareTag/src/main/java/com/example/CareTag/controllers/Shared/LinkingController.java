@@ -1,4 +1,4 @@
-package com.example.CareTag.controllers;
+package com.example.CareTag.controllers.Shared;
 
 import com.example.CareTag.Services.LinkingService;
 import lombok.extern.slf4j.Slf4j;

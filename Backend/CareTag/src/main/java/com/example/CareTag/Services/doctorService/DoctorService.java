@@ -36,6 +36,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -213,6 +215,12 @@ public class DoctorService {
 
     if (encounterModel.getInvoice() != null) {
 
+      String transcationID = "CT-" + UUID.randomUUID().toString().substring(0, 8);
+
+      Optional<Patient> patient = paitentRepo.findById(encounterModel.getPatientId());
+
+      encounterModel.getInvoice().setPatientEmail(patient.get().getEmail());
+      encounterModel.getInvoice().setTranscationNumber(transcationID);
       invoiceRepo.save(encounterModel.getInvoice());
     }
     Session session = Session.builder().docId(encounterModel.getDocId()).patientId(encounterModel.getPatientId())

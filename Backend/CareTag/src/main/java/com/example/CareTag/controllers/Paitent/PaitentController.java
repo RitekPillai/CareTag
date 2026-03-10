@@ -1,4 +1,4 @@
-package com.example.CareTag.controllers;
+package com.example.CareTag.controllers.Paitent;
 
 import com.example.CareTag.DTOs.PatientDTOs.*;
 import com.example.CareTag.DTOs.commonDTOs.RecordRequestAcceptDTO;

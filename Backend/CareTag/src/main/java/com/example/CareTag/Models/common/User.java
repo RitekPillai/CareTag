@@ -25,73 +25,62 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @Builder
 public class User implements UserDetails {
-    @Transient
-    public static final String SEQUENCE_NAME = "user_id_sequence";
+  @Transient
+  public static final String SEQUENCE_NAME = "user_id_sequence";
 
-    @MongoId
-    @Id
-    private long id;
-    @Indexed(unique = true)
-    private String email;
-    private String password;
-   private String username;
-   private String providerId;
-   private AuthProvider authProvider;
-   private boolean isVerified = false;
+  @MongoId
+  @Id
+  private long id;
+  @Indexed(unique = true)
+  private String email;
+  private String password;
+  private String username;
+  private String providerId;
+  private AuthProvider authProvider;
+  private boolean isVerified = false;
 
-   private Set<RoleType> role = new HashSet<>();
-   ///  for password reset
+  private Set<RoleType> role = new HashSet<>();
+  /// for password reset
 
+  private String passwordResetToken;
+  private LocalDateTime passwordRestExpiery;
 
-   private String passwordResetToken;
-   private LocalDateTime passwordRestExpiery;
+  @Override
+  public boolean isAccountNonExpired() {
+    return true; // Set to true so users don't get blocked
+  }
 
+  @Override
+  public boolean isAccountNonLocked() {
+    return true;
+  }
 
+  @Override
+  public boolean isCredentialsNonExpired() {
+    return true;
+  }
 
-    @Override
-    public boolean isAccountNonExpired() {
-        return true; // Set to true so users don't get blocked
-    }
+  @Override
+  public boolean isEnabled() {
+    return this.isVerified; // This is great! Users can't login until they verify email.
+  }
 
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
+  @Override
+  public String getUsername() {
+    return this.email;
+  }
 
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
+  @Override
+  public Collection<? extends GrantedAuthority> getAuthorities() {
+    return role.stream().map(roleType -> new SimpleGrantedAuthority("ROLE_" + roleType.name()))
+        .collect(Collectors.toSet());
 
-    @Override
-    public boolean isEnabled() {
-        return this.isVerified; // This is great! Users can't login until they verify email.
-    }
+  }
 
+  /// SignUp verification process
 
-    @Override
-    public String getUsername() {
-        return this.email;
-    }
-
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return role.stream().map(roleType -> new SimpleGrantedAuthority("ROLE_"+roleType.name())).collect(Collectors.toSet());
-
-
-
-
-    }
-
-
-///  SignUp verification process
-
-
-
-    /// is verified  = false
-    /// signup->email password->save->randomUUID->sent to the email->user click the link->verify its -> and then sign up happy:)
-
-
+  /// is verified = false
+  /// signup->email password->save->randomUUID->sent to the email->user click the
+  /// link->verify its -> and then sign up happy:)
 
 }
