@@ -1,3 +1,5 @@
+import 'package:caretag/Modules/Invoice/model_view/bloc/invoice_bloc.dart';
+import 'package:caretag/Modules/Invoice/view/invoice_list_page.dart';
 import 'package:caretag/Modules/card_registration/model_view/bloc/patient_bloc_bloc.dart';
 import 'package:caretag/Modules/records_module/view/pages/doctor_prescription_page.dart';
 import 'package:caretag/Modules/records_module/view/pages/record_home_page.dart';
@@ -123,19 +125,24 @@ class _RecordsState extends State<Records> {
       case "Home":
         return RecordHomePage();
       case "Doctor\nPrescription":
-        context.read<PatientBloc>().add(GetAllPrescription());
         return DoctorPrescriptionPage();
+      case "Bills\nInvoices":
+        return InvoiceListPage();
       default:
-        return Container();
+        return Container(child: Center(child: Text("ata")));
     }
   }
 
   Widget titleStyleWidget(String name) {
     bool isSelected = name == seletedOption;
+
     return GestureDetector(
       onTap: () {
         setState(() {
           seletedOption = name;
+          if (name == "Bills\nInvoices") {
+            context.read<InvoiceBloc>().add(GetInvoiceList());
+          }
         });
       },
       child: Text(

@@ -1,12 +1,10 @@
 import 'package:caretag/Modules/card_registration/model_view/service/bluetooth_service.dart';
 import 'package:caretag/Modules/home/widgets/careTagHome/currentdate.dart';
 import 'package:caretag/utils/storage_service.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:lottie/lottie.dart';
 
@@ -39,6 +37,12 @@ class _HeartbeatcardState extends State<Heartbeatcard>
     );
 
     animatationController.repeat(reverse: true);
+  }
+
+  @override
+  void dispose() {
+    animatationController.dispose();
+    super.dispose();
   }
 
   // Future<void> _connectToBluetoothId() async {

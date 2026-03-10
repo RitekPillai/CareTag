@@ -3,7 +3,6 @@ import 'dart:developer';
 
 import 'package:caretag/Modules/auth/data/model/authException.dart';
 import 'package:caretag/Modules/auth/model_view/service/AuthenticationService.dart';
-import 'package:caretag/Modules/card_registration/data/model/acceptReqModel.dart';
 import 'package:caretag/Modules/card_registration/data/model/bloc_req_model.dart';
 import 'package:caretag/Modules/card_registration/data/model/medicarecordmodel.dart';
 import 'package:caretag/Modules/card_registration/data/model/profileModel.dart';

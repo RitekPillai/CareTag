@@ -1,6 +1,7 @@
 package com.example.CareTag.Services.PaitentServices;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -26,10 +27,21 @@ public class InvoiceService {
           .docName(invoice.getDoctorName())
           .totalAmount(invoice.getTotalAmount())
           .hospitalName(invoice.getHosptialName())
+          .invoiceId(invoice.getId())
           .transcationId(invoice.getTranscationNumber())
           .Status(invoice.getStatus()).build();
 
     }).toList();
+
+  }
+
+  public Invoice getInvoice(String invoiceId) throws Exception {
+    Optional<Invoice> optionalInvoice = invoiceRepo.findById(invoiceId);
+    if (optionalInvoice.isEmpty()) {
+      throw new Exception("Oops no invoice found!!!");
+
+    }
+    return optionalInvoice.get();
 
   }
 }

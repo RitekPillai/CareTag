@@ -20,59 +20,54 @@ import java.util.Optional;
 @Component
 public class OAuth2Service {
 
-    private final AuthUtil authUtil;
-    private final UserRepo userRepo;
-    private final DatabaseSeqService databaseSeqService;
-    private  final PatientRecordsRepo patientRecordsRepo;
+  private final AuthUtil authUtil;
+  private final UserRepo userRepo;
+  private final DatabaseSeqService databaseSeqService;
+  private final PatientRecordsRepo patientRecordsRepo;
 
+  private final RefereshTokenService refereshTokenService;
 
-    private final RefereshTokenService refereshTokenService;
+  @Transactional
+  public ResponseEntity<LoginResponseDTO> Oauth2Login(OAuth2User oAuth2User, String registrationid) throws Exception {
+    AuthProvider authProvider = authUtil.getProviderFromRegID(registrationid);
+    String providerid = authUtil.getProperProviderId(oAuth2User, registrationid);
+    String email = oAuth2User.getAttribute("email");
 
+    User user = userRepo.findByProviderIdAndAuthProvider(providerid, authProvider).orElse(null);
+    User emailUser = userRepo.findByEmail(email);
 
+    boolean isRegister = false;
+    Optional<PatientRecords> patient = patientRecordsRepo.findById(user.getId());
 
+    if (patient.isPresent()) {
 
-    @Transactional
-    public ResponseEntity<LoginResponseDTO> Oauth2Login(OAuth2User oAuth2User, String registrationid) throws Exception {
-        AuthProvider authProvider = authUtil.getProviderFromRegID(registrationid);
-        String providerid = authUtil.getProperProviderId(oAuth2User, registrationid);
-        String email = oAuth2User.getAttribute("email");
-
-        User user = userRepo.findByProviderIdAndAuthProvider(providerid, authProvider).orElse(null);
-        User emailUser = userRepo.findByEmail(email);
-
-        boolean isRegister = false;
-        Optional<PatientRecords> patient = patientRecordsRepo.findById(user.getId());
-
-        if(patient.isPresent()){
-
-            isRegister = true;
-        }
-
-        boolean isNew = false;
-        if (user == null && emailUser == null) {
-            isNew = true;
-            long id = databaseSeqService.generateSequence(User.SEQUENCE_NAME);
-            user = User.builder()
-                    .id(id)
-                    .email(email)
-                    .authProvider(authProvider)
-                    .providerId(providerid)
-                    .isVerified(true)
-                    .username(oAuth2User.getAttribute("name"))
-                    .build();
-            userRepo.save(user); // CRITICAL: Save new user
-        } else if (user != null) {
-            if (email != null && !email.equals(user.getEmail())) {
-                user.setEmail(email);
-                userRepo.save(user); // Update existing user email
-            }
-        } else {
-            throw new BadCredentialsException("Email already registered with another provider");
-        }
-
-        String token = authUtil.generateToken(user);
-        RefreshToken refreshToken = refereshTokenService.generateToken(user.getEmail());
-
-        return ResponseEntity.ok(new LoginResponseDTO(token, user.getUsername(), refreshToken.getToken(), isNew,isRegister));
+      isRegister = true;
     }
+
+    boolean isNew = false;
+    if (user == null && emailUser == null) {
+      isNew = true;
+      long id = databaseSeqService.generateSequence(User.SEQUENCE_NAME);
+      user = User.builder()
+          .id(id)
+          .email(email)
+          .authProvider(authProvider)
+          .providerId(providerid)
+          .build();
+      userRepo.save(user); // CRITICAL: Save new user
+    } else if (user != null) {
+      if (email != null && !email.equals(user.getEmail())) {
+        user.setEmail(email);
+        userRepo.save(user); // Update existing user email
+      }
+    } else {
+      throw new BadCredentialsException("Email already registered with another provider");
+    }
+
+    String token = authUtil.generateToken(user);
+    RefreshToken refreshToken = refereshTokenService.generateToken(user.getEmail());
+
+    return ResponseEntity
+        .ok(new LoginResponseDTO(token, user.getUsername(), refreshToken.getToken(), isNew, isRegister));
+  }
 }

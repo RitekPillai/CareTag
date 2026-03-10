@@ -116,11 +116,9 @@ public class AuthService {
     User user = User.builder()
         .id(id)
         .email(pendingUser.getEmail())
-        .username(pendingUser.getName())
         .password(pendingUser.getPassword())
         .authProvider(AuthProvider.EMAIL)
         .role(Set.of(pendingUser.getRoleType()))
-        .isVerified(true)
         .build();
     userRepo.save(user);
     cacheService.removeFromCache(email);

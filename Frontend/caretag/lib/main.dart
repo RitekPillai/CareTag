@@ -1,6 +1,8 @@
 import 'dart:developer';
 
-import 'package:caretag/Modules/news/view/newsPage.dart';
+import 'package:caretag/Modules/Invoice/model_view/bloc/invoice_bloc.dart';
+import 'package:caretag/Modules/Invoice/model_view/repo/invoice_repo.dart';
+import 'package:caretag/Modules/auth/model_view/service/AuthenticationService.dart';
 import 'package:caretag/auth_gate.dart';
 
 import 'package:caretag/constants/messagingService.dart';
@@ -34,8 +36,6 @@ void main() async {
     await hive.initializeService();
   }
 
-  // ...
-
   await Firebase.initializeApp();
 
   NotificationService notificationService = NotificationService();
@@ -55,7 +55,8 @@ class MyApp extends StatelessWidget {
     final repo = AuthRepo();
     final storeageService = Storageservice();
     final paitentRepo = PaitientRepo();
-
+    final authenticationService = Authenticationservice();
+    final invoiceRepo = InvoiceRepo(auth: authenticationService);
     return MultiBlocProvider(
       providers: [
         BlocProvider(
@@ -63,6 +64,9 @@ class MyApp extends StatelessWidget {
               AuthBloc(repo, storeageService)..add(OnAppStart()),
         ),
         BlocProvider(create: (context) => PatientBloc(paitentRepo)),
+        BlocProvider<InvoiceBloc>(
+          create: (context) => InvoiceBloc(invoiceRepo),
+        ),
       ],
       child: ScreenUtilInit(
         designSize: const Size(393, 852),
@@ -71,7 +75,6 @@ class MyApp extends StatelessWidget {
         builder: (context, child) {
           return MaterialApp(
             navigatorKey: navigatorKey,
-            title: 'Flutter Demo',
             debugShowCheckedModeBanner: false,
             theme: ThemeData(
               textTheme: GoogleFonts.poppinsTextTheme(

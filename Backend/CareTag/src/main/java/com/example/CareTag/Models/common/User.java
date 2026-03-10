@@ -34,10 +34,8 @@ public class User implements UserDetails {
   @Indexed(unique = true)
   private String email;
   private String password;
-  private String username;
   private String providerId;
   private AuthProvider authProvider;
-  private boolean isVerified = false;
 
   private Set<RoleType> role = new HashSet<>();
   /// for password reset
@@ -58,11 +56,6 @@ public class User implements UserDetails {
   @Override
   public boolean isCredentialsNonExpired() {
     return true;
-  }
-
-  @Override
-  public boolean isEnabled() {
-    return this.isVerified; // This is great! Users can't login until they verify email.
   }
 
   @Override

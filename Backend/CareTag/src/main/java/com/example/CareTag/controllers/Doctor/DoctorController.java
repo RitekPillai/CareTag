@@ -5,12 +5,9 @@ import com.example.CareTag.DTOs.DoctorDTOs.PrescriptionRequestDTO;
 import com.example.CareTag.DTOs.DoctorDTOs.PrescriptionListDTO;
 import com.example.CareTag.DTOs.DoctorDTOs.SignUpRequest;
 import com.example.CareTag.DTOs.authDTOs.LoginRequestDTO;
-import com.example.CareTag.DTOs.commonDTOs.RecordRequestAcceptDTO;
-import com.example.CareTag.DTOs.commonDTOs.RecordResponseAcceptDTO;
 import com.example.CareTag.Models.common.EncounterModel;
 import com.example.CareTag.Services.doctorService.DoctorAuthService;
 import com.example.CareTag.Services.doctorService.DoctorService;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +16,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @RestController()
