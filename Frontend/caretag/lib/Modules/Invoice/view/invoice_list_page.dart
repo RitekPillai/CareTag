@@ -1,4 +1,6 @@
+import 'package:caretag/Modules/Invoice/model/invoice_list_model.dart';
 import 'package:caretag/Modules/Invoice/model_view/bloc/invoice_bloc.dart';
+import 'package:caretag/Modules/Invoice/view/widget/invoice_list_container_tile.dart';
 import 'package:caretag/constants/app_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -15,17 +17,17 @@ class InvoiceListPage extends StatelessWidget {
         if (state is Loading) {
           return Center(child: CircularProgressIndicator());
         } else if (state is InvoiceListLoaded) {
-          final InvoiceListLoaded invoiceList = state;
+          final List<InvoiceListModel> invoiceList = state.invoiceList;
 
-          // Now, typing 'loadedState.' should give you 'invoiceList' immediately
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                children: [
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20.w),
-                    child: Text(
+              Padding(
+                padding: EdgeInsetsGeometry.symmetric(horizontal: 18.w),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
                       "Recent Invoices",
                       style: GoogleFonts.poppins(
                         fontWeight: FontWeight.w700,
@@ -33,10 +35,28 @@ class InvoiceListPage extends StatelessWidget {
                         color: AppColor.darkishBlue,
                       ),
                     ),
-                  ),
 
-                  Text("${state.invoiceList.length} Records"),
-                ],
+                    Text(
+                      "${invoiceList.length} Records",
+                      style: GoogleFonts.inter(
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w600,
+                        color: AppColor.greyTextColor,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 16),
+
+              ListView.builder(
+                shrinkWrap: true,
+                itemBuilder: (context, index) {
+                  return InvoiceListContainerTile(
+                    invoiceListModel: invoiceList[index],
+                  );
+                },
+                itemCount: invoiceList.length,
               ),
             ],
           );
