@@ -7,6 +7,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.MongoId;
 
 import com.example.CareTag.Models.type.InvoiceStatus;
+import com.example.CareTag.Models.type.InvoiceType;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -30,7 +31,7 @@ public class Invoice {
 
   private LocalDateTime invoiceDate;
 
-  private double totalAmount;
+  private Integer totalAmount;
 
   private double discount;
 
@@ -43,5 +44,7 @@ public class Invoice {
   private String transcationNumber;
 
   private String patientEmail;
+
+  private InvoiceType invoiceType;
 
 }

@@ -28,6 +28,7 @@ public class InvoiceService {
           .totalAmount(invoice.getTotalAmount())
           .hospitalName(invoice.getHosptialName())
           .invoiceId(invoice.getId())
+          .invoiceType(invoice.getInvoiceType())
           .transcationId(invoice.getTranscationNumber())
           .Status(invoice.getStatus()).build();
 

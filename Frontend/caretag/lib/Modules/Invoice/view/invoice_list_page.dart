@@ -1,3 +1,4 @@
+import 'package:caretag/Modules/Invoice/model/invoiceListConatinerTileModel.dart';
 import 'package:caretag/Modules/Invoice/model/invoice_list_model.dart';
 import 'package:caretag/Modules/Invoice/model_view/bloc/invoice_bloc.dart';
 import 'package:caretag/Modules/Invoice/view/widget/invoice_list_container_tile.dart';
@@ -14,6 +15,9 @@ class InvoiceListPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<InvoiceBloc, InvoiceBlocState>(
       builder: (context, state) {
+        const Color doctorInvoicesContainerColor = Color(0xffEEF2FF);
+        const Color labInvoiceContainerColor = Color(0xffEEF2FF);
+        const Color pharmacyIvoiceContainerColor = Color(0xffFFFBEB);
         if (state is Loading) {
           return Center(child: CircularProgressIndicator());
         } else if (state is InvoiceListLoaded) {
@@ -52,9 +56,39 @@ class InvoiceListPage extends StatelessWidget {
               ListView.builder(
                 shrinkWrap: true,
                 itemBuilder: (context, index) {
-                  return InvoiceListContainerTile(
-                    invoiceListModel: invoiceList[index],
-                  );
+                  if (invoiceList[index].invoiceType == "DOCTOR") {
+                    return InvoiceListContainerTile(
+                      invoicelistconatinertilemodel:
+                          Invoicelistconatinertilemodel(
+                            invoiceListModel: invoiceList[index],
+                            containerColor: doctorInvoicesContainerColor,
+                            conatinerImagePath: "/Icon(11).svg",
+                            backgroundImagePath: "/Text.svg",
+                          ),
+                    );
+                  }
+                  if (invoiceList[index].invoiceType == "DIAGONOSIS") {
+                    return InvoiceListContainerTile(
+                      invoicelistconatinertilemodel:
+                          Invoicelistconatinertilemodel(
+                            invoiceListModel: invoiceList[index],
+                            containerColor: pharmacyIvoiceContainerColor,
+                            conatinerImagePath: "/Icon(12).svg",
+                            backgroundImagePath: "/Text(1).svg",
+                          ),
+                    );
+                  }
+                  if (invoiceList[index].invoiceType == "PHARMACY") {
+                    return InvoiceListContainerTile(
+                      invoicelistconatinertilemodel:
+                          Invoicelistconatinertilemodel(
+                            invoiceListModel: invoiceList[index],
+                            containerColor: pharmacyIvoiceContainerColor,
+                            conatinerImagePath: "/Icon(12).svg",
+                            backgroundImagePath: "/Text(1).svg",
+                          ),
+                    );
+                  }
                 },
                 itemCount: invoiceList.length,
               ),

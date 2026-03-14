@@ -12,6 +12,7 @@ import com.example.CareTag.Models.Paitent.Patient;
 import com.example.CareTag.Models.common.Link;
 import com.example.CareTag.Models.doctor.Prescription;
 import com.example.CareTag.Models.type.Ecounterstatus;
+import com.example.CareTag.Models.type.InvoiceType;
 import com.example.CareTag.Models.type.Status;
 import com.example.CareTag.Repos.Paitent.PaitentRepo;
 import com.example.CareTag.Repos.common.EncounterRepo;
@@ -221,6 +222,8 @@ public class DoctorService {
 
       encounterModel.getInvoice().setPatientEmail(patient.get().getEmail());
       encounterModel.getInvoice().setTranscationNumber(transcationID);
+
+      encounterModel.getInvoice().setInvoiceType(InvoiceType.DOCTOR);
       invoiceRepo.save(encounterModel.getInvoice());
     }
     Session session = Session.builder().docId(encounterModel.getDocId()).patientId(encounterModel.getPatientId())
