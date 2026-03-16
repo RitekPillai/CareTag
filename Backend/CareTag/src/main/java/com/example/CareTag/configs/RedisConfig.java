@@ -56,4 +56,18 @@ public class RedisConfig {
     return template;
   }
 
+  @Bean(name = "recentActivityTemplate")
+  public RedisTemplate<String, Object> recentActivityTemplate(RedisConnectionFactory factory) {
+    RedisTemplate<String, Object> template = new RedisTemplate<>();
+    ObjectMapper objectMapper = new ObjectMapper();
+    objectMapper.registerModule(new JavaTimeModule());
+    objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+    template.setConnectionFactory(factory);
+    template.setKeySerializer(new StringRedisSerializer());
+    GenericJackson2JsonRedisSerializer jsonSerializer = new GenericJackson2JsonRedisSerializer(objectMapper);
+    template.setValueSerializer(jsonSerializer);
+    template.afterPropertiesSet();
+    return template;
+  }
+
 }

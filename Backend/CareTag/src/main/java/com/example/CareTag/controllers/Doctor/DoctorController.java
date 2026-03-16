@@ -84,7 +84,7 @@ public class DoctorController {
   }
 
   @PostMapping("/session-end")
-  public void sessionEnd(@RequestBody EncounterModel encounterModel) {
+  public void sessionEnd(@RequestBody EncounterModel encounterModel) throws Exception {
     doctorService.endSession(encounterModel);
   }
 

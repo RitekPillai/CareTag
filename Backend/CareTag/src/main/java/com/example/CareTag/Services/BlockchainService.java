@@ -9,6 +9,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.example.CareTag.DTOs.commonDTOs.EncounterDTO;
 import com.example.CareTag.Models.common.Block;
 import com.example.CareTag.Models.common.EncounterModel;
 import com.example.CareTag.Models.common.Invoice;
@@ -56,14 +57,13 @@ public class BlockchainService {
     }
   }
 
-  public Block sealEncounter(EncounterModel dto) {
+  public Block sealEncounter(EncounterDTO dto) {
     try {
       String encounterJson = objectMapper.writeValueAsString(new EncounterFingerprint(
 
           dto.getId(),
           dto.getPatientId(),
           dto.getDocId(),
-          dto.getEcounterstatus(),
           dto.getEncrptedAESKey(),
           dto.getEnvrpytedBlob(),
           dto.getXrayUrls() != null
@@ -156,7 +156,6 @@ public class BlockchainService {
       String id,
       Long patientId,
       Long docId,
-      Ecounterstatus ecounterstatus,
 
       String encrptedAESKey,
 

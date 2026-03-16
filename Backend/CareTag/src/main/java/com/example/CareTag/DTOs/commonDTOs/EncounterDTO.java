@@ -1,21 +1,18 @@
-package com.example.CareTag.Models.common;
+package com.example.CareTag.DTOs.commonDTOs;
 
-import com.example.CareTag.DTOs.DoctorDTOs.PrescriptionRequestDTO;
 import com.example.CareTag.DTOs.PatientDTOs.BasicDataDTO;
-import lombok.AllArgsConstructor;
+import com.example.CareTag.Models.common.Invoice;
+import com.example.CareTag.Models.doctor.Prescription;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
-
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Data
-@AllArgsConstructor
 @Builder
-@Document(collection = "encounter")
-public class EncounterModel {
+@Data
+public class EncounterDTO {
+
   @Id
   private String id;
   private Long patientId;
@@ -28,7 +25,7 @@ public class EncounterModel {
 
   private BasicDataDTO basicDataDTO;
 
-  private PrescriptionRequestDTO prescription;
+  private Prescription prescription;
   private Invoice invoice;
 
   private String discription;

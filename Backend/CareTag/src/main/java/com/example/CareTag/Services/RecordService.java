@@ -82,7 +82,6 @@ public class RecordService {
     String combinedBase64 = Base64.getEncoder().encodeToString(combined);
 
     encounter.setEnvrpytedBlob(combinedBase64);
-    encounter.setEcounterstatus(Ecounterstatus.ACTIVE);
 
     encounterRepo.save(encounter);
     log.info("Encounter Updated Successfully");

@@ -1,76 +1,702 @@
-import 'dart:convert';
-
 class NewsArticle {
+  final String id;
+  final String category;
   final String title;
-  final String? description;
-  final String? imageUrl;
-  final DateTime pubDate;
-  final String? sourceName;
-  final String link;
+  final String subtitle;
+  final String author;
+  final String timeAgo;
+  final String readTime;
+  final String imageUrl;
+  final bool isFeatured;
+  final String content;
 
-  NewsArticle({
+  const NewsArticle({
+    required this.id,
+    required this.category,
     required this.title,
-    this.description,
-    this.imageUrl,
-    required this.pubDate,
-    this.sourceName,
-    required this.link,
+    this.subtitle = '',
+    required this.author,
+    required this.timeAgo,
+    required this.readTime,
+    required this.imageUrl,
+    this.isFeatured = false,
+    this.content = '',
   });
-
-  factory NewsArticle.fromJson(Map<String, dynamic> json) {
-    return NewsArticle(
-      title: json['title'] ?? 'No Title',
-      description: json['description'],
-      imageUrl: json['image_url'],
-      pubDate: json['pubDate'] != null
-          ? DateTime.parse(json['pubDate'])
-          : DateTime.now(),
-      sourceName: json['source_id'],
-      link: json['link'] ?? '',
-    );
-  }
-
-  String get timeAgo {
-    final duration = DateTime.now().difference(pubDate);
-
-    if (duration.inDays > 0) {
-      return "${duration.inDays}d ago";
-    } else if (duration.inHours > 0) {
-      return "${duration.inHours}h ago";
-    } else if (duration.inMinutes > 0) {
-      return "${duration.inMinutes}m ago";
-    } else {
-      return "Just now";
-    }
-  }
 }
 
-class NewsResponse {
-  final String status;
-  final int totalResults;
-  final List<NewsArticle> articles;
-  final String? nextPage;
+final List<NewsArticle> dummyNewsArticles = [
+  const NewsArticle(
+    id: '1',
+    category: 'FEATURED',
+    title: 'The Secret to Better Sleep Quality',
+    author: 'Dr. Sarah Jenkins',
+    timeAgo: 'Just now',
+    readTime: '5 min read',
+    imageUrl:
+        'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=800&auto=format&fit=crop',
+    isFeatured: true,
+  ),
+  const NewsArticle(
+    id: '2',
+    category: 'NUTRITION',
+    title: 'Superfoods You Need to Include in Your Diet',
+    author: 'CareTag Editorial',
+    timeAgo: '2h ago',
+    readTime: '5 min read',
+    imageUrl:
+        'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800&auto=format&fit=crop',
+  ),
+  const NewsArticle(
+    id: '3',
+    category: 'MENTAL HEALTH',
+    title: 'Why Mindfulness Matters in a Busy World',
+    author: 'eHealth Weekly',
+    timeAgo: '5h ago',
+    readTime: '5 min read',
+    imageUrl:
+        'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=800&auto=format&fit=crop',
+  ),
+  const NewsArticle(
+    id: '4',
+    category: 'FITNESS',
+    title: '5 Simple Exercises for Lower Back Pain',
+    author: 'Physio Tips',
+    timeAgo: '8h ago',
+    readTime: '15 min read',
+    imageUrl:
+        'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=800&auto=format&fit=crop',
+  ),
+  const NewsArticle(
+    id: '5',
+    category: 'INNOVATION',
+    title: 'New Wearable Tech Tracks Hydration Levels',
+    author: 'Tech eHealth',
+    timeAgo: '1d ago',
+    readTime: '5 min read',
+    imageUrl:
+        'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&auto=format&fit=crop',
+  ),
+];
 
-  NewsResponse({
-    required this.status,
-    required this.totalResults,
-    required this.articles,
-    this.nextPage,
-  });
+// Diseases & Awareness Tab Articles
+final List<NewsArticle> diseasesArticles = [
+  const NewsArticle(
+    id: 'da1',
+    category: 'AWARENESS MONTH',
+    title: 'Breast Cancer Awareness',
+    subtitle:
+        'Early detection saves lives. Learn about self-examination and screening schedules.',
+    author: 'CareTag Editorial',
+    timeAgo: 'Just now',
+    readTime: '4 min read',
+    imageUrl:
+        'https://images.unsplash.com/photo-1631217868264-e5b90bb7e133?w=800&auto=format&fit=crop',
+    isFeatured: true,
+  ),
+  const NewsArticle(
+    id: 'da2',
+    category: 'CHRONIC',
+    title: 'Understanding Diabetes',
+    subtitle:
+        'Learn the critical differences between Type 1 and Type 2 symptoms and management.',
+    author: 'CareTag Editorial',
+    timeAgo: '2h ago',
+    readTime: '5 min read',
+    imageUrl:
+        'https://images.unsplash.com/photo-1578496479914-7ef3b0193be3?w=800&auto=format&fit=crop',
+  ),
+  const NewsArticle(
+    id: 'da3',
+    category: 'CARDIOLOGY',
+    title: 'Heart Health Essentials',
+    subtitle: '5 common warning signs of hypertension you should not ignore.',
+    author: 'CareTag Editorial',
+    timeAgo: '5h ago',
+    readTime: '5 min read',
+    imageUrl:
+        'https://images.unsplash.com/photo-1505751172876-fa1923c5c528?w=800&auto=format&fit=crop',
+  ),
+  const NewsArticle(
+    id: 'da4',
+    category: 'SEASONAL',
+    title: 'Allergy Prep Guide',
+    subtitle:
+        'How to effectively prepare for the upcoming spring pollen season.',
+    author: 'CareTag Editorial',
+    timeAgo: '8h ago',
+    readTime: '4 min read',
+    imageUrl:
+        'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&auto=format&fit=crop',
+  ),
+  const NewsArticle(
+    id: 'da5',
+    category: 'CLINICAL TRIALS',
+    title: 'New Alzheimer\'s Study',
+    subtitle: 'Promising results from phase 3 clinical trials.',
+    author: 'Journal of Clinical Neurology',
+    timeAgo: '2h ago',
+    readTime: '3 min read',
+    imageUrl:
+        'https://images.unsplash.com/photo-1576319155264-99536e0be1ee?w=800&auto=format&fit=crop',
+  ),
+  const NewsArticle(
+    id: 'da6',
+    category: 'BREAKTHROUGH',
+    title: 'Gene Therapy Update',
+    subtitle: 'FDA approves new treatment for sickle cell.',
+    author: 'CareTag Research',
+    timeAgo: '1d ago',
+    readTime: '5 min read',
+    imageUrl:
+        'https://images.unsplash.com/photo-1530026405186-ed1f139313f8?w=800&auto=format&fit=crop',
+  ),
+  const NewsArticle(
+    id: 'da7',
+    category: 'SELF-SCREENING',
+    title: 'Skin Mole Check',
+    subtitle: 'ABCDE method',
+    author: 'CareTag Editorial',
+    timeAgo: '3d ago',
+    readTime: '3 min read',
+    imageUrl:
+        'https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=800&auto=format&fit=crop',
+  ),
+  const NewsArticle(
+    id: 'da8',
+    category: 'SELF-SCREENING',
+    title: 'Breast Self-Exam',
+    subtitle: 'Monthly check',
+    author: 'CareTag Editorial',
+    timeAgo: '3d ago',
+    readTime: '5 min read',
+    imageUrl:
+        'https://images.unsplash.com/photo-1631217868264-e5b90bb7e133?w=800&auto=format&fit=crop',
+  ),
+  const NewsArticle(
+    id: 'da9',
+    category: 'EXPERT INSIGHTS',
+    title: 'Managing Chronic Pain',
+    subtitle: 'Dr. Emily Chen explains new holistic approaches.',
+    author: 'Dr. Emily Chen, MD',
+    timeAgo: '1d ago',
+    readTime: '4 min read',
+    imageUrl:
+        'https://images.unsplash.com/photo-1537274942065-eda9d00a6293?w=800&auto=format&fit=crop',
+  ),
+];
 
-  factory NewsResponse.fromRawJson(String str) =>
-      NewsResponse.fromJson(json.decode(str));
+// Health Tips Tab Articles
+final List<NewsArticle> healthTipsArticles = [
+  const NewsArticle(
+    id: 'ht1',
+    category: 'NUTRITION',
+    title: '7-Day High Protein Meal Plan',
+    subtitle:
+        'Boost your energy and build muscle with this dietitian-approved weekly guide tailored for...',
+    author: 'CareTag Editorial',
+    timeAgo: 'Just now',
+    readTime: '5 min read',
+    imageUrl:
+        'https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=800&auto=format&fit=crop',
+    isFeatured: true,
+  ),
+  const NewsArticle(
+    id: 'ht2',
+    category: 'FITNESS',
+    title: 'Home Cardio for Beginners',
+    subtitle:
+        'No equipment needed. Start your journey to better heart health toda...',
+    author: 'Sarah Jenkins',
+    timeAgo: '2 hours ago',
+    readTime: '15 min',
+    imageUrl:
+        'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=800&auto=format&fit=crop',
+  ),
+  const NewsArticle(
+    id: 'ht3',
+    category: 'DIET',
+    title: 'Superfoods for Immunity',
+    subtitle:
+        'Incorporating ginger, turmeric, and citrus into your daily routine can...',
+    author: 'Dr. Sarah Jensen',
+    timeAgo: '5 hours ago',
+    readTime: '5 min',
+    imageUrl:
+        'https://images.unsplash.com/photo-1490885578174-acda8905c2c6?w=800&auto=format&fit=crop',
+  ),
+  const NewsArticle(
+    id: 'ht4',
+    category: 'WELLNESS',
+    title: 'The Role of Hydration in Weight Loss',
+    subtitle: 'Why drinking water before meals is a game changer for your...',
+    author: 'Dr. Sarah Waters',
+    timeAgo: '1 day ago',
+    readTime: '5 min',
+    imageUrl:
+        'https://images.unsplash.com/photo-1548839140-29a749e1cf4d?w=800&auto=format&fit=crop',
+  ),
+  const NewsArticle(
+    id: 'ht5',
+    category: 'FITNESS',
+    title: 'The Science of HIIT',
+    subtitle:
+        'Maximize your calorie burn in less time with High-Intensity Interval...',
+    author: 'Dr. Marcus Thorne',
+    timeAgo: '1 day ago',
+    readTime: '6 min',
+    imageUrl:
+        'https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?w=800&auto=format&fit=crop',
+  ),
+  const NewsArticle(
+    id: 'ht6',
+    category: 'DIET',
+    title: 'Sugar Detox: Day 1',
+    subtitle:
+        'Understanding sugar withdrawal and how to replace empty calories...',
+    author: 'CareTag Editorial',
+    timeAgo: '2 days ago',
+    readTime: '5 min',
+    imageUrl:
+        'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800&auto=format&fit=crop',
+  ),
+];
 
-  factory NewsResponse.fromJson(Map<String, dynamic> json) {
-    return NewsResponse(
-      status: json['status'] ?? 'error',
-      totalResults: json['totalResults'] ?? 0,
-      nextPage: json['nextPage'],
-      articles: json['results'] != null
-          ? List<NewsArticle>.from(
-              json['results'].map((x) => NewsArticle.fromJson(x)),
-            )
-          : [],
-    );
-  }
-}
+// Mental Wellness Tab Articles
+final List<NewsArticle> mentalWellnessArticles = [
+  const NewsArticle(
+    id: 'mw1',
+    category: 'MINDFULNESS',
+    title: 'The Science of Mindfulness',
+    subtitle:
+        'Recent neurological studies confirm what monks have known for centuries: meditation restructures the brain.',
+    author: 'Dr. Elena Rossi',
+    timeAgo: '5 min read',
+    readTime: '5 min read',
+    imageUrl:
+        'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=800&auto=format&fit=crop',
+    isFeatured: true,
+  ),
+  const NewsArticle(
+    id: 'mw2',
+    category: 'SELF CARE',
+    title: 'Burnout: Recognizing the Early Signs',
+    subtitle:
+        'Feeling exhausted isn\'t the only symptom. Learn the emotional cues that matter most.',
+    author: 'Dr. Elena Rossi',
+    timeAgo: '4 min read',
+    readTime: '4 min read',
+    imageUrl:
+        'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800&auto=format&fit=crop',
+  ),
+  const NewsArticle(
+    id: 'mw3',
+    category: 'SLEEP HEALTH',
+    title: 'Sleep Hygiene for Better Mood Regulation',
+    subtitle:
+        'Why your sleep environment matters more than you think for emotional wellbeing.',
+    author: 'CareTag Editorial',
+    timeAgo: '3 min read',
+    readTime: '3 min read',
+    imageUrl:
+        'https://images.unsplash.com/photo-1541781774459-bb2af2f05b55?w=800&auto=format&fit=crop',
+  ),
+];
+
+// Medicines & Treatments Tab Articles
+final List<NewsArticle> medicinesArticles = [
+  const NewsArticle(
+    id: 'mt1',
+    category: 'BREAKTHROUGH',
+    title: 'Breakthrough in Heart Valve Therapy',
+    subtitle:
+        'A revolutionary minimally invasive procedure offers new hope for patients previously.',
+    author: 'Dr. Sarah Johnson',
+    timeAgo: '2 hrs ago',
+    readTime: '6 min read',
+    imageUrl:
+        'https://images.unsplash.com/photo-1530026405186-ed1f139313f3?w=800&auto=format&fit=crop',
+    isFeatured: true,
+  ),
+  const NewsArticle(
+    id: 'mt2',
+    category: 'RESEARCH',
+    title: 'Managing Diabetes: New Oral Insulin trials show promise',
+    subtitle: 'Phase 3 trials indicate efficacy comparable to injections.',
+    author: 'CareTag Research',
+    timeAgo: '4 min read',
+    readTime: '4 min read',
+    imageUrl:
+        'https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=800&auto=format&fit=crop',
+  ),
+  const NewsArticle(
+    id: 'mt3',
+    category: 'GUIDE',
+    title: 'Physical Therapy for Lower Back Pain',
+    subtitle:
+        'A step-by-step illustrated recovery guide focusing on core strengthening and flexibility.',
+    author: 'CareTag Specialists',
+    timeAgo: '12 min read',
+    readTime: '12 min read',
+    imageUrl:
+        'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&auto=format&fit=crop',
+  ),
+  const NewsArticle(
+    id: 'mt4',
+    category: 'SAFETY FIRST',
+    title: "Common Antibiotics: Dos and Don'ts",
+    subtitle: 'Key guidelines for safe and effective antibiotic use.',
+    author: 'CareTag Safety',
+    timeAgo: '3 min read',
+    readTime: '3 min read',
+    imageUrl:
+        'https://images.unsplash.com/photo-1587854692152-cbe660dbde88?w=800&auto=format&fit=crop',
+  ),
+  const NewsArticle(
+    id: 'mt5',
+    category: 'TECH',
+    title: 'Robotic Surgery',
+    subtitle: 'High-precision minimally invasive techniques.',
+    author: 'CareTag Tech',
+    timeAgo: '5 min read',
+    readTime: '5 min read',
+    imageUrl:
+        'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=800&auto=format&fit=crop',
+  ),
+  const NewsArticle(
+    id: 'mt6',
+    category: 'GENETICS',
+    title: 'Gene Therapy',
+    subtitle: 'Targeted treatments for hereditary conditions.',
+    author: 'CareTag Science',
+    timeAgo: '7 min read',
+    readTime: '7 min read',
+    imageUrl:
+        'https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=800&auto=format&fit=crop',
+  ),
+  const NewsArticle(
+    id: 'mt7',
+    category: 'IoT',
+    title: 'Smart Implants: Health Monitoring from the Inside',
+    subtitle: 'Real-time vitals monitoring from within.',
+    author: 'Dr. Julian Vance',
+    timeAgo: '6 min read',
+    readTime: '6 min read',
+    imageUrl:
+        'https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&auto=format&fit=crop',
+  ),
+];
+
+// Medical Technology Tab Articles
+final List<NewsArticle> techArticles = [
+  const NewsArticle(
+    id: 'tech1',
+    category: 'MEDICAL TECH',
+    title: 'AI in Early Cancer Detection',
+    subtitle:
+        'New algorithms demonstrate 99% accuracy in identifying anomalies weeks before traditional scans.',
+    author: 'Dr. Emily Chen',
+    timeAgo: '2h ago',
+    readTime: '6 min read',
+    imageUrl:
+        'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=800&auto=format&fit=crop',
+    isFeatured: true,
+  ),
+  const NewsArticle(
+    id: 'tech2',
+    category: 'INNOVATION',
+    title: 'Solid-State Power: The Future of Wearable Battery Life',
+    subtitle:
+        'Next-generation solid-state batteries promise 7-day continuous monitoring and flash charging.',
+    author: 'CareTag Research',
+    timeAgo: '3h ago',
+    readTime: '4 min read',
+    imageUrl:
+        'https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&auto=format&fit=crop',
+  ),
+  const NewsArticle(
+    id: 'tech3',
+    category: 'DATA SCIENCE',
+    title: 'Understanding AI Precision in Diagnostics',
+    subtitle:
+        'How neural networks are outperforming traditional methods in specific medical fields.',
+    author: 'CareTag Editorial',
+    timeAgo: '5h ago',
+    readTime: '5 min read',
+    imageUrl:
+        'https://images.unsplash.com/photo-1576319155264-99536e0be1ee?w=800&auto=format&fit=crop',
+  ),
+  const NewsArticle(
+    id: 'tech4',
+    category: 'SECURITY',
+    title: 'Military-Grade Security for Your Health Data',
+    subtitle:
+        'AES-256 encryption, end-to-end vaulting, and zero-knowledge architecture explained.',
+    author: 'CareTag Security',
+    timeAgo: '8h ago',
+    readTime: '3 min read',
+    imageUrl:
+        'https://images.unsplash.com/photo-1614064641938-3bbee52942c7?w=800&auto=format&fit=crop',
+  ),
+  const NewsArticle(
+    id: 'tech5',
+    category: 'ONCOLOGY & AI',
+    title: 'AI in Early Detection: Enhancing Diagnostic Accuracy in Oncology',
+    subtitle:
+        'Clinical trial findings: CNN trained on 45,000 histopathological images outperforms radiologists.',
+    author: 'Dr. Sarah Jennings, et al.',
+    timeAgo: 'Oct 14, 2023',
+    readTime: '8 min read',
+    imageUrl:
+        'https://images.unsplash.com/photo-1530026405186-ed1f139313f3?w=800&auto=format&fit=crop',
+  ),
+  const NewsArticle(
+    id: 'tech6',
+    category: 'WEARABLES',
+    title: 'Wearable Sensors: The Next Frontier',
+    subtitle:
+        'Ultra-thin smart patches adhere directly to the epidermis for continuous multi-vital monitoring.',
+    author: 'Dr. Aris Thorne',
+    timeAgo: '1d ago',
+    readTime: '5 min read',
+    imageUrl:
+        'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&auto=format&fit=crop',
+  ),
+  const NewsArticle(
+    id: 'tech7',
+    category: 'SURGERY',
+    title: 'Robotic-Assisted Surgery Breakthroughs',
+    subtitle:
+        'Sub-millimeter precision and remote capabilities are redefining what is possible in the OR.',
+    author: 'Dr. Sarah Jenkins',
+    timeAgo: '1d ago',
+    readTime: '8 min read',
+    imageUrl:
+        'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=800&auto=format&fit=crop',
+  ),
+  const NewsArticle(
+    id: 'tech8',
+    category: 'INDUSTRY DATA',
+    title: 'Telehealth Trends for 2025',
+    subtitle:
+        'As virtual-first healthcare becomes foundational, AI triaging is reducing misdiagnoses by 18%.',
+    author: 'James P. Miller',
+    timeAgo: '2d ago',
+    readTime: '4 min read',
+    imageUrl:
+        'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=800&auto=format&fit=crop',
+  ),
+  const NewsArticle(
+    id: 'tech9',
+    category: 'BIOTECH',
+    title: '3D Printed Organs: From Lab to Clinic',
+    subtitle:
+        'How bioprinting technology is moving beyond experimental scaffolds to functional, life-saving tissues.',
+    author: 'Dr. Elena Rostova',
+    timeAgo: '3d ago',
+    readTime: '9 min read',
+    imageUrl:
+        'https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=800&auto=format&fit=crop',
+  ),
+  const NewsArticle(
+    id: 'tech10',
+    category: 'CONNECTIVITY',
+    title: 'Tele-Surgery via 5G: A Success Story',
+    subtitle:
+        'A surgeon in London performed a successful procedure on a patient 6,700 miles away.',
+    author: 'Dr. Elena Vance',
+    timeAgo: '4d ago',
+    readTime: '5 min read',
+    imageUrl:
+        'https://images.unsplash.com/photo-1559757175-0eb30cd8c063?w=800&auto=format&fit=crop',
+  ),
+];
+
+// Fitness & Nutrition Tab Articles
+final List<NewsArticle> fitArticles = [
+  const NewsArticle(
+    id: 'fit1',
+    category: 'FITNESS',
+    title: '5 Home Cardio Exercises for Longevity',
+    subtitle: 'No equipment needed. Strengthen your heart and boost energy.',
+    author: 'Dr. Ray',
+    timeAgo: '4 min read',
+    readTime: '4 min read',
+    imageUrl:
+        'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=800&auto=format&fit=crop',
+  ),
+  const NewsArticle(
+    id: 'fit2',
+    category: 'WELLNESS GUIDE',
+    title: 'Master Your Office Posture',
+    subtitle: 'A 4-step checklist to align your spine and boost your energy.',
+    author: 'CareTag Wellness',
+    timeAgo: '3 min read',
+    readTime: '3 min read',
+    imageUrl:
+        'https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&auto=format&fit=crop',
+  ),
+  const NewsArticle(
+    id: 'fit3',
+    category: 'NUTRITION GUIDE',
+    title: 'Fiber Facts: The Unsung Hero of Digestion',
+    subtitle: 'Regulate blood sugar, lower cholesterol, and feel full longer.',
+    author: 'Dr. Sarah Jones, Gastroenterologist',
+    timeAgo: '5 min read',
+    readTime: '5 min read',
+    imageUrl:
+        'https://images.unsplash.com/photo-1490885578174-acda8905c2c6?w=800&auto=format&fit=crop',
+  ),
+  const NewsArticle(
+    id: 'fit4',
+    category: 'PLANT BASED',
+    title: 'Vegan Protein Sources: A Complete Guide',
+    subtitle: 'Fuel your body with plants — no performance sacrifice.',
+    author: 'Dr. Lisa Wong, RD',
+    timeAgo: '4 min read',
+    readTime: '4 min read',
+    imageUrl:
+        'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800&auto=format&fit=crop',
+  ),
+  const NewsArticle(
+    id: 'fit5',
+    category: 'RECIPE',
+    title: 'Quinoa & Avocado Salad',
+    subtitle: '420 kcal • 20 min • Easy — heart-healthy and delicious.',
+    author: 'CareTag Kitchen',
+    timeAgo: '2 min read',
+    readTime: '2 min read',
+    imageUrl:
+        'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800&auto=format&fit=crop',
+  ),
+  const NewsArticle(
+    id: 'fit6',
+    category: 'RECIPE',
+    title: 'Green Smoothie Bowl',
+    subtitle: '320 kcal • 10 min • Easy — nutrient-dense morning fuel.',
+    author: 'CareTag Kitchen',
+    timeAgo: '2 min read',
+    readTime: '2 min read',
+    imageUrl:
+        'https://images.unsplash.com/photo-1490885578174-acda8905c2c6?w=800&auto=format&fit=crop',
+  ),
+  const NewsArticle(
+    id: 'fit7',
+    category: 'WORKOUT SCIENCE',
+    title: 'HIIT: The Science of Efficient Cardio',
+    subtitle: 'How EPOC keeps burning calories 24h after your workout.',
+    author: 'Dr. Ray, Sports Medicine',
+    timeAgo: '5 min read',
+    readTime: '5 min read',
+    imageUrl:
+        'https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?w=800&auto=format&fit=crop',
+  ),
+  const NewsArticle(
+    id: 'fit8',
+    category: 'BUDGET FITNESS',
+    title: 'Building Muscle on a Budget',
+    subtitle: 'Smart grocery choices and bodyweight leverage for real results.',
+    author: 'Dr. Ray, Sports Medicine',
+    timeAgo: '6 min read',
+    readTime: '6 min read',
+    imageUrl:
+        'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&auto=format&fit=crop',
+  ),
+  const NewsArticle(
+    id: 'fit9',
+    category: 'MEDICAL',
+    title: 'The Gut-Brain Connection',
+    subtitle: 'How your gut\'s 100M neurons shape mood, digestion, and stress.',
+    author: 'Dr. Lisa Wong, RD',
+    timeAgo: '5 min read',
+    readTime: '5 min read',
+    imageUrl:
+        'https://images.unsplash.com/photo-1576319155264-99536e0be1ee?w=800&auto=format&fit=crop',
+  ),
+  const NewsArticle(
+    id: 'fit10',
+    category: 'RESEARCH',
+    title: 'Intermittent Fasting: Clinical Benefits & Risks',
+    subtitle: 'Peer-reviewed findings on 16:8 protocols and metabolic health.',
+    author: 'Dr. Lisa Wong, RD',
+    timeAgo: '2h ago',
+    readTime: '5 min read',
+    imageUrl:
+        'https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=800&auto=format&fit=crop',
+  ),
+];
+
+// Alerts & Safety Tab Articles
+final List<NewsArticle> alertsArticles = [
+  const NewsArticle(
+    id: 'as1',
+    category: 'HIGH PRIORITY',
+    title: 'Seasonal Flu Advisory',
+    subtitle: 'Local health authorities report a 45% spike in influenza cases.',
+    author: 'CareTag Health Alerts',
+    timeAgo: '2h ago',
+    readTime: '3 min read',
+    imageUrl:
+        'https://images.unsplash.com/photo-1584820927498-cfe5211fd8bf?w=800&auto=format&fit=crop',
+    isFeatured: true,
+  ),
+  const NewsArticle(
+    id: 'as2',
+    category: 'URGENT RECALL',
+    title: 'Product Recall: Histamine-Block Allergy Meds',
+    subtitle:
+        'Batch #4029-X contains potential contaminants. Do not consume. Return to pharmacy for full refund.',
+    author: 'PharmaCare Inc.',
+    timeAgo: '5h ago',
+    readTime: '2 min read',
+    imageUrl:
+        'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=800&auto=format&fit=crop',
+  ),
+  const NewsArticle(
+    id: 'as3',
+    category: 'FOOD SAFETY',
+    title: 'Romaine Lettuce Alert',
+    subtitle:
+        'Multi-state salmonella outbreak linked to specific distributors.',
+    author: 'FDA Food Safety',
+    timeAgo: '2h ago',
+    readTime: '4 min read',
+    imageUrl:
+        'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&auto=format&fit=crop',
+  ),
+  const NewsArticle(
+    id: 'as4',
+    category: 'PROTOCOL UPDATE',
+    title: 'New Vaccination Protocols for Adults (Age 50+)',
+    subtitle:
+        'CDC has updated guidelines regarding shingles and pneumonia vaccines.',
+    author: 'Dr. Sarah Jenks',
+    timeAgo: '3h ago',
+    readTime: '5 min read',
+    imageUrl:
+        'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=800&auto=format&fit=crop',
+  ),
+  const NewsArticle(
+    id: 'as5',
+    category: 'FIRST AID',
+    title: 'First Aid: Handling Heatstroke',
+    subtitle:
+        'Heatstroke is a life-threatening emergency. Take immediate action.',
+    author: 'CareTag First Aid',
+    timeAgo: '2m ago',
+    readTime: '3 min read',
+    imageUrl:
+        'https://images.unsplash.com/photo-1530026405186-ed1f139313f8?w=800&auto=format&fit=crop',
+  ),
+  const NewsArticle(
+    id: 'as6',
+    category: 'HOME SAFETY',
+    title: 'Home Safety: Winter Fire Prevention',
+    subtitle:
+        'Space heaters account for 43% of home heating fires. Stay safe this season.',
+    author: 'CareTag Safety',
+    timeAgo: '1d ago',
+    readTime: '4 min read',
+    imageUrl:
+        'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&auto=format&fit=crop',
+  ),
+];

@@ -1,12 +1,13 @@
+import 'package:caretag/Modules/news/model/newsmodel.dart';
 import 'package:flutter/material.dart';
 
 class FeaturedNewsCard extends StatelessWidget {
-  // final NewsArticle article;
+  final NewsArticle article;
   final VoidCallback onTap;
 
   const FeaturedNewsCard({
     super.key,
-    // required this.article,
+    required this.article,
     required this.onTap,
   });
 
@@ -22,10 +23,10 @@ class FeaturedNewsCard extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
           color: Colors.grey[300], // Placeholder color
-          // image: DecorationImage(
-          //   // image: NetworkImage(article.imageUrl),
-          //   fit: BoxFit.cover,
-          // ),
+          image: DecorationImage(
+            image: NetworkImage(article.imageUrl),
+            fit: BoxFit.cover,
+          ),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.1),
@@ -59,8 +60,7 @@ class FeaturedNewsCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
-                  "hello",
-                  // article.category,
+                  article.category,
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 10,
@@ -75,7 +75,7 @@ class FeaturedNewsCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "sd",
+                    article.title,
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 22,
@@ -93,7 +93,7 @@ class FeaturedNewsCard extends StatelessWidget {
                       ),
                       const SizedBox(width: 4),
                       Text(
-                        "ds",
+                        article.readTime,
                         style: const TextStyle(
                           color: Colors.white70,
                           fontSize: 12,
@@ -104,7 +104,7 @@ class FeaturedNewsCard extends StatelessWidget {
                       const Icon(Icons.circle, color: Colors.white70, size: 4),
                       const SizedBox(width: 12),
                       Text(
-                        "",
+                        article.author,
                         style: const TextStyle(
                           color: Colors.white70,
                           fontSize: 12,

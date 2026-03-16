@@ -2,6 +2,8 @@ package com.example.CareTag.Services.doctorService;
 
 import com.example.CareTag.DTOs.DoctorDTOs.PaitentSearchDTO;
 import com.example.CareTag.DTOs.DoctorDTOs.PrescriptionRequestDTO;
+import com.example.CareTag.DTOs.commonDTOs.EncounterDTO;
+import com.example.CareTag.DTOs.commonDTOs.RecentActivityDTO;
 import com.example.CareTag.DTOs.DoctorDTOs.PrescriptionListDTO;
 import com.example.CareTag.DTOs.PermissionRequestDTO;
 
@@ -11,9 +13,8 @@ import com.example.CareTag.Models.doctor.Doctor;
 import com.example.CareTag.Models.Paitent.Patient;
 import com.example.CareTag.Models.common.Link;
 import com.example.CareTag.Models.doctor.Prescription;
-import com.example.CareTag.Models.type.Ecounterstatus;
+import com.example.CareTag.Models.type.ActivityType;
 import com.example.CareTag.Models.type.InvoiceType;
-import com.example.CareTag.Models.type.Status;
 import com.example.CareTag.Repos.Paitent.PaitentRepo;
 import com.example.CareTag.Repos.common.EncounterRepo;
 import com.example.CareTag.Repos.common.InvoiceRepo;
@@ -28,11 +29,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -71,6 +74,10 @@ public class DoctorService {
   @Autowired
   private InvoiceRepo invoiceRepo;
 
+  @Autowired
+  @Qualifier("recentActivityTemplate")
+  private RedisTemplate<String, Object> redisTemplate;
+
   // public ResponseEntity<?> getPaitents() {
   //
   // String docEmail =
@@ -94,7 +101,7 @@ public class DoctorService {
 
   }
 
-  public void createPrecription(PrescriptionRequestDTO dto) throws Exception {
+  public Prescription createPrecription(PrescriptionRequestDTO dto) throws Exception {
     log.info("in");
     String docEmail = SecurityContextHolder.getContext().getAuthentication().getName();
     Doctor doctor = doctorRepo.findByEmail(docEmail);
@@ -106,19 +113,6 @@ public class DoctorService {
     dto.setSpeclization(doctor.getSpecialization());
     dto.setHospitalName(doctor.getClinicName());
     dto.setCreatedAt(LocalDateTime.now());
-
-    Link link = linkRepo.findByDocIdAndPaitentId(doctor.getId(), patient.getId());
-    if (link == null) {
-      throw new RuntimeException("Link is not yet established");
-    }
-    boolean isLinkVaild = LinkingService.isLinkedVaild(link);
-
-    if (!isLinkVaild) {
-      link.setStatus(Status.EXPIRED);
-      linkRepo.save(link);
-
-      throw new RuntimeException("THE LINK HAS BEEN EXPIRED ");
-    }
 
     ObjectMapper objectMapper = new ObjectMapper();
     objectMapper.registerModule(new JavaTimeModule());
@@ -135,10 +129,16 @@ public class DoctorService {
         .build();
 
     log.info("Encryted Data:{}", encryptedData);
+    RecentActivityDTO activityDTO = RecentActivityDTO.builder().activityType(ActivityType.PRESCRIPTION)
+        .title(dto.getDiagnosis()).discription(dto.getDoctorName()).activityDate(dto.getCreatedAt()).build();
 
-    Prescription prescription1 = precriptionRepo.save(prescription);
-    log.info(prescription1.toString());
-    log.info("Precription Created Successfully");
+    redisTemplate.opsForList().leftPush("activity:" + patient.getEmail(), activityDTO);
+    redisTemplate.opsForList().trim("activity:" + patient.getEmail(), 0, 9);
+
+    redisTemplate.opsForValue().set("meds_activity:" + patient.getEmail(), 0);
+
+    return precriptionRepo.save(prescription);
+
   }
 
   public List<PrescriptionListDTO> getPrecriptionList() {
@@ -190,7 +190,6 @@ public class DoctorService {
     EncounterModel encounter = EncounterModel.builder()
         .docId(doctor.getId())
         .patientId(patient.getId())
-        .ecounterstatus(Ecounterstatus.PENDING)
         .createdAt(LocalDateTime.now())
         .build();
 
@@ -206,36 +205,43 @@ public class DoctorService {
 
   }
 
-  @Transactional
-  public void endSession(EncounterModel encounterModel) {
+  public void endSession(EncounterModel encounterModel) throws Exception {
 
-    if (encounterModel.getPrescription() != null) {
+    Prescription prescription = createPrecription(encounterModel.getPrescription());
 
-      precriptionRepo.save(encounterModel.getPrescription());
-    }
+    String transcationID = "CT-" + UUID.randomUUID().toString().substring(0, 8);
+    Optional<Patient> patient = paitentRepo.findById(encounterModel.getPatientId());
+    encounterModel.getInvoice().setPatientEmail(patient.get().getEmail());
+    encounterModel.getInvoice().setTranscationNumber(transcationID);
+    encounterModel.getInvoice().setInvoiceType(InvoiceType.DOCTOR);
 
-    if (encounterModel.getInvoice() != null) {
+    invoiceRepo.save(encounterModel.getInvoice());
+    /// TODO: Dont's forgot to implement the TTL of 72 or 75 hours in redis
+    RecentActivityDTO activityDTO = RecentActivityDTO.builder().activityType(ActivityType.INVOCIE)
+        .title(encounterModel.getInvoice().getTitle())
+        .discription(encounterModel.getInvoice().getTotalAmount().toString())
+        .activityDate(encounterModel.getInvoice().getInvoiceDate()).build();
+    redisTemplate.opsForList().leftPush("activity:" + patient.get().getEmail(), activityDTO);
+    redisTemplate.opsForList().trim("activity:" + patient.get().getEmail(), 0, 9);
 
-      String transcationID = "CT-" + UUID.randomUUID().toString().substring(0, 8);
-
-      Optional<Patient> patient = paitentRepo.findById(encounterModel.getPatientId());
-
-      encounterModel.getInvoice().setPatientEmail(patient.get().getEmail());
-      encounterModel.getInvoice().setTranscationNumber(transcationID);
-
-      encounterModel.getInvoice().setInvoiceType(InvoiceType.DOCTOR);
-      invoiceRepo.save(encounterModel.getInvoice());
-    }
     Session session = Session.builder().docId(encounterModel.getDocId()).patientId(encounterModel.getPatientId())
         .sessionAt(encounterModel.getCreatedAt()).nestSessionDate(encounterModel.getNestSessionDate())
         .discription(encounterModel.getDiscription()).build();
-
     sessionRepo.save(session);
+
+    EncounterDTO encounterDTO = EncounterDTO.builder().id(encounterModel.getId())
+        .patientId(encounterModel.getPatientId()).docId(encounterModel.getDocId())
+        .encrptedAESKey(encounterModel.getEncrptedAESKey()).envrpytedBlob(encounterModel.getEnvrpytedBlob())
+        .xrayUrls(encounterModel.getXrayUrls()).basicDataDTO(encounterModel.getBasicDataDTO())
+        .prescription(prescription).invoice(encounterModel.getInvoice())
+        .discription(encounterModel.getDiscription())
+        .nestSessionDate(encounterModel.getNestSessionDate()).createdAt(encounterModel.getCreatedAt()).build();
     encounterModel.setSealAt(LocalDateTime.now());
-    blockchainService.sealEncounter(encounterModel);
+    blockchainService.sealEncounter(encounterDTO);
 
     encounterRepo.delete(encounterModel);
     log.info("Session has been ended successfully");
 
   }
+
 }
