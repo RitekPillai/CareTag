@@ -6,8 +6,8 @@ import lombok.Data;
 @Builder
 @Data
 public class DoctorDetailDTO {
-    private Long id;
-    private String doctorName;
-    private String hospitalName;
-    private String specialization;
+  private Long id;
+  private String doctorName;
+  private String hospitalName;
+  private String specialization;
 }

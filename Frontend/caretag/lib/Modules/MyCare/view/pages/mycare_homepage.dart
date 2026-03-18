@@ -1,7 +1,7 @@
 import 'package:caretag/Modules/Invoice/model_view/bloc/invoice_bloc.dart';
 import 'package:caretag/Modules/Invoice/view/invoice_list_page.dart';
-import 'package:caretag/Modules/records_module/view/pages/doctor_prescription_page.dart';
-import 'package:caretag/Modules/records_module/view/pages/record_home_page.dart';
+import 'package:caretag/Modules/doctor_details/model_view/bloc/doctor_detail_bloc.dart';
+import 'package:caretag/Modules/doctor_details/view/pages/doctors_page.dart';
 import 'package:caretag/constants/app_color.dart';
 import 'package:caretag/widgets/custom_search_bar.dart';
 import 'package:flutter/material.dart';
@@ -10,20 +10,17 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class Records extends StatefulWidget {
-  const Records({super.key});
+class MycarePage extends StatefulWidget {
+  const MycarePage({super.key});
 
   @override
-  State<Records> createState() => _RecordsState();
+  State<MycarePage> createState() => _MyCarePagState();
 }
 
-class _RecordsState extends State<Records> {
+class _MyCarePagState extends State<MycarePage> {
   String seletedOption = "Home";
-
   @override
   Widget build(BuildContext context) {
-    const String imagePath = "assets/images/records";
-
     return Scaffold(
       backgroundColor: Colors.white,
       body: Column(
@@ -35,34 +32,15 @@ class _RecordsState extends State<Records> {
                 alignment: Alignment.center,
                 children: [
                   SvgPicture.asset("assets/images/records/Ellipse 94.svg"),
-                  SafeArea(
-                    child: Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Center(
-                              child: Padding(
-                                padding: EdgeInsets.only(left: 70.w),
-                                child: Text(
-                                  "Records",
-                                  style: GoogleFonts.poppins(
-                                    fontWeight: FontWeight.w700,
-                                    color: Colors.white,
-                                    fontSize: 24.sp,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            SizedBox(width: 12.w),
-                            SvgPicture.asset("$imagePath/heart.svg"),
-
-                            SizedBox(width: 11.72.w),
-                            SvgPicture.asset("$imagePath/bell.svg"),
-                          ],
-                        ),
-                      ],
+                  Positioned(
+                    left: 100.w,
+                    child: Text(
+                      "My Care",
+                      style: GoogleFonts.poppins(
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
+                        fontSize: 24.sp,
+                      ),
                     ),
                   ),
                 ],
@@ -88,21 +66,19 @@ class _RecordsState extends State<Records> {
                 ),
                 SizedBox(width: 21.w),
 
-                titleStyleWidget("Doctor\nPrescription"),
+                titleStyleWidget("caretag"),
                 SizedBox(width: 21.w),
 
-                titleStyleWidget("Diagnostic\nReports"),
+                titleStyleWidget("Doctors"),
                 SizedBox(width: 21.w),
 
-                titleStyleWidget("Vaccination\nReports"),
+                titleStyleWidget("Care\nServices"),
                 SizedBox(width: 21.w),
-                titleStyleWidget("Medical\nHistory"),
+                titleStyleWidget("Insurance"),
                 SizedBox(width: 21.w),
-                titleStyleWidget("Bills\nInvoices"),
+                titleStyleWidget("Timeline"),
                 SizedBox(width: 21.w),
-                titleStyleWidget("Insurance Policy\n& Claims"),
                 SizedBox(width: 21.w),
-                titleStyleWidget("Health\nCertificates"),
               ],
             ),
           ),
@@ -122,13 +98,14 @@ class _RecordsState extends State<Records> {
   Widget returnPage() {
     switch (seletedOption) {
       case "Home":
-        return RecordHomePage();
-      case "Doctor\nPrescription":
-        return DoctorPrescriptionPage();
-      case "Bills\nInvoices":
+        return Center(child: Text("home"));
+      case "Doctors":
+        context.read<DoctorDetailBloc>().add(GetMyDoctor());
+        return DoctorsPage();
+      case "caretag":
         return InvoiceListPage();
       default:
-        return Container(child: Center(child: Text("ata")));
+        return Center(child: Text("ata"));
     }
   }
 

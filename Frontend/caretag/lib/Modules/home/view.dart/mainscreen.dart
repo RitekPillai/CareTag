@@ -1,3 +1,4 @@
+import 'package:caretag/Modules/MyCare/view/pages/mycare_homepage.dart';
 import 'package:caretag/Modules/card_registration/data/model/profileModel.dart';
 import 'package:caretag/Modules/home/view.dart/caretag_homepage.dart';
 import 'package:caretag/Modules/news/view/newsPage.dart';
@@ -48,7 +49,7 @@ class _MainScreenState extends State<MainScreen> {
         children: [
           CaretagHomepage(profilemodel: widget.profilemodel),
           const Records(),
-          const Scaffold(body: Center(child: Text("Care"))),
+          const MycarePage(),
           const NewsPage(),
           ProfilePage(profilemodel: widget.profilemodel),
         ],

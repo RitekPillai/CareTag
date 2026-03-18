@@ -3,6 +3,8 @@ import 'dart:developer';
 import 'package:caretag/Modules/Invoice/model_view/bloc/invoice_bloc.dart';
 import 'package:caretag/Modules/Invoice/model_view/repo/invoice_repo.dart';
 import 'package:caretag/Modules/auth/model_view/service/AuthenticationService.dart';
+import 'package:caretag/Modules/doctor_details/model_view/bloc/doctor_detail_bloc.dart';
+import 'package:caretag/Modules/doctor_details/model_view/repo/doctor_detail_repo.dart';
 import 'package:caretag/auth_gate.dart';
 
 import 'package:caretag/constants/messagingService.dart';
@@ -57,6 +59,7 @@ class MyApp extends StatelessWidget {
     final paitentRepo = PaitientRepo();
     final authenticationService = Authenticationservice();
     final invoiceRepo = InvoiceRepo(auth: authenticationService);
+    final doctorDetailRepo = DoctorDetailRepo();
     return MultiBlocProvider(
       providers: [
         BlocProvider(
@@ -66,6 +69,11 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (context) => PatientBloc(paitentRepo)),
         BlocProvider<InvoiceBloc>(
           create: (context) => InvoiceBloc(invoiceRepo),
+        ),
+
+        BlocProvider<DoctorDetailBloc>(
+          create: (context) =>
+              DoctorDetailBloc(authenticationService, doctorDetailRepo),
         ),
       ],
       child: ScreenUtilInit(
