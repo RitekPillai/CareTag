@@ -1,4 +1,5 @@
 import 'package:caretag/Modules/doctor_details/model_view/bloc/doctor_detail_bloc.dart';
+import 'package:caretag/Modules/doctor_details/view/pages/doctor_detail_page.dart';
 import 'package:caretag/Modules/doctor_details/view/widgets/mydoctor_container_tile.dart';
 import 'package:caretag/Modules/doctor_details/view/widgets/specialties_tile.dart';
 import 'package:caretag/constants/app_color.dart';
@@ -91,6 +92,20 @@ class DoctorsPage extends StatelessWidget {
                   itemBuilder: (context, index) {
                     return MydoctorContainerTile(
                       getDoctorModel: mydoctors[index],
+                      onTap: () {
+                        context.read<DoctorDetailBloc>().add(
+                          GetMyDoctorDetails(
+                            id: mydoctors[index].id.toDouble(),
+                          ),
+                        );
+
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => DoctorDetailPage(),
+                          ),
+                        );
+                      },
                     );
                   },
                 ),

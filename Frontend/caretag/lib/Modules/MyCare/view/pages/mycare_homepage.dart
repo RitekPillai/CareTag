@@ -33,7 +33,7 @@ class _MyCarePagState extends State<MycarePage> {
                 children: [
                   SvgPicture.asset("assets/images/records/Ellipse 94.svg"),
                   Positioned(
-                    left: 100.w,
+                    left: 150.w,
                     child: Text(
                       "My Care",
                       style: GoogleFonts.poppins(

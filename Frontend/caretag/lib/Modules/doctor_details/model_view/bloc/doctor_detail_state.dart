@@ -13,3 +13,8 @@ final class MyDoctorSuccess extends DoctorDetailState {
 final class ErrorState extends DoctorDetailState {}
 
 final class DoctorDetailLoadingState extends DoctorDetailState {}
+
+final class MyDoctorDetailSuccess extends DoctorDetailState {
+  final GetDoctorDetailModel doctorDetails;
+  MyDoctorDetailSuccess({required this.doctorDetails});
+}

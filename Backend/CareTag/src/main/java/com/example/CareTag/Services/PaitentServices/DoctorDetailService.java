@@ -1,11 +1,13 @@
 package com.example.CareTag.Services.PaitentServices;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import com.example.CareTag.DTOs.PatientDTOs.MyDoctorDetailsDTO;
 import com.example.CareTag.DTOs.PatientDTOs.MydoctorDetails;
 import com.example.CareTag.Models.common.Link;
 import com.example.CareTag.Models.common.User;
@@ -38,6 +40,18 @@ public class DoctorDetailService {
           .speclization(doctor.getSpecialization()).imgUrl(doctor.getImageUrl()).build();
     }).toList();
 
+  }
+
+  public MyDoctorDetailsDTO getMyDoctorDetails(long docId) throws Exception {
+    Optional<Doctor> optionalDoctor = doctorRepo.findById(docId);
+    if (optionalDoctor.isEmpty()) {
+      throw new Exception("Doctor not exsist");
+    }
+    Doctor doctor = optionalDoctor.get();
+    return MyDoctorDetailsDTO.builder().docName(doctor.getFullName()).imgUrl(doctor.getImageUrl())
+        .speclization(doctor.getSpecialization()).exp(doctor.getYearsOfExperience()).links(doctor.getNumOfLinks())
+        .about(doctor.getAboutBio()).address(doctor.getClinicAddress()).hospitalName(doctor.getClinicName())
+        .lat(doctor.getLocation().getY()).longit(doctor.getLocation().getX()).build();
   }
 
 }

@@ -8,45 +8,74 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.Base64;
 import java.util.UUID;
+
 @Service
 public class FileService {
-    @Autowired
-    private BlobServiceClient blobServiceClient;
+  @Autowired
+  private BlobServiceClient blobServiceClient;
 
-    @Value("${azure.storage.container-name}")
-    private String containerName;
+  @Value("${azure.storage.container-name}")
+  private String containerName;
 
+  public String uploadProfilePhoto(MultipartFile file) throws IOException {
+    BlobContainerClient blobContainerClient = blobServiceClient.getBlobContainerClient(containerName);
 
-    public String uploadProfilePhoto(MultipartFile file)throws IOException {
-        BlobContainerClient blobContainerClient = blobServiceClient.getBlobContainerClient(containerName);
+    String fileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
 
-        String fileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
+    BlobClient blobClient = blobContainerClient.getBlobClient(fileName);
 
-        BlobClient blobClient = blobContainerClient.getBlobClient(fileName);
+    blobClient.upload(file.getInputStream(), file.getSize(), true);
 
-        blobClient.upload(file.getInputStream(), file.getSize(), true);
+    return blobClient.getBlobUrl();
 
-        return blobClient.getBlobUrl();
+  }
 
+  public String uploadBase64Image(String base64Data, String fileNamePrefix, String containerName) {
+    if (base64Data == null || base64Data.isEmpty()) {
+      return null;
     }
+    try {
+      String[] parts = base64Data.split(",");
+      String actualBase64 = parts.length > 1 ? parts[1] : parts[0];
 
-    public void deleteOldImage(String imageUrl) {
-        if (imageUrl == null || imageUrl.isEmpty()) return;
+      byte[] decodedBytes = Base64.getDecoder().decode(actualBase64);
+      InputStream dataStream = new ByteArrayInputStream(decodedBytes);
 
-        try {
+      String uniquefileName = fileNamePrefix + "_" + UUID.randomUUID().toString();
 
-            String fileName = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
+      BlobContainerClient containerClient = blobServiceClient.getBlobContainerClient(containerName);
 
-            BlobClient blobClient = blobServiceClient
-                    .getBlobContainerClient(containerName)
-                    .getBlobClient(fileName);
+      BlobClient blobClient = containerClient.getBlobClient(uniquefileName);
 
-            blobClient.deleteIfExists();
+      blobClient.upload(dataStream, decodedBytes.length, true);
 
-        } catch (Exception e) {
-            System.out.println("Failed to delete old image: " + e.getMessage());
-        }
+      return blobClient.getBlobUrl();
+    } catch (Exception e) {
+      throw new RuntimeException("Failed to upload image to Azure container: " + containerName, e);
     }
+  }
+
+  public void deleteOldImage(String imageUrl) {
+    if (imageUrl == null || imageUrl.isEmpty())
+      return;
+
+    try {
+
+      String fileName = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
+
+      BlobClient blobClient = blobServiceClient
+          .getBlobContainerClient(containerName)
+          .getBlobClient(fileName);
+
+      blobClient.deleteIfExists();
+
+    } catch (Exception e) {
+      System.out.println("Failed to delete old image: " + e.getMessage());
+    }
+  }
 }

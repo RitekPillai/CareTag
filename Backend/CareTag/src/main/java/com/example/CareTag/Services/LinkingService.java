@@ -119,7 +119,9 @@ public class LinkingService {
       return;
 
     }
-
+    int docLinkNumber = doctor.getNumOfLinks();
+    doctor.setNumOfLinks(docLinkNumber++);
+    doctorRepo.save(doctor);
     Link newLink = Link.builder()
         .docId(doctor.getId())
         .paitentId(patient.getId())

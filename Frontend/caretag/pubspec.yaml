@@ -74,6 +74,8 @@ dependencies:
   encrypt: ^5.0.3
   stomp_dart_client: ^3.0.1
   external_app_launcher: ^4.0.3
+  flutter_map:
+  latlong2:
 
 uses-material-design: true
 dev_dependencies:

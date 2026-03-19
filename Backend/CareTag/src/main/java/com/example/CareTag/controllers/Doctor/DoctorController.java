@@ -38,8 +38,8 @@ public class DoctorController {
   }
 
   @PostMapping("/signup")
-  public ResponseEntity<?> signup(@RequestBody SignUpRequest signUpRequest) {
-    return doctorAuthService.signup(signUpRequest);
+  public void signup(@RequestBody SignUpRequest signUpRequest) throws Exception {
+    doctorAuthService.signup(signUpRequest);
 
   }
 
