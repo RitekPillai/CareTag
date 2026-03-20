@@ -4,6 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:caretag/Modules/Invoice/model/invoice_detail_model.dart';
 import 'package:caretag/Modules/Invoice/model/invoice_list_model.dart';
 import 'package:caretag/Modules/Invoice/model_view/repo/invoice_repo.dart';
+import 'package:flutter/material.dart';
 
 part 'invoice_bloc_state.dart';
 part 'invoice_bloc_event.dart';
@@ -39,6 +40,7 @@ class InvoiceBloc extends Bloc<InvoiceBlocEvent, InvoiceBlocState> {
       );
       emit(InvoiceDetailLoaded(invoiceData: invoiceData));
     } catch (e) {
+      debugPrint(e.toString());
       emit(Failed());
     }
   }

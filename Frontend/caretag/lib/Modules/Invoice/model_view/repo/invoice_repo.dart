@@ -39,6 +39,7 @@ class InvoiceRepo {
       );
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
+        debugPrint("Response form the server:$data");
         return InvoiceDetailModel.fromJson(data);
       } else {
         throw Exception("error");

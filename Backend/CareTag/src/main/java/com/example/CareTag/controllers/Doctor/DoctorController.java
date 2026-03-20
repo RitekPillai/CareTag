@@ -64,12 +64,13 @@ public class DoctorController {
 
   }
 
-  @PostMapping("/prescription")
-  public void createPrescription(@RequestBody PrescriptionRequestDTO requestDTO) throws Exception {
-    log.info("createPrescription:{}", requestDTO);
-    doctorService.createPrecription(requestDTO);
-
-  }
+  // @PostMapping("/prescription")
+  // public void createPrescription(@RequestBody PrescriptionRequestDTO
+  // requestDTO) throws Exception {
+  // log.info("createPrescription:{}", requestDTO);
+  // doctorService.createPrecription(requestDTO);
+  //
+  // }
 
   @GetMapping("/prescription/list")
   public List<PrescriptionListDTO> getAllPrescription() {

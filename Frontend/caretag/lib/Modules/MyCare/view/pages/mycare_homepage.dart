@@ -1,5 +1,7 @@
 import 'package:caretag/Modules/Invoice/model_view/bloc/invoice_bloc.dart';
-import 'package:caretag/Modules/Invoice/view/invoice_list_page.dart';
+import 'package:caretag/Modules/MyCare/view/pages/careService.dart';
+import 'package:caretag/Modules/MyCare/view/pages/caretag_page.dart';
+import 'package:caretag/Modules/MyCare/view/pages/insurance_page.dart';
 import 'package:caretag/Modules/doctor_details/model_view/bloc/doctor_detail_bloc.dart';
 import 'package:caretag/Modules/doctor_details/view/pages/doctors_page.dart';
 import 'package:caretag/constants/app_color.dart';
@@ -99,11 +101,15 @@ class _MyCarePagState extends State<MycarePage> {
     switch (seletedOption) {
       case "Home":
         return Center(child: Text("home"));
+      case "caretag":
+        return CaretagPage();
       case "Doctors":
         context.read<DoctorDetailBloc>().add(GetMyDoctor());
         return DoctorsPage();
-      case "caretag":
-        return InvoiceListPage();
+      case "Insurance":
+        return InsurancePage();
+      case "Care\nServices":
+        return MyCareCareServicesContent();
       default:
         return Center(child: Text("ata"));
     }

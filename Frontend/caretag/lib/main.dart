@@ -88,7 +88,8 @@ class MyApp extends StatelessWidget {
               textTheme: GoogleFonts.poppinsTextTheme(
                 Theme.of(context).textTheme,
               ),
-              colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+              
+              colorScheme:         Theme.of(context).colorScheme.copyWith(outline: Colors.transparent),
             ),
             home: Authgate(),
           );

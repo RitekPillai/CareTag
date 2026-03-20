@@ -8,6 +8,7 @@ import org.springframework.data.mongodb.core.mapping.MongoId;
 
 import com.example.CareTag.Models.type.InvoiceStatus;
 import com.example.CareTag.Models.type.InvoiceType;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -29,6 +30,7 @@ public class Invoice {
 
   private String patientName;
 
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "MMM dd")
   private LocalDateTime invoiceDate;
 
   private Integer totalAmount;

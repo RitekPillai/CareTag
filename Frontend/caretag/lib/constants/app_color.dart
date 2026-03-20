@@ -29,6 +29,14 @@ class AppColor {
 
   static const Color shadowColor = Color.fromRGBO(0, 0, 0, 0.05);
 
+  static const Color whiteCreamColor = Color(0xffF1F5F9);
+
+  static const Color lightGreenSmallConatinerColor = Color(0xffDCFCE7);
+
+  static const Color greenTextColor = Color(0xff15803D);
+
+  static const Color darkishColor = Color(0xff111817);
+
   static Color getShadowColor(double op) {
     return Color.fromRGBO(0, 0, 0, op);
   }

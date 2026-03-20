@@ -1,5 +1,5 @@
 import 'package:caretag/Modules/Invoice/model_view/bloc/invoice_bloc.dart';
-import 'package:caretag/Modules/Invoice/view/invoice_list_page.dart';
+import 'package:caretag/Modules/Invoice/view/pages/invoice_list_page.dart';
 import 'package:caretag/Modules/records_module/view/pages/doctor_prescription_page.dart';
 import 'package:caretag/Modules/records_module/view/pages/record_home_page.dart';
 import 'package:caretag/constants/app_color.dart';

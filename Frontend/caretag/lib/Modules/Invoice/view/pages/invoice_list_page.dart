@@ -1,6 +1,7 @@
 import 'package:caretag/Modules/Invoice/model/invoiceListConatinerTileModel.dart';
 import 'package:caretag/Modules/Invoice/model/invoice_list_model.dart';
 import 'package:caretag/Modules/Invoice/model_view/bloc/invoice_bloc.dart';
+import 'package:caretag/Modules/Invoice/view/pages/invoice_details_page.dart';
 import 'package:caretag/Modules/Invoice/view/widget/invoice_list_container_tile.dart';
 import 'package:caretag/constants/app_color.dart';
 import 'package:flutter/material.dart';
@@ -57,14 +58,29 @@ class InvoiceListPage extends StatelessWidget {
                 shrinkWrap: true,
                 itemBuilder: (context, index) {
                   if (invoiceList[index].invoiceType == "DOCTOR") {
-                    return InvoiceListContainerTile(
-                      invoicelistconatinertilemodel:
-                          Invoicelistconatinertilemodel(
-                            invoiceListModel: invoiceList[index],
-                            containerColor: doctorInvoicesContainerColor,
-                            conatinerImagePath: "/Icon(11).svg",
-                            backgroundImagePath: "/Text.svg",
+                    return GestureDetector(
+                      onTap: () {
+                        context.read<InvoiceBloc>().add(
+                          GetInvoiceDetail(
+                            invoiceId: invoiceList[index].invoiceId!,
                           ),
+                        );
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => InvoiceDetailsPage(),
+                          ),
+                        );
+                      },
+                      child: InvoiceListContainerTile(
+                        invoicelistconatinertilemodel:
+                            Invoicelistconatinertilemodel(
+                              invoiceListModel: invoiceList[index],
+                              containerColor: doctorInvoicesContainerColor,
+                              conatinerImagePath: "/Icon(11).svg",
+                              backgroundImagePath: "/Text.svg",
+                            ),
+                      ),
                     );
                   }
                   if (invoiceList[index].invoiceType == "DIAGONOSIS") {

@@ -24,52 +24,56 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 @EnableWebSocketMessageBroker
 @RequiredArgsConstructor
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
-    private final AuthUtil authUtil;
-    private final UserRepo userRepo;
-    @Override
-    public void registerStompEndpoints(StompEndpointRegistry registry) {
+  private final AuthUtil authUtil;
+  private final UserRepo userRepo;
 
-        registry.addEndpoint("/ws").setAllowedOriginPatterns("*"); // Raw WebSocket
-        registry.addEndpoint("/websocket").withSockJS(); // SockJS
-    }
-    @Override
-    public void configureMessageBroker(MessageBrokerRegistry config) {
+  @Override
+  public void registerStompEndpoints(StompEndpointRegistry registry) {
+    registry.addEndpoint("/ws").setAllowedOriginPatterns("*"); // Raw WebSocket
 
-        config.enableSimpleBroker("/topic", "/queue");
-        config.setApplicationDestinationPrefixes("/app");
+    registry.addEndpoint("/websocket")
+        .setAllowedOriginPatterns("*")
+        .withSockJS();
+  }
 
-        config.setUserDestinationPrefix("/user");
-    }
+  @Override
+  public void configureMessageBroker(MessageBrokerRegistry config) {
 
-    @Override
-    public void configureClientInboundChannel(ChannelRegistration registration) {
-        registration.interceptors(new ChannelInterceptor() {
-            @Override
-            public Message<?> preSend(Message<?> message, MessageChannel channel) {
-                StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
+    config.enableSimpleBroker("/topic", "/queue");
+    config.setApplicationDestinationPrefixes("/app");
 
-                if (StompCommand.CONNECT.equals(accessor.getCommand())) {
-                    String authHeader = accessor.getFirstNativeHeader("Authorization");
+    config.setUserDestinationPrefix("/user");
+  }
 
-                    if (authHeader != null && authHeader.startsWith("Bearer ")) {
-                        String token = authHeader.substring(7);
-                        try {
-                            String email = authUtil.getUsernameFromToken(token);
-                            log.info("username = {}", email);
-                            User user = userRepo.findByEmail(email);
-                            UsernamePasswordAuthenticationToken auth =
-                                    new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+  @Override
+  public void configureClientInboundChannel(ChannelRegistration registration) {
+    registration.interceptors(new ChannelInterceptor() {
+      @Override
+      public Message<?> preSend(Message<?> message, MessageChannel channel) {
+        StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
 
-                            accessor.setUser(auth);
-                            System.out.println("WebSocket Authenticated User: " + user.getEmail());
-                        } catch (Exception e) {
-                            System.out.println("WebSocket Auth Failed: " + e.getMessage());
-                        }
-                    }
-                }
-                return message;
+        if (StompCommand.CONNECT.equals(accessor.getCommand())) {
+          String authHeader = accessor.getFirstNativeHeader("Authorization");
+
+          if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String token = authHeader.substring(7);
+            try {
+              String email = authUtil.getUsernameFromToken(token);
+              log.info("username = {}", email);
+              User user = userRepo.findByEmail(email);
+              UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(user, null,
+                  user.getAuthorities());
+
+              accessor.setUser(auth);
+              System.out.println("WebSocket Authenticated User: " + user.getEmail());
+            } catch (Exception e) {
+              System.out.println("WebSocket Auth Failed: " + e.getMessage());
             }
-        });
-    }
+          }
+        }
+        return message;
+      }
+    });
+  }
 
 }

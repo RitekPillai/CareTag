@@ -1,40 +1,43 @@
 class InvoiceDetailModel {
-  final String docName;
+  final String id;
+  final String doctorName;
   final String hospitalName;
-  final String paitentName;
+  final String patientName;
   final String invoiceDate;
-  final double totalAmount;
+  final int totalAmount;
   final double taxRate;
+  final double discount;
   final String title;
   final String status;
-  final String transactionNumber;
-  final String paitentEmail;
+  final String transcationNumber;
 
   InvoiceDetailModel({
-    required this.docName,
+    required this.id,
+    required this.doctorName,
     required this.hospitalName,
-    required this.paitentName,
+    required this.patientName,
     required this.invoiceDate,
     required this.totalAmount,
     required this.taxRate,
+    required this.discount,
     required this.title,
     required this.status,
-    required this.transactionNumber,
-    required this.paitentEmail,
+    required this.transcationNumber,
   });
 
   factory InvoiceDetailModel.fromJson(Map<String, dynamic> json) {
     return InvoiceDetailModel(
-      docName: json['docName'],
-      hospitalName: json['hospitalName'],
-      paitentName: json['paitentName'],
-      invoiceDate: json['invoiceDate'],
-      totalAmount: json['totalAmount'],
-      taxRate: json['taxRate'],
-      title: json['title'],
-      status: json['status'],
-      transactionNumber: json['transactionNumber'],
-      paitentEmail: json['paitentEmail'],
+      id: json['id'] ?? '',
+      doctorName: json['doctorName'] ?? '',
+      hospitalName: json['hospitalName'] ?? '',
+      patientName: json['patientName'] ?? '',
+      invoiceDate: json['invoiceDate'] ?? '',
+      totalAmount: (json['totalAmount'] as num?)?.toInt() ?? 0,
+      taxRate: (json['taxRate'] as num?)?.toDouble() ?? 0.0,
+      discount: (json['discount'] as num?)?.toDouble() ?? 0.0,
+      title: json['title'] ?? '',
+      status: json['status'] ?? '',
+      transcationNumber: json['transcationNumber'] ?? '',
     );
   }
 }
