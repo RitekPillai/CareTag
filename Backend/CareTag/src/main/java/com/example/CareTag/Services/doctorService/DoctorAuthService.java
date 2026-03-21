@@ -115,12 +115,9 @@ public class DoctorAuthService {
           .location(clinicLocation)
           .city(signUpRequest.getCity())
           .state(signUpRequest.getState())
-          .imageUrl(photoUrl)
-          .consultationType(signUpRequest.getConsultationType())
-          .id(userId).build();
+          .imageUrl(photoUrl).consultationType(signUpRequest.getConsultationType()).id(userId).build();
       System.out.println(doctor.getLocation());
       doctorRepo.save(doctor);
-
     } catch (Exception e) {
       System.out.println(e.toString());
     }

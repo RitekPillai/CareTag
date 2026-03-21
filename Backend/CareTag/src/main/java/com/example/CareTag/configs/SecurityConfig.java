@@ -36,72 +36,66 @@ import java.util.List;
 
 @EnableMethodSecurity
 public class SecurityConfig {
-    private final JWTfilter jwTfilter;
-    private final CustomUserDeatilsService customUserDeatilsService;
-    private final @Lazy OAuthSuccessHandaler oAuthSuccessHandaler;
-    private final HttpCookieOAuth2AuthorizationRequestRepository cookieRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final OAuthFailureHandler oAuthFailureHandler;
+  private final JWTfilter jwTfilter;
+  private final CustomUserDeatilsService customUserDeatilsService;
+  private final @Lazy OAuthSuccessHandaler oAuthSuccessHandaler;
+  private final HttpCookieOAuth2AuthorizationRequestRepository cookieRepository;
+  private final PasswordEncoder passwordEncoder;
+  private final OAuthFailureHandler oAuthFailureHandler;
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        return http
-                .csrf(AbstractHttpConfigurer::disable)
-                .cors(Customizer.withDefaults())
+  @Bean
+  public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    return http
+        .csrf(AbstractHttpConfigurer::disable)
+        .cors(Customizer.withDefaults())
 
-                .authorizeHttpRequests(req -> req
-                                .requestMatchers("/ws/**", "/ws", "/websocket/**,/wss/**").permitAll()
-                        .requestMatchers("/doctor/signup","/doctor/login").permitAll()
+        .authorizeHttpRequests(req -> req
+            .requestMatchers("/ws/**", "/ws", "/websocket/**,/wss/**").permitAll()
+            .requestMatchers("/doctor/signup", "/doctor/login").permitAll()
+            .requestMatchers("diagnostic/signUp", "diagnostic/login").permitAll()
 
             .requestMatchers("/websocket/**", "/websocket", "/websocket/*").permitAll()
-                        .requestMatchers("/webscoket/**").permitAll()
-                        .requestMatchers("/auth/**", "/exchange", "/login/**", "/oauth2/**", "/error").permitAll()
-                        .requestMatchers("/blockchain/seal").hasRole("DOCTOR")
-                        .requestMatchers("/blockchain/validate", "/blockchain/chain").hasAnyRole("DOCTOR", "PATIENT")
-                        .requestMatchers("/doctor/**").hasRole("DOCTOR")
-                        .requestMatchers("/paitent/**").hasRole("PATIENT")
-                        .requestMatchers("/auth/me").authenticated()
-                        .anyRequest().authenticated()
-                )
-                .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
-                )
-                .authenticationProvider(authenticationProvider())
-                .addFilterBefore(jwTfilter, UsernamePasswordAuthenticationFilter.class)
-                .oauth2Login(oauth2 -> oauth2
-                        .authorizationEndpoint(auth -> auth
-                                .baseUri("/oauth2/authorization")
-                                .authorizationRequestRepository(cookieRepository)
-                        )
-                        .redirectionEndpoint(redirection -> redirection
-                                .baseUri("/login/oauth2/code/*")
-                        )
-                        .successHandler(oAuthSuccessHandaler)
-                        .failureHandler(oAuthFailureHandler)
+            .requestMatchers("/webscoket/**").permitAll()
+            .requestMatchers("/auth/**", "/exchange", "/login/**", "/oauth2/**", "/error").permitAll()
+            .requestMatchers("/blockchain/seal").hasRole("DOCTOR")
+            .requestMatchers("/blockchain/validate", "/blockchain/chain").hasAnyRole("DOCTOR", "PATIENT")
+            .requestMatchers("/doctor/**").hasRole("DOCTOR")
+            .requestMatchers("/paitent/**").hasRole("PATIENT")
+            .requestMatchers("/auth/me").authenticated()
+            .anyRequest().authenticated())
+        .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
+        .authenticationProvider(authenticationProvider())
+        .addFilterBefore(jwTfilter, UsernamePasswordAuthenticationFilter.class)
+        .oauth2Login(oauth2 -> oauth2
+            .authorizationEndpoint(auth -> auth
+                .baseUri("/oauth2/authorization")
+                .authorizationRequestRepository(cookieRepository))
+            .redirectionEndpoint(redirection -> redirection
+                .baseUri("/login/oauth2/code/*"))
+            .successHandler(oAuthSuccessHandaler)
+            .failureHandler(oAuthFailureHandler)
 
-                )
-                .build();
-    }
+        )
+        .build();
+  }
 
+  @Bean
+  public CorsConfigurationSource corsConfigurationSource() {
+    CorsConfiguration configuration = new CorsConfiguration();
+    configuration.setAllowedOrigins(List.of("*")); // For development
+    configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+    configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "ngrok-skip-browser-warning"));
 
+    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    source.registerCorsConfiguration("/**", configuration);
+    return source;
+  }
 
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("*")); // For development
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "ngrok-skip-browser-warning"));
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
-    }
-    @Bean
-    public AuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setUserDetailsService(customUserDeatilsService);
-        provider.setPasswordEncoder(passwordEncoder);
-        return provider;
-    }
+  @Bean
+  public AuthenticationProvider authenticationProvider() {
+    DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+    provider.setUserDetailsService(customUserDeatilsService);
+    provider.setPasswordEncoder(passwordEncoder);
+    return provider;
+  }
 }
-

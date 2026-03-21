@@ -56,7 +56,9 @@ public class FileService {
 
       return blobClient.getBlobUrl();
     } catch (Exception e) {
+      System.out.println("error:" + e.toString());
       throw new RuntimeException("Failed to upload image to Azure container: " + containerName, e);
+
     }
   }
 
