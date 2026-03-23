@@ -94,6 +94,7 @@ public class diagnosticAuthService {
       GeoJsonPoint diagonsticLocation = new GeoJsonPoint(signupRequest.getLongitude(), signupRequest.getLatitude());
 
       DiagnosticCenter diagnosticCenter = DiagnosticCenter.builder().name(signupRequest.getFullName())
+          .id(userId)
           .email(signupRequest.getEmail()).mobile(signupRequest.getMobileNumber())
           .centerName(signupRequest.getCenterName()).centerEmail(signupRequest.getCenterEmail())
           .centerPhone(signupRequest.getCenterMobileNumber()).Centeraddress(signupRequest.getCenterAddress())

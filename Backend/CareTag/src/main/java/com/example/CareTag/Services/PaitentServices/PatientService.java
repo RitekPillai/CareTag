@@ -27,6 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
@@ -109,6 +110,7 @@ public class PatientService {
     BasicDataDTO basicDataDTO = req.getBasicDataDTO();
     log.info("--------------------------------------addresss:{}", basicDataDTO.getAddress());
 
+    GeoJsonPoint paitentLocation = new GeoJsonPoint(req.getLongitute(), req.getLat());
     Patient paitent = Patient.builder()
         .id(currentuser.getId())
         .fullName(basicDataDTO.getFullName())
@@ -116,6 +118,7 @@ public class PatientService {
         .email(user.getEmail())
         .address(basicDataDTO.getAddress())
         .careTagId(careTagId)
+        .location(paitentLocation)
         .bloodGroup(basicDataDTO.getBloodGroup())
         .fcmToken(req.getFcmToken())
         .build();

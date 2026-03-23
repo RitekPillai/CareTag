@@ -10,6 +10,7 @@ import 'package:caretag/Modules/card_registration/data/model/registrationrespons
 import 'package:caretag/Modules/card_registration/data/model/reordRequestModel.dart';
 import 'package:caretag/Modules/card_registration/data/model/shippingRegistration.dart';
 import 'package:caretag/Modules/card_registration/model_view/service/cryptographyservice.dart';
+import 'package:caretag/Modules/card_registration/model_view/service/locationService.dart';
 import 'package:caretag/Modules/home/model/RecordAccessAcceptModel.dart';
 import 'package:caretag/Modules/profile/model/profile_edit_model.dart';
 import 'package:caretag/Modules/records_module/model/prescription_model.dart';
@@ -46,11 +47,18 @@ class PaitientRepo {
       'lifeStyleDetails': medicalRecord.lifeStyleDetails.toJson(),
     };
 
+    Locationservice locationservice = Locationservice();
+    final Map<String, double>? location = await locationservice.getCordinates(
+      medicalRecord.basicPersonalDetails.address,
+    );
+
     Registrationmodel finalResposne = await cryptographyservice.encrypingData(
       jsonEncode(sensitiveData),
       aeskey,
       medicalRecord.basicPersonalDetails,
       fcmToken,
+      location!['lat']!,
+      location['long']!,
     );
 
     log(

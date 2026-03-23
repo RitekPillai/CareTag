@@ -10,14 +10,15 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RegistrationRequestDTO {
-    private String ciphertext;
-    private String iv;
-    private String encryptedAesKey;
-    private String mac;
-    private String rsaPublicKey;
-    private String id;
-    private BasicDataDTO basicDataDTO;
-    private String fcmToken;
-
+  private String ciphertext;
+  private String iv;
+  private String encryptedAesKey;
+  private String mac;
+  private String rsaPublicKey;
+  private String id;
+  private BasicDataDTO basicDataDTO;
+  private String fcmToken;
+  private double lat;
+  private double longitute;
 
 }

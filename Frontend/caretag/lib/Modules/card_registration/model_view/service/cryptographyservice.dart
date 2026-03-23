@@ -32,6 +32,8 @@ class Cryptographyservice {
     SecretKey aesKey,
     BasicPersonalDetails basicPersonalDetails,
     String fcmToken,
+    double lat,
+    double longitute,
   ) async {
     final aeskeyBytes = await aesKey.extractBytes();
     final Uint8List uint8keybytes = Uint8List.fromList(aeskeyBytes);
@@ -59,6 +61,8 @@ class Cryptographyservice {
       rsaPublicKey: rsaPublicKey,
       basicPersonalDetails: basicPersonalDetails,
       fcmToken: fcmToken,
+      lat: lat,
+      longitute: longitute,
     );
   }
 
