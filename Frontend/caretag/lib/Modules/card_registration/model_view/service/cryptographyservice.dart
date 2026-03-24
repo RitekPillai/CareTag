@@ -61,8 +61,6 @@ class Cryptographyservice {
       rsaPublicKey: rsaPublicKey,
       basicPersonalDetails: basicPersonalDetails,
       fcmToken: fcmToken,
-      lat: lat,
-      longitute: longitute,
     );
   }
 

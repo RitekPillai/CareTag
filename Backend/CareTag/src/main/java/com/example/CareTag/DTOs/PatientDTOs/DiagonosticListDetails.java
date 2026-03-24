@@ -9,7 +9,9 @@ import lombok.Data;
 public class DiagonosticListDetails {
   Long id;
   String diagonosticName;
-  String accrelationTypes;
   String timing;
   String imageUrl;
+  String worktTime;
+  String workDays;
+  String locationAway;
 }

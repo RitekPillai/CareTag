@@ -101,13 +101,20 @@ public class diagnosticAuthService {
           .city(signupRequest.getCity()).state(signupRequest.getState()).pinCode(signupRequest.getPincode())
           .website(signupRequest.getWebsite()).accrediationType(signupRequest.getAccreditationType())
           .accreditationNumber(signupRequest.getAccreditationNumber()).gstNumber(signupRequest.getGstNumber())
-          .centerLogoUrl(profilePicUrl)
           .registrationCertificationUrl(verficiationIdUrl).ownerIdProofUrl(idProofUrl).location(diagonsticLocation)
-          .build();
+          .diagonosticProfile(DiagonosticProfile.builder().profileImageUrl(profilePicUrl)
+              .workingTime(signupRequest.getWorkTime())
+              .workLocation(signupRequest.getWorkLocation())
+              .linkRate(0)
+              .aboutLab(signupRequest.getAboutLab())
+              .workingDays(signupRequest.getWorkingDays())
+              .build())
 
+          .build();
       diagnosticRepo.save(diagnosticCenter);
     } catch (Exception e) {
       System.out.println(e.toString());
+      throw new RuntimeException("Signup failed, rolling back user creation", e);
     }
   }
 

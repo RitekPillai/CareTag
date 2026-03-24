@@ -61,6 +61,7 @@ public class SecurityConfig {
             .requestMatchers("/blockchain/validate", "/blockchain/chain").hasAnyRole("DOCTOR", "PATIENT")
             .requestMatchers("/doctor/**").hasRole("DOCTOR")
             .requestMatchers("/paitent/**").hasRole("PATIENT")
+            .requestMatchers("/diagnostic/**").hasRole("DIAGNOSTIC")
             .requestMatchers("/auth/me").authenticated()
             .anyRequest().authenticated())
         .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))

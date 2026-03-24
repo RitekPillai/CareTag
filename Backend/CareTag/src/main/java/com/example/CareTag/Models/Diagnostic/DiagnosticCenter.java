@@ -6,6 +6,8 @@ import org.springframework.data.mongodb.core.index.GeoSpatialIndexType;
 import org.springframework.data.mongodb.core.index.GeoSpatialIndexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import com.example.CareTag.Services.Diagnostic.DiagonosticProfile;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -33,7 +35,7 @@ public class DiagnosticCenter {
   final String gstNumber;
   final String registrationCertificationUrl;
   final String ownerIdProofUrl;
-  final String centerLogoUrl;
+  final DiagonosticProfile diagonosticProfile;
 
   @GeoSpatialIndexed(type = GeoSpatialIndexType.GEO_2DSPHERE)
   private GeoJsonPoint location;

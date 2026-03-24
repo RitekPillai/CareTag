@@ -24,5 +24,8 @@ public class signupRequest {
   double longitude;
   String centerLogoUrl;
   String centerMobileNumber;
-
+  String workTime;
+  String workLocation;
+  String aboutLab;
+  String workingDays;
 }
