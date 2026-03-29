@@ -1,12 +1,10 @@
-import 'dart:ffi';
-
 class DiagonosticListModel {
-  final Long id;
+  final int id;
   final String diagonosticName;
   final String timing;
   final String imageUrl;
   final String worktTime;
-  final String workDays;
+  final String? workDays;
   final String locationAway;
 
   DiagonosticListModel({
@@ -26,7 +24,7 @@ class DiagonosticListModel {
       timing: json['timing'],
       imageUrl: json['imageUrl'],
       worktTime: json['worktTime'],
-      workDays: json['workDays'],
+      workDays: json['workDays'] ?? 'ALlDAY',
       locationAway: json['locationAway'],
     );
   }

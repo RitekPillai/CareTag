@@ -2,6 +2,7 @@ package com.example.CareTag.Services.PaitentServices;
 
 import com.example.CareTag.DTOs.DoctorDTOs.PrescriptionRequestDTO;
 import com.example.CareTag.DTOs.PatientDTOs.*;
+import com.example.CareTag.DTOs.commonDTOs.RecentActivityDTO;
 import com.example.CareTag.Models.doctor.Doctor;
 import com.example.CareTag.Models.Paitent.Patient;
 import com.example.CareTag.Models.Paitent.PatientRecords;
@@ -25,12 +26,14 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -40,8 +43,10 @@ import java.io.IOException;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -76,6 +81,9 @@ public class PatientService {
   private String aesKey;
   @Autowired
   private PaitentCacheService paitentCacheService;
+  @Autowired
+  @Qualifier("recentActivityTemplate")
+  private RedisTemplate<String, Object> redisTemplate;
 
   public String careTagIdGenerator() {
 
@@ -364,5 +372,18 @@ public class PatientService {
     paitentCacheService.deleteProfileCache(patient.getId());
     paitentRepo.save(patient);
 
+  }
+
+  public List<RecentActivityDTO> getPatientTimeline() {
+    User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    List<Object> rawActivities = redisTemplate.opsForList().range("activity:" + user.getEmail(), 0, -1);
+
+    if (rawActivities == null || rawActivities.isEmpty()) {
+      return Collections.emptyList();
+    }
+
+    return rawActivities.stream()
+        .map(obj -> (RecentActivityDTO) obj)
+        .collect(Collectors.toList());
   }
 }

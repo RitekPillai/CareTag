@@ -1,4 +1,4 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:caretag/Modules/pharmacy/view/pharmacy_homepage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -10,7 +10,12 @@ import 'package:caretag/constants/app_color.dart';
 
 class CaretagHomepage extends StatefulWidget {
   final Profilemodel profilemodel;
-  const CaretagHomepage({super.key, required this.profilemodel});
+  final Function(String)? onTabChanged;
+  const CaretagHomepage({
+    super.key,
+    required this.profilemodel,
+    this.onTabChanged,
+  });
 
   @override
   State<CaretagHomepage> createState() => _CaretagHomepageState();
@@ -156,6 +161,8 @@ class _CaretagHomepageState extends State<CaretagHomepage> {
                     bloodType: profilemodel.bloodGroup,
                   ),
                 ),
+
+              if (selectedTab == "Meds") Expanded(child: MedsHomeScreen()),
             ],
           ),
         ],
@@ -176,6 +183,9 @@ class _CaretagHomepageState extends State<CaretagHomepage> {
           selectedTab = title;
           gradientColor = [backgroundColor, Colors.white];
         });
+        if (widget.onTabChanged != null) {
+          widget.onTabChanged!(title);
+        }
       },
       child: Container(
         width: 89,

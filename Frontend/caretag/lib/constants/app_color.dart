@@ -37,6 +37,9 @@ class AppColor {
 
   static const Color darkishColor = Color(0xff111817);
 
+  static const Color pharmacyGreenColor = Color(0xff16A34A);
+
+  static const Color greyTextColor1 = Color(0xff64748B);
   static Color getShadowColor(double op) {
     return Color.fromRGBO(0, 0, 0, op);
   }

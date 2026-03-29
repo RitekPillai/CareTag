@@ -1,6 +1,7 @@
 package com.example.CareTag.controllers.Paitent;
 
 import com.example.CareTag.DTOs.PatientDTOs.*;
+import com.example.CareTag.DTOs.commonDTOs.RecentActivityDTO;
 import com.example.CareTag.DTOs.commonDTOs.RecordRequestAcceptDTO;
 import com.example.CareTag.DTOs.commonDTOs.RecordResponseAcceptDTO;
 import com.example.CareTag.Models.Paitent.Patient;
@@ -120,6 +121,11 @@ public class PaitentController {
         "/queue/record/approval",
         Map.of("status", "DENIED"));
     return ResponseEntity.ok("Denial pushed to doctor");
+  }
+
+  @GetMapping("/timeline")
+  public ResponseEntity<List<RecentActivityDTO>> getTimeline() {
+    return ResponseEntity.ok(paitentService.getPatientTimeline());
   }
 
 }

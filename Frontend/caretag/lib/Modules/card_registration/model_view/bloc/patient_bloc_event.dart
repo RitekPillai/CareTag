@@ -76,3 +76,7 @@ class BluetoothData extends PatientBlocEvent {
 
   const BluetoothData({required this.heartrate, required this.stepCount});
 }
+
+class LoadTimeline extends PatientBlocEvent {
+  LoadTimeline();
+}

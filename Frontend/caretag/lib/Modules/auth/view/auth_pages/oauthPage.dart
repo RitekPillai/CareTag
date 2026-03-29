@@ -5,6 +5,7 @@ import 'package:caretag/widgets/animated_route.dart';
 import 'package:caretag/widgets/custombutton.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart' show ReadContext, BlocProvider;
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -38,23 +39,23 @@ class _OauthpageState extends State<Oauthpage> {
       body: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.only(top: 82, left: 11),
+            padding: EdgeInsets.only(top: 82.h, left: 11.w, right: 10.w),
             child: Text(
               textAlign: TextAlign.center,
-              "Securely access your \n health, your way ",
+              "Securely access your\nhealth,your way ",
               style: GoogleFonts.poppins(
                 color: Colors.black,
                 fontWeight: FontWeight.w700,
-                fontSize: 32,
+                fontSize: 29.sp,
               ),
             ),
           ),
 
           Padding(
-            padding: const EdgeInsets.only(top: 20, left: 10),
+            padding: EdgeInsets.only(top: 14.h, left: 10),
             child: SizedBox(
-              width: 333,
-              height: 333,
+              width: 333.w,
+              height: 333.h,
               child: AspectRatio(
                 aspectRatio: _controller.value.aspectRatio,
                 child: VideoPlayer(_controller),
@@ -62,12 +63,12 @@ class _OauthpageState extends State<Oauthpage> {
             ),
           ),
           oauthRegTile("assets/images/auth/google.svg", "Continue with Google"),
-          const SizedBox(height: 30),
+          SizedBox(height: 15.h),
           oauthRegTile(
             "assets/images/auth/Facebook.svg",
             "Continue with Facebook",
           ),
-          const SizedBox(height: 30),
+          const SizedBox(height: 37),
 
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -94,17 +95,18 @@ class _OauthpageState extends State<Oauthpage> {
             ],
           ),
 
-          const SizedBox(height: 15),
+          SizedBox(height: 34.h),
 
           Hero(
             tag: 'auth',
-            child: Padding(
-              padding: const EdgeInsets.only(left: 20, right: 20),
+            child: SizedBox(
+              width: 320.w,
+              height: 52.h,
               child: customElevatedButton(
                 50,
                 double.infinity,
                 "Log In with your Password",
-                20,
+                17.sp,
                 FontWeight.w700,
                 () {
                   Navigator.push(

@@ -11,7 +11,6 @@ import lombok.Data;
 @AllArgsConstructor
 @Builder
 public class DiagonosticTest {
-
   private long diagonosticId;
   private String title;
   private String discription;

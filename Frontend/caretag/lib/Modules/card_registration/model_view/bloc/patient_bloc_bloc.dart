@@ -8,14 +8,17 @@ import 'package:caretag/Modules/card_registration/data/model/profileModel.dart';
 import 'package:caretag/Modules/card_registration/data/model/shippingRegistration.dart';
 import 'package:caretag/Modules/card_registration/data/repos/paitent_repo.dart';
 import 'package:caretag/Modules/card_registration/model_view/service/cryptographyservice.dart';
+import 'package:caretag/Modules/home/model/RecentActivity.dart';
 import 'package:caretag/Modules/home/model/RecordAccessAcceptModel.dart';
 
 import 'package:caretag/Modules/home/model/permissionRequestModel.dart';
 import 'package:caretag/Modules/home/model/permssionAcceptModel.dart';
+import 'package:caretag/Modules/home/modelview/recent_activity_repo.dart';
 import 'package:caretag/Modules/profile/model/profile_edit_model.dart';
 import 'package:caretag/Modules/records_module/model/prescription_model.dart';
 import 'package:caretag/Modules/records_module/model/prescription_detail_model.dart';
 import 'package:caretag/constants/messagingService.dart';
+import 'package:caretag/utils/test.dart';
 
 import 'package:equatable/equatable.dart';
 import 'package:flutter/widgets.dart';
@@ -41,6 +44,7 @@ class PatientBloc extends Bloc<PatientBlocEvent, PatientBlocState> {
     on<ProfileEditEvent>(_onProfileEdit);
     on<RecordAccessAccept>(_onRecordAccessAccept);
     on<RecordAcessDeny>(_onRecordAccessDeny);
+    on<LoadTimeline>(_LoadTimeline);
   }
   Future<void> _onPatientRegistration(
     PatientRegistration event,
@@ -62,6 +66,21 @@ class PatientBloc extends Bloc<PatientBlocEvent, PatientBlocState> {
     } catch (e) {
       emit(Failed(message: e.toString()));
       debugPrint(e.toString());
+    }
+  }
+
+  Future<void> _LoadTimeline(
+    LoadTimeline event,
+    Emitter<PatientBlocState> emit,
+  ) async {
+    TimelineRepository repository = TimelineRepository();
+    emit(TimelineLoading());
+    try {
+      debugPrint("inside function");
+      final activities = await repository.fetchTimeline();
+      emit(TimelineLoaded(activities));
+    } catch (e) {
+      emit(TimelineError(e.toString()));
     }
   }
 

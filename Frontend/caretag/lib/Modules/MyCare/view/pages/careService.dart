@@ -1,14 +1,13 @@
+import 'package:caretag/Modules/%20Diagonostic/model_view/bloc/diagonostic_bloc.dart';
 import 'package:caretag/Modules/MyCare/view/pages/careService/care_service_category.dart';
-import 'package:caretag/Modules/MyCare/view/pages/careService/dignosisDetailPage.dart';
-import 'package:caretag/Modules/MyCare/view/pages/careService/hospital_detail_page.dart';
 import 'package:caretag/Modules/MyCare/view/widgets/digonissi_nearby_tie.dart';
 import 'package:caretag/Modules/MyCare/view/widgets/hospital_nearby_tile.dart';
 import 'package:caretag/constants/app_color.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hive/hive.dart';
 
 class CsHospital {
   const CsHospital({
@@ -385,8 +384,22 @@ const _categories = [
   ),
 ];
 
-class MyCareCareServicesContent extends StatelessWidget {
+class MyCareCareServicesContent extends StatefulWidget {
   const MyCareCareServicesContent({super.key});
+
+  @override
+  State<MyCareCareServicesContent> createState() =>
+      _MyCareCareServicesContentState();
+}
+
+class _MyCareCareServicesContentState extends State<MyCareCareServicesContent> {
+  @override
+  void initState() {
+    debugPrint("called");
+    context.read<DiagonosticBloc>().add(GetDiagnosticList());
+
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -591,7 +604,67 @@ class MyCareCareServicesContent extends StatelessWidget {
             const SizedBox(height: 12),
             HospitalNearbyTile(),
             SizedBox(height: 40.h),
-            DigonissiNearbyTie(),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Diagnostic Labs',
+                  style: GoogleFonts.inter(
+                    fontSize: 18.sp,
+                    fontWeight: FontWeight.w700,
+                    color: Color(0xFF111827),
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => CareServicesCategoryResultsPage(
+                        categoryName: 'Diagnostic Labs',
+                        hospitals: _hospitals,
+                        diagnostics: const [],
+                      ),
+                    ),
+                  ),
+                  child: Text(
+                    'See All',
+                    style: GoogleFonts.inter(
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w500,
+                      color: Color(0xFF0063F7),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+
+            BlocBuilder<DiagonosticBloc, DiagonosticState>(
+              builder: (context, state) {
+                if (state is DiagonosticLoading) {
+                  return Center(child: CircularProgressIndicator());
+                } else if (state is DiagonosticListFetched) {
+                  return SizedBox(
+                    height: 200.h,
+
+                    child: ListView.builder(
+                      itemCount: state.diagonosticListModel.length > 3
+                          ? 3
+                          : state.diagonosticListModel.length,
+
+                      itemBuilder: (context, index) {
+                        return DigonissiNearbyTie(
+                          diagonosticList: state.diagonosticListModel[index],
+                        );
+                      },
+                    ),
+                  );
+                } else if (state is DiagonosticFalied) {
+                  return Center(child: Text("Failed to fetch"));
+                } else {
+                  return Container();
+                }
+              },
+            ),
           ],
         ),
       ),

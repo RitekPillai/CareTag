@@ -2,6 +2,8 @@ import 'package:caretag/Modules/Invoice/model_view/bloc/invoice_bloc.dart';
 import 'package:caretag/Modules/MyCare/view/pages/careService.dart';
 import 'package:caretag/Modules/MyCare/view/pages/caretag_page.dart';
 import 'package:caretag/Modules/MyCare/view/pages/insurance_page.dart';
+import 'package:caretag/Modules/MyCare/view/pages/my_care_home.dart';
+import 'package:caretag/Modules/MyCare/view/pages/timeline.dart';
 import 'package:caretag/Modules/doctor_details/model_view/bloc/doctor_detail_bloc.dart';
 import 'package:caretag/Modules/doctor_details/view/pages/doctors_page.dart';
 import 'package:caretag/constants/app_color.dart';
@@ -100,7 +102,7 @@ class _MyCarePagState extends State<MycarePage> {
   Widget returnPage() {
     switch (seletedOption) {
       case "Home":
-        return Center(child: Text("home"));
+        return MyCareHomePage();
       case "caretag":
         return CaretagPage();
       case "Doctors":
@@ -111,7 +113,7 @@ class _MyCarePagState extends State<MycarePage> {
       case "Care\nServices":
         return MyCareCareServicesContent();
       default:
-        return Center(child: Text("ata"));
+        return MyCareTimelineScreen();
     }
   }
 

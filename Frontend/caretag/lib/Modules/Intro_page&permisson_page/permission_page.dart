@@ -61,30 +61,28 @@ class _PermissionPageState extends State<PermissionPage> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(height: 20.h),
-          SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.only(left: 15),
-              child: Text(
-                textAlign: TextAlign.start,
-                "Let’s get started",
-                style: GoogleFonts.poppins(
-                  fontWeight: FontWeight.w700,
-                  fontSize: 36,
-                  color: AppColor.darkishBlue,
-                ),
+          SizedBox(height: 40.h),
+          Padding(
+            padding: const EdgeInsets.only(left: 15),
+            child: Text(
+              textAlign: TextAlign.start,
+              "Let’s get started",
+              style: GoogleFonts.poppins(
+                fontWeight: FontWeight.w700,
+                fontSize: 36.sp,
+                color: AppColor.darkishBlue,
               ),
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(left: 15),
+            padding: EdgeInsets.only(left: 26.w),
             child: Text(
               textAlign: TextAlign.start,
               "We need a few permissions before we continue",
               style: GoogleFonts.poppins(
                 color: AppColor.lightBlueTextColor2,
                 fontWeight: FontWeight.w400,
-                fontSize: 14,
+                fontSize: 14.sp,
               ),
             ),
           ),
@@ -93,7 +91,7 @@ class _PermissionPageState extends State<PermissionPage> {
 
             child: indexpages(index),
           ),
-          const SizedBox(height: 20),
+          SizedBox(height: 16.h),
           Center(
             child: Container(
               width: 103,
@@ -299,16 +297,20 @@ Widget permissonsTile(String icon, String title, String discription) {
                 color: AppColor.darkishBlue,
               ),
             ),
-            Text(
-              discription,
-              maxLines: 3,
+            SizedBox(
+              height: 55.h,
+              width: 336.w,
+              child: Text(
+                discription,
+                maxLines: 3,
 
-              overflow: TextOverflow.clip,
-              style: GoogleFonts.poppins(
-                fontWeight: FontWeight.w400,
+                overflow: TextOverflow.clip,
+                style: GoogleFonts.poppins(
+                  fontWeight: FontWeight.w400,
 
-                fontSize: 16,
-                color: AppColor.darkishBlue,
+                  fontSize: 16,
+                  color: AppColor.darkishBlue,
+                ),
               ),
             ),
           ],

@@ -1,10 +1,19 @@
 import 'dart:developer';
 
+import 'package:caretag/Modules/%20Diagonostic/model_view/bloc/diagonostic_bloc.dart';
+import 'package:caretag/Modules/%20Diagonostic/model_view/repo/diagonostic_repo.dart';
+import 'package:caretag/Modules/%20Diagonostic/view/pages/diagonostic_Detail_page.dart';
 import 'package:caretag/Modules/Invoice/model_view/bloc/invoice_bloc.dart';
 import 'package:caretag/Modules/Invoice/model_view/repo/invoice_repo.dart';
 import 'package:caretag/Modules/auth/model_view/service/AuthenticationService.dart';
 import 'package:caretag/Modules/doctor_details/model_view/bloc/doctor_detail_bloc.dart';
 import 'package:caretag/Modules/doctor_details/model_view/repo/doctor_detail_repo.dart';
+import 'package:caretag/Modules/pharmacy/model_view/bloc/cart_bloc.dart';
+import 'package:caretag/Modules/pharmacy/model_view/bloc/pharmacy/parmacy_bloc.dart';
+import 'package:caretag/Modules/pharmacy/model_view/repo/cart_repo.dart';
+import 'package:caretag/Modules/pharmacy/model_view/repo/pharmacy_repo.dart';
+import 'package:caretag/Modules/pharmacy/view/pharmacy_homepage.dart';
+import 'package:caretag/Modules/records_module/view/pages/diagonostic_detail.dart';
 import 'package:caretag/auth_gate.dart';
 
 import 'package:caretag/constants/messagingService.dart';
@@ -60,6 +69,9 @@ class MyApp extends StatelessWidget {
     final authenticationService = Authenticationservice();
     final invoiceRepo = InvoiceRepo(auth: authenticationService);
     final doctorDetailRepo = DoctorDetailRepo();
+    final diagonosticRepo = DiagonosticRepo();
+    final cartRepo = CartRepo();
+    final pharmacyRepo = PharmacyRepo();
     return MultiBlocProvider(
       providers: [
         BlocProvider(
@@ -71,9 +83,20 @@ class MyApp extends StatelessWidget {
           create: (context) => InvoiceBloc(invoiceRepo),
         ),
 
+        BlocProvider<DiagonosticBloc>(
+          create: (context) => DiagonosticBloc(diagonosticRepo),
+        ),
+
         BlocProvider<DoctorDetailBloc>(
           create: (context) =>
               DoctorDetailBloc(authenticationService, doctorDetailRepo),
+        ),
+        BlocProvider<CartBloc>(
+          create: (context) => CartBloc(authenticationService, cartRepo),
+        ),
+        BlocProvider<PharmacyBloc>(
+          create: (context) =>
+              PharmacyBloc(authenticationService, pharmacyRepo),
         ),
       ],
       child: ScreenUtilInit(
@@ -88,8 +111,10 @@ class MyApp extends StatelessWidget {
               textTheme: GoogleFonts.poppinsTextTheme(
                 Theme.of(context).textTheme,
               ),
-              
-              colorScheme:         Theme.of(context).colorScheme.copyWith(outline: Colors.transparent),
+
+              colorScheme: Theme.of(
+                context,
+              ).colorScheme.copyWith(outline: Colors.transparent),
             ),
             home: Authgate(),
           );

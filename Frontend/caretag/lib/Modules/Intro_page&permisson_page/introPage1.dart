@@ -144,8 +144,8 @@ class _Intropage1State extends State<Intropage1> {
               },
               child: SvgPicture.asset(
                 images[index].path,
-                width: images[index].width,
                 height: images[index].height,
+                width: images[index].width,
                 key: ValueKey<int>(index),
                 errorBuilder: (context, error, stackTrace) {
                   return Center(
@@ -163,24 +163,25 @@ class _Intropage1State extends State<Intropage1> {
               ),
             ),
           ),
-          Expanded(
-            child: TweenAnimationBuilder(
-              duration: Duration(milliseconds: 500),
-              tween: Tween<double>(begin: 10.0, end: _currentTopPadding),
-              curve: Curves.easeIn,
-              builder: (context, value, child) => Padding(
-                padding: EdgeInsets.only(top: value),
-                child: Container(
-                  width: 393.w,
+          TweenAnimationBuilder(
+            duration: Duration(milliseconds: 500),
+            tween: Tween<double>(begin: 10.0, end: _currentTopPadding),
+            curve: Curves.easeIn,
+            builder: (context, value, child) => Padding(
+              padding: EdgeInsets.only(top: value),
+              child: Container(
+                width: 393.w,
 
-                  decoration: BoxDecoration(
-                    color: AppColor.lightblueColor,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(100.r),
-                      topRight: Radius.circular(100.r),
-                    ),
+                decoration: BoxDecoration(
+                  color: AppColor.lightblueColor,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(100.r),
+                    topRight: Radius.circular(100.r),
                   ),
+                ),
 
+                child: SafeArea(
+                  top: false,
                   child: SingleChildScrollView(
                     physics: NeverScrollableScrollPhysics(),
                     child: Column(

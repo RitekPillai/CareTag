@@ -76,8 +76,9 @@ dependencies:
   external_app_launcher: ^4.0.3
   flutter_map:
   latlong2:
-  dotted_border:
   geocoding:
+  dotted_border: ^3.1.0
+  cached_network_image: ^3.3.1
 
 uses-material-design: true
 dev_dependencies:
@@ -127,6 +128,7 @@ flutter:
     - assets/images/mycare/Icon(1).svg
     - assets/images/mycare/tap.svg
     - assets/images/mycare/Background.svg
+    - assets/images/pharmacy/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

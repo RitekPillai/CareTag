@@ -7,10 +7,12 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.GenericToStringSerializer;
+import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Configuration
@@ -51,8 +53,15 @@ public class RedisConfig {
   public RedisTemplate<Long, Patient> paitentRedisTemplate(RedisConnectionFactory factory) {
     RedisTemplate<Long, Patient> template = new RedisTemplate<>();
     template.setConnectionFactory(factory);
-    template.setKeySerializer(new GenericToStringSerializer<Long>(Long.class));
-    template.setValueSerializer(new GenericJackson2JsonRedisSerializer());
+
+    ObjectMapper objectMapper = new ObjectMapper();
+
+    objectMapper.addMixIn(GeoJsonPoint.class, GeoJsonPointMixin.class);
+
+    Jackson2JsonRedisSerializer<Patient> serializer = new Jackson2JsonRedisSerializer<>(objectMapper, Patient.class);
+    template.setKeySerializer(new GenericToStringSerializer<>(Long.class));
+    template.setValueSerializer(serializer);
+
     return template;
   }
 

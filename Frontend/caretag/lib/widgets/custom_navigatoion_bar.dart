@@ -3,13 +3,32 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+class NavigationItem {
+  final String? icon;
+  final String? selectedIcon;
+  final IconData? materialIcon;
+  final String label;
+
+  NavigationItem({
+    this.icon,
+    this.selectedIcon,
+    this.materialIcon,
+    required this.label,
+  });
+}
+
 class CustomNavigatoionBar extends StatefulWidget {
   final int selectedIndex;
   final Function(int) onTap;
+  final List<NavigationItem>? items;
+  final Color? activeColor;
+
   const CustomNavigatoionBar({
     super.key,
     required this.selectedIndex,
     required this.onTap,
+    this.items,
+    this.activeColor,
   });
 
   @override
@@ -17,9 +36,41 @@ class CustomNavigatoionBar extends StatefulWidget {
 }
 
 class _CustomNavigatoionBarState extends State<CustomNavigatoionBar> {
+  List<NavigationItem> get defaultItems {
+    const String imagePath = "assets/images/navigation";
+    return [
+      NavigationItem(
+        icon: "$imagePath/home.svg",
+        selectedIcon: "$imagePath/s_home.svg",
+        label: "Home",
+      ),
+      NavigationItem(
+        icon: "$imagePath/records.svg",
+        selectedIcon: "$imagePath/s_records.svg",
+        label: "Records",
+      ),
+      NavigationItem(
+        icon: "$imagePath/mycare.svg",
+        selectedIcon: "$imagePath/s_mycare.svg",
+        label: "My Care",
+      ),
+      NavigationItem(
+        icon: "$imagePath/news.svg",
+        selectedIcon: "$imagePath/s_news.svg",
+        label: "News",
+      ),
+      NavigationItem(
+        icon: "$imagePath/profile.svg",
+        selectedIcon: "$imagePath/s_profile.svg",
+        label: "Profile",
+      ),
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
-    const String imagePath = "assets/images/navigation";
+    final items = widget.items ?? defaultItems;
+
     return Container(
       height: 77.h,
       color: Colors.white,
@@ -27,40 +78,16 @@ class _CustomNavigatoionBarState extends State<CustomNavigatoionBar> {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          naviItem("$imagePath/home.svg", "Home", 0, "$imagePath/s_home.svg"),
-          naviItem(
-            "$imagePath/records.svg",
-            "Records",
-            1,
-            "$imagePath/s_records.svg",
-          ),
-          naviItem(
-            "$imagePath/mycare.svg",
-            "My Care",
-            2,
-            "$imagePath/s_mycare.svg",
-          ),
-          naviItem("$imagePath/news.svg", "News", 3, "$imagePath/s_news.svg"),
-          naviItem(
-            "$imagePath/profile.svg",
-            "Profile",
-            4,
-            "$imagePath/s_profile.svg",
-          ),
+          for (int i = 0; i < items.length; i++) naviItem(items[i], i),
         ],
       ),
     );
   }
 
-  Widget naviItem(
-    String imagePath,
-    String name,
-    int index,
-    String selectedImagePath,
-  ) {
+  Widget naviItem(NavigationItem item, int index) {
     bool isSelected = widget.selectedIndex == index;
     Color textColor = Color(0xff415762);
-    Color activeColor = const Color(0xff0063F7);
+    Color activeColor = widget.activeColor ?? const Color(0xff0063F7);
 
     return GestureDetector(
       onTap: () => widget.onTap(index),
@@ -80,15 +107,24 @@ class _CustomNavigatoionBarState extends State<CustomNavigatoionBar> {
             ),
           ),
           SizedBox(height: 12.h),
-
-          SvgPicture.asset(
-            isSelected ? selectedImagePath : imagePath,
-
-            width: 24.w,
-          ),
+          if (item.materialIcon != null)
+            Icon(
+              item.materialIcon,
+              size: 24.w,
+              color: isSelected ? activeColor : textColor,
+            )
+          else
+            SvgPicture.asset(
+              isSelected ? (item.selectedIcon ?? item.icon!) : item.icon!,
+              width: 24.w,
+              colorFilter: ColorFilter.mode(
+                isSelected ? activeColor : textColor,
+                BlendMode.srcIn,
+              ),
+            ),
           SizedBox(height: 4.h),
           Text(
-            name,
+            item.label,
             style: GoogleFonts.poppins(
               fontWeight: isSelected ? FontWeight.w700 : FontWeight.w300,
               fontSize: 12,

@@ -48,3 +48,15 @@ final class Success extends PatientBlocState {
 
   const Success({required this.careTagId});
 }
+
+class TimelineLoading extends PatientBlocState {}
+
+class TimelineLoaded extends PatientBlocState {
+  final List<RecentActivity> activities;
+  TimelineLoaded(this.activities);
+}
+
+class TimelineError extends PatientBlocState {
+  final String message;
+  TimelineError(this.message);
+}
