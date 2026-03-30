@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -100,7 +101,7 @@ class CaretagHomepageHelpers {
   Widget adTile() {
     return Container(
       width: 350,
-      height: 183,
+      height: 190,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
         image: DecorationImage(
@@ -142,7 +143,7 @@ class CaretagHomepageHelpers {
                 textAlign: TextAlign.start,
                 style: GoogleFonts.poppins(
                   fontWeight: FontWeight.w800,
-                  fontSize: 20,
+                  fontSize: 20.sp,
                   color: Colors.white,
                 ),
               ),

@@ -62,11 +62,18 @@ class _OauthpageState extends State<Oauthpage> {
               ),
             ),
           ),
-          oauthRegTile("assets/images/auth/google.svg", "Continue with Google"),
+          oauthRegTile(
+            "assets/images/auth/google.svg",
+            "Continue with Google",
+            () {
+              context.read<AuthBloc>().add(AuthoauthLogin());
+            },
+          ),
           SizedBox(height: 15.h),
           oauthRegTile(
             "assets/images/auth/Facebook.svg",
             "Continue with Facebook",
+            () {},
           ),
           const SizedBox(height: 37),
 
@@ -100,13 +107,13 @@ class _OauthpageState extends State<Oauthpage> {
           Hero(
             tag: 'auth',
             child: SizedBox(
-              width: 320.w,
+              width: 310.w,
               height: 52.h,
               child: customElevatedButton(
                 50,
                 double.infinity,
                 "Log In with your Password",
-                17.sp,
+                16.sp,
                 FontWeight.w700,
                 () {
                   Navigator.push(
@@ -163,27 +170,30 @@ class _OauthpageState extends State<Oauthpage> {
   }
 }
 
-Widget oauthRegTile(String path, String title) {
-  return Container(
-    width: 299,
-    height: 40,
-    decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(12),
-      border: Border.all(width: 1, color: Color(0xffC2C2C2)),
-    ),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        SizedBox(height: 50, width: 50, child: SvgPicture.asset(path)),
-        Text(
-          title,
-          style: GoogleFonts.poppins(
-            fontWeight: FontWeight.w300,
-            fontSize: 15,
-            color: Colors.black,
+Widget oauthRegTile(String path, String title, VoidCallback onTap) {
+  return GestureDetector(
+    onTap: onTap,
+    child: Container(
+      width: 299,
+      height: 40,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(width: 1, color: Color(0xffC2C2C2)),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          SizedBox(height: 50, width: 50, child: SvgPicture.asset(path)),
+          Text(
+            title,
+            style: GoogleFonts.poppins(
+              fontWeight: FontWeight.w300,
+              fontSize: 15,
+              color: Colors.black,
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     ),
   );
 }

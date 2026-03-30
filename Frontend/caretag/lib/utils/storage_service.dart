@@ -59,6 +59,10 @@ class Storageservice {
     await storage.write(key: _newUser, value: "true");
   }
 
+  Future<String?> getNewUser() async {
+    return await storage.read(key: _newUser);
+  }
+
   Future<bool> hasSeenIntro() async {
     String? value = await storage.read(key: _newUser);
     return value == "true";

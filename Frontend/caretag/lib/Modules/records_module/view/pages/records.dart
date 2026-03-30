@@ -1,7 +1,13 @@
-import 'package:caretag/Modules/Invoice/model_view/bloc/invoice_bloc.dart';
 import 'package:caretag/Modules/Invoice/view/pages/invoice_list_page.dart';
+import 'package:caretag/Modules/MyCare/view/pages/insurance/insurance_track_claim.dart';
+import 'package:caretag/Modules/card_registration/model_view/bloc/patient_bloc_bloc.dart';
+import 'package:caretag/Modules/records_module/view/pages/diagonostic_detail.dart';
 import 'package:caretag/Modules/records_module/view/pages/doctor_prescription_page.dart';
+import 'package:caretag/Modules/records_module/view/pages/insurance_policy.dart';
+import 'package:caretag/Modules/records_module/view/pages/medical_document.dart';
+import 'package:caretag/Modules/records_module/view/pages/medical_history.dart';
 import 'package:caretag/Modules/records_module/view/pages/record_home_page.dart';
+import 'package:caretag/Modules/records_module/view/pages/vacination_reports.dart';
 import 'package:caretag/constants/app_color.dart';
 import 'package:caretag/widgets/custom_search_bar.dart';
 import 'package:flutter/material.dart';
@@ -124,24 +130,31 @@ class _RecordsState extends State<Records> {
       case "Home":
         return RecordHomePage();
       case "Doctor\nPrescription":
+        context.read<PatientBloc>().add(GetAllPrescription());
         return DoctorPrescriptionPage();
+      case "Diagnostic\nReports":
+        return DiagonosticDetail();
+      case "Vaccination\nReports":
+        return VaccinationReportsView();
+      case "Medical\nHistory":
+        return MedicalHistoryView();
       case "Bills\nInvoices":
         return InvoiceListPage();
+      case "Insurance Policy\n& Claims":
+        return InsurancePolicy();
+      case "Health\nCertificates":
+        return OfficialDocumentsView();
       default:
-        return Container(child: Center(child: Text("ata")));
+        return Container();
     }
   }
 
   Widget titleStyleWidget(String name) {
     bool isSelected = name == seletedOption;
-
     return GestureDetector(
       onTap: () {
         setState(() {
           seletedOption = name;
-          if (name == "Bills\nInvoices") {
-            context.read<InvoiceBloc>().add(GetInvoiceList());
-          }
         });
       },
       child: Text(

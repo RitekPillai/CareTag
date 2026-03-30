@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:caretag/Modules/card_registration/model_view/bloc/patient_bloc_bloc.dart';
 import 'package:caretag/Modules/records_module/model/prescription_model.dart';
 import 'package:caretag/Modules/records_module/view/pages/detail_prescription_page.dart';
+import 'package:caretag/Modules/records_module/view/widgets/empty_screen_records.dart';
 import 'package:caretag/Modules/records_module/view/widgets/prescription_tile.dart';
 import 'package:caretag/Modules/records_module/view/widgets/record_option_containe_tile.dart';
 import 'package:flutter/material.dart';
@@ -226,12 +227,16 @@ class _DoctorPrescriptionPageState extends State<DoctorPrescriptionPage> {
                     state.prescriptionList,
                   );
                   if (filerList.isEmpty) {
-                    return Center(
-                      child: Text(
-                        'No ${categories[_selectedIndex]["title"].replaceAll('\n', ' ')} prescriptions found',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 14.sp, color: Colors.grey),
-                      ),
+                    // return Center(
+                    //   child: Text(
+                    //     'No ${categories[_selectedIndex]["title"].replaceAll('\n', ' ')} prescriptions found',
+                    //     textAlign: TextAlign.center,
+                    //     style: TextStyle(fontSize: 14.sp, color: Colors.grey),
+                    //   ),
+                    // );
+                    return EmptyRecordsWidget(
+                      categoryName: categories[_selectedIndex]["title"],
+                      onAddRecord: () {},
                     );
                   } else {
                     return ListView.builder(

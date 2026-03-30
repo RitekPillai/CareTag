@@ -113,7 +113,7 @@ class _OtpPageState extends State<OtpPage> {
             ),
             const SizedBox(height: 20),
             Text(
-              "We’ve sent a 6-digit code to your registered \n email.\n\n\nEnter the code below to reset your password.",
+              "We’ve sent a 6-digit code to your registered \n email.\n\n\nEnter the code below to\nreset your password.",
               textAlign: TextAlign.center,
               style: GoogleFonts.poppins(
                 fontSize: 14,

@@ -14,6 +14,7 @@ import 'package:caretag/widgets/custombutton.dart';
 import 'package:caretag/widgets/help_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -26,9 +27,6 @@ class AuthPage extends StatefulWidget {
 }
 
 class _AuthPageState extends State<AuthPage> {
-  ///-------------page variables-----------------------------
-  ///
-
   TextEditingController phoneController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
@@ -95,7 +93,7 @@ class _AuthPageState extends State<AuthPage> {
                         "Create your CareTag \n account!!!",
                         style: GoogleFonts.poppins(
                           fontWeight: FontWeight.w800,
-                          fontSize: 30,
+                          fontSize: 27.sp,
                           color: AppColor.lightBlueTextColor2,
                         ),
                       )
@@ -130,14 +128,14 @@ class _AuthPageState extends State<AuthPage> {
                         key: ValueKey(1),
                         textAlign: TextAlign.center,
                         style: GoogleFonts.poppins(
-                          fontSize: 15,
+                          fontSize: 15.sp,
                           fontWeight: FontWeight.w500,
                           color: AppColor.lightBlueTextColor2,
                         ),
                       ),
               ),
 
-              const SizedBox(height: 20),
+              SizedBox(height: 24.h),
 
               customTextFiled(
                 "Email address",
@@ -190,8 +188,8 @@ class _AuthPageState extends State<AuthPage> {
                             "Create your own Password",
                             passwordController,
                             isPassword: true,
-                            hintText:
-                                "We recommend using complex passwords \n with a minimum length of 15 characters.",
+                            // hintText:
+                            //     "We recommend using complex passwords \n with a minimum length of 15 characters.",
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 debugPrint("password empty");
@@ -199,6 +197,18 @@ class _AuthPageState extends State<AuthPage> {
                               }
                               return null;
                             },
+                          ),
+                          SizedBox(height: 4.h),
+                          SizedBox(
+                            width: 316.w,
+                            child: Text(
+                              "We recommend using complex passwords with a minimum length of 15 characters.",
+                              style: GoogleFonts.poppins(
+                                fontWeight: FontWeight.w300,
+                                fontSize: 14.sp,
+                                color: Color(0xff757575),
+                              ),
+                            ),
                           ),
                         ],
                       )

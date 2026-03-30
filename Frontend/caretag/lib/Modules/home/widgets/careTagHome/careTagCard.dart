@@ -144,7 +144,7 @@ class Caretagcard extends StatelessWidget {
                 ),
                 ElevatedButton(
                   style: ButtonStyle(
-                    fixedSize: WidgetStatePropertyAll(Size(140, 40)),
+                    fixedSize: WidgetStatePropertyAll(Size(150, 40)),
                     backgroundColor: WidgetStatePropertyAll(Colors.black),
                   ),
                   onPressed: () {},

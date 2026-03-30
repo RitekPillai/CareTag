@@ -11,6 +11,7 @@ import 'package:caretag/constants/app_color.dart';
 import 'package:caretag/widgets/custom_search_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive/hive.dart';
@@ -146,7 +147,7 @@ class Caretagpage extends StatelessWidget {
                       "Tap to show full emergency info",
                       style: GoogleFonts.poppins(
                         fontWeight: FontWeight.w600,
-                        fontSize: 15,
+                        fontSize: 15.sp,
                       ),
                     ),
                   ),
@@ -160,7 +161,7 @@ class Caretagpage extends StatelessWidget {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                const SizedBox(height: 15),
+                SizedBox(height: 15.h),
                 helper.adTile(),
                 Padding(
                   padding: const EdgeInsets.only(

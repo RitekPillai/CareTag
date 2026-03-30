@@ -8,6 +8,7 @@ import 'package:caretag/Modules/auth/data/auth/login_request.dart';
 import 'package:caretag/Modules/auth/data/auth/signup_request.dart';
 import 'package:caretag/Modules/auth/data/model/authException.dart';
 import 'package:caretag/Modules/auth/data/model/otpVerifyRequest.dart';
+import 'package:caretag/Modules/auth/data/model/tokenModel.dart';
 
 import 'package:caretag/Modules/auth/data/repo/auth_repo.dart';
 import 'package:caretag/utils/storage_service.dart';
@@ -169,12 +170,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   ) async {
     emit(AuthLoading());
     try {
-      //   Tokenmodel tokenmodel = await _authRepo.GoogleOauthSignUp();
-      // if (tokenmodel.isNew) {
-      //   emit(SignUpCOmpleted());
-      // } else {
-      //   emit(Authenticated());
-      // }
+      Tokenmodel tokenmodel = await _authRepo.GoogleOauthSignUp();
+      String? isNewUser = await _storageservice.getNewUser();
+      if (isNewUser! == "true") {
+        emit(SignUpCOmpleted());
+      } else {
+        emit(Authenticated());
+      }
     } catch (e) {
       if (e is AuthException) {
         debugPrint(e.errorMessage);

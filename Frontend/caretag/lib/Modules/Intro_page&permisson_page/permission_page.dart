@@ -134,7 +134,7 @@ class _PermissionPageState extends State<PermissionPage> {
               ),
             ),
           ),
-          const SizedBox(height: 30),
+          SizedBox(height: 30.h),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             crossAxisAlignment: CrossAxisAlignment.center,

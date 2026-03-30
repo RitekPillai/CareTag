@@ -113,7 +113,7 @@ class _Intropage1State extends State<Intropage1> {
       backgroundColor: Colors.white,
       body: Column(
         children: [
-          SizedBox(height: 10.h),
+          SizedBox(height: 20.h),
           SafeArea(
             child: AnimatedSize(
               duration: Duration(milliseconds: 500),
@@ -124,11 +124,10 @@ class _Intropage1State extends State<Intropage1> {
                     textAlign: TextAlign.center,
                     "Welcome to\nCare Tag",
 
-                    style: GoogleFonts.poppins(
+                    style: GoogleFonts.inter(
                       fontWeight: FontWeight.w900,
                       color: AppColor.darkishBlue,
-                      fontSize: index == 0 ? 50.sp : 35.sp,
-                      height: 1.h,
+                      fontSize: index == 0 ? 48.sp : 35.sp,
                     ),
                   ),
                 ],
@@ -196,7 +195,7 @@ class _Intropage1State extends State<Intropage1> {
                                   "CareTag bridges patients and doctors\nwith secure, RFID-powered access to\nvital health records—anytime, anywhere.",
                                   style: GoogleFonts.poppins(
                                     fontWeight: FontWeight.w600,
-                                    fontSize: 16.sp,
+                                    fontSize: 13.sp,
                                     color: AppColor.textColor,
                                   ),
                                 )
@@ -227,41 +226,45 @@ class _Intropage1State extends State<Intropage1> {
                         SizedBox(height: index == 0 ? 20.h : 5),
                         index == 0
                             ? Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  Text.rich(
-                                    TextSpan(
-                                      text: "By continuing, you accept ",
-                                      style: GoogleFonts.poppins(
-                                        fontWeight: FontWeight.w300,
-                                        fontSize: 13.sp,
-                                      ),
-                                      children: [
-                                        TextSpan(
-                                          text: "T&C ",
-                                          style: GoogleFonts.poppins(
-                                            fontWeight: FontWeight.w700,
-                                            fontSize: 15.sp,
-                                            color: Color(0xff1D4ED8),
-                                          ),
+                                  Center(
+                                    child: Text.rich(
+                                      textAlign: TextAlign.center,
+                                      TextSpan(
+                                        text: "By continuing, you accept ",
+                                        style: GoogleFonts.poppins(
+                                          fontWeight: FontWeight.w300,
+                                          fontSize: 12.sp,
                                         ),
-                                        TextSpan(
-                                          text: "and",
-                                          style: GoogleFonts.poppins(
-                                            fontWeight: FontWeight.w300,
-                                            fontSize: 13.sp,
-                                          ),
-                                          children: [
-                                            TextSpan(
-                                              text: " Privacy Policy",
-                                              style: GoogleFonts.poppins(
-                                                fontWeight: FontWeight.w700,
-                                                fontSize: 15.sp,
-                                                color: Color(0xff1D4ED8),
-                                              ),
+                                        children: [
+                                          TextSpan(
+                                            text: "T&C ",
+                                            style: GoogleFonts.poppins(
+                                              fontWeight: FontWeight.w700,
+                                              fontSize: 12.sp,
+                                              color: Color(0xff1D4ED8),
                                             ),
-                                          ],
-                                        ),
-                                      ],
+                                          ),
+                                          TextSpan(
+                                            text: "and",
+                                            style: GoogleFonts.poppins(
+                                              fontWeight: FontWeight.w300,
+                                              fontSize: 13.sp,
+                                            ),
+                                            children: [
+                                              TextSpan(
+                                                text: " Privacy Policy",
+                                                style: GoogleFonts.poppins(
+                                                  fontWeight: FontWeight.w300,
+                                                  fontSize: 13.sp,
+                                                  color: Color(0xff1D4ED8),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -305,7 +308,7 @@ class _Intropage1State extends State<Intropage1> {
                                 ),
                               )
                             : Container(),
-                        SizedBox(height: index == 0 ? 10.h : 21.h),
+                        SizedBox(height: index == 0 ? 8.h : 21.h),
 
                         Container(
                           decoration: BoxDecoration(
@@ -347,6 +350,7 @@ class _Intropage1State extends State<Intropage1> {
                             ),
                           ),
                         ),
+                        SizedBox(height: index == 0 ? 20.h : 5),
                       ],
                     ),
                   ),

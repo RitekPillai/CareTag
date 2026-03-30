@@ -52,11 +52,11 @@ class Homepage extends StatelessWidget {
                           "${Homepageservice().getTime()}👋",
                           style: GoogleFonts.poppins(
                             fontWeight: FontWeight.w300,
-                            fontSize: 14,
+                            fontSize: 14.sp,
                           ),
                         ),
                         SizedBox(
-                          width: 170,
+                          width: 170.w,
                           child: Text(
                             profilemodel.fullName,
 
@@ -86,7 +86,7 @@ class Homepage extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 40),
+                SizedBox(height: 51.h),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -112,7 +112,7 @@ class Homepage extends StatelessWidget {
                       "assets/images/home/pharmacy.png",
                       () {},
                       greenGradient,
-                      20,
+                      5,
                     ),
                   ],
                 ),
@@ -222,28 +222,28 @@ Widget selectionTile(
       ),
 
       width: 164,
-      height: 255,
+      height: 270,
       child: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 30.0, bottom: 10),
-            child: Text(
-              textAlign: TextAlign.center,
-              title,
-              style: GoogleFonts.poppins(
-                color: Colors.white,
-                fontWeight: FontWeight.w900,
-                fontSize: 17,
-              ),
+          SizedBox(height: 35.h),
+          Text(
+            textAlign: TextAlign.center,
+            title,
+            style: GoogleFonts.poppins(
+              color: Colors.white,
+              fontWeight: FontWeight.w900,
+              fontSize: 17.sp,
             ),
           ),
+          SizedBox(height: 10.h),
+
           Text(
             description,
             textAlign: TextAlign.center,
             style: GoogleFonts.poppins(
-              fontWeight: FontWeight.w600,
+              fontWeight: FontWeight.w500,
               color: Colors.white,
-              fontSize: 11,
+              fontSize: 11.sp,
             ),
           ),
           SizedBox(height: height),
@@ -251,11 +251,8 @@ Widget selectionTile(
             alignment: Alignment.bottomCenter,
             children: [
               SvgPicture.asset("assets/images/home/Ellipse 78.svg"),
-              Image.asset(
-                image,
-                filterQuality: FilterQuality.high,
-                width: 150,
-                height: 114,
+              SizedBox(
+                child: Image.asset(image, filterQuality: FilterQuality.high),
               ),
             ],
           ),
