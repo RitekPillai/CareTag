@@ -75,7 +75,7 @@ class MyApp extends StatelessWidget {
     final diagonosticRepo = DiagonosticRepo();
     final cartRepo = CartRepo();
     final pharmacyRepo = PharmacyRepo();
-    final hospitalRepo= HospitalRepo();
+    final hospitalRepo = HospitalRepo();
     return MultiBlocProvider(
       providers: [
         BlocProvider(
@@ -107,8 +107,9 @@ class MyApp extends StatelessWidget {
               SearchBloc(doctorDetailRepo, authenticationService),
         ),
         BlocProvider(
-        create: (context)=>HospitalBloc(hospitalRepo, authenticationService),
-        )
+          create: (context) =>
+              HospitalBloc(hospitalRepo, authenticationService),
+        ),
       ],
       child: ScreenUtilInit(
         designSize: const Size(393, 852),

@@ -6,6 +6,7 @@ import com.example.CareTag.DTOs.commonDTOs.RecordRequestAcceptDTO;
 import com.example.CareTag.DTOs.commonDTOs.RecordResponseAcceptDTO;
 import com.example.CareTag.Models.Paitent.Patient;
 import com.example.CareTag.Repos.Paitent.PaitentRepo;
+import com.example.CareTag.Services.PaitentServices.AppointmentService;
 import com.example.CareTag.Services.PaitentServices.PatientService;
 import com.example.CareTag.Services.RecordService;
 import lombok.extern.slf4j.Slf4j;
@@ -126,6 +127,24 @@ public class PaitentController {
   @GetMapping("/timeline")
   public ResponseEntity<List<RecentActivityDTO>> getTimeline() {
     return ResponseEntity.ok(paitentService.getPatientTimeline());
+  }
+
+  @Autowired
+  private AppointmentService appointmentService;
+
+  @GetMapping("/slots")
+  public ResponseEntity<List<String>> getAvailableSlots(@RequestParam Long doctorId, @RequestParam String date) {
+    return ResponseEntity.ok(appointmentService.getAvailableSlots(doctorId, date));
+  }
+
+  @PostMapping("/book-appointment")
+  public ResponseEntity<String> bookAppointment(@RequestBody BookAppointmentReq req) {
+    try {
+      String res = appointmentService.bookAppointment(req);
+      return ResponseEntity.ok(res);
+    } catch (Exception e) {
+      return ResponseEntity.badRequest().body(e.getMessage());
+    }
   }
 
 }

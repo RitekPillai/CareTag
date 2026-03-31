@@ -57,28 +57,44 @@ public class LinkingService {
   }
 
   public void PermissionRequest(String careTagId) throws InterruptedException {
-    log.info(" careTagId:{}", careTagId);
-    log.info(careTagId);
+    log.info("Processing request for CareTag ID: {}", careTagId);
+
     String email = SecurityContextHolder.getContext().getAuthentication().getName();
     Doctor doctor = doctorRepo.findByEmail(email);
 
-    log.info(email);
+    if (doctor == null) {
+      throw new RuntimeException("Authenticated doctor not found in database.");
+    }
+
     Patient patient = paitentRepo.findByCareTagId(careTagId);
-    log.info(" paitentId:{}", patient.getFullName());
+
+    // SAFETY CHECK 1: Ensure patient exists
+    if (patient == null) {
+      log.error("Patient with CareTag ID {} not found", careTagId);
+      throw new RuntimeException("Patient with CareTag ID " + careTagId + " not found.");
+    }
+    log.info("Patient found: {}", patient.getFullName());
 
     Link isLinked = linkRepo.findByDocIdAndPaitentId(doctor.getId(), patient.getId());
-    log.info(" isLinked:{}", isLinked);
-    if (isLinked != null) {
+    log.info("Existing Link Status: {}", isLinked);
 
-      log.info("It is already linked there is no  need to link it");
+    if (isLinked != null) {
+      log.info("It is already linked, notifying frontend via websocket.");
       simpMessagingTemplate.convertAndSendToUser(email, "/queue/approval", Map.of("status", "ALREADY SCANNED"));
       return;
-
     }
+
     boolean isBlocked = reportRepo.existsByDocIdAndPatientId(doctor.getId(), patient.getId());
     if (isBlocked) {
-      log.info("You have been blocked can not send request");
-      return;
+      log.info("Doctor is blocked by this patient.");
+      throw new RuntimeException("You do not have permission to request access from this patient.");
+    }
+
+    // SAFETY CHECK 2: Ensure patient has a device registered for notifications
+    String fcmToken = patient.getFcmToken();
+    if (fcmToken == null || fcmToken.trim().isEmpty()) {
+      log.error("Patient {} has no FCM token.", patient.getFullName());
+      throw new RuntimeException("Patient's device is not currently reachable for notifications.");
     }
 
     PermissionRequestDTO permissionRequestDTO = PermissionRequestDTO.builder()
@@ -90,10 +106,48 @@ public class LinkingService {
         .isRecord(false)
         .publicKey("")
         .build();
-    log.info(permissionRequestDTO.toString() + "careated");
-    sendMessage(permissionRequestDTO, patient.getFcmToken());
-    log.info("done");
 
+    log.info("DTO created, sending push notification...");
+    sendMessage(permissionRequestDTO, fcmToken);
+    log.info("Request process completed.");
+  }
+
+  public void sendMessage(PermissionRequestDTO permissionRequestDTO, String token) {
+    try {
+      log.info("Attempting to send FCM message to token: {}", token);
+
+      Message message = Message.builder()
+          .setToken(token)
+          .putData("docName", permissionRequestDTO.getDocName())
+          .putData("placeName",
+              permissionRequestDTO.getHospitalName() != null ? permissionRequestDTO.getHospitalName() : "Clinic")
+          .putData("docId", permissionRequestDTO.getDocId().toString())
+          .putData("isRecord", permissionRequestDTO.getIsRecord().toString())
+          .putData("encounterId", permissionRequestDTO.getEncounterId())
+          .putData("publicKey", permissionRequestDTO.getPublicKey())
+          .setNotification(Notification.builder()
+              .setTitle("Access Request")
+              .setBody("Dr. " + permissionRequestDTO.getDocName() + " wants to Access your data")
+              .build())
+          .setAndroidConfig(AndroidConfig.builder()
+              .setPriority(AndroidConfig.Priority.HIGH)
+              .build())
+          .build();
+
+      FirebaseMessaging.getInstance().send(message);
+      log.info("FCM message sent successfully.");
+
+    } catch (FirebaseMessagingException e) {
+      if (e.getMessagingErrorCode() == MessagingErrorCode.UNREGISTERED) {
+        log.error("Token is no longer valid. Consider removing it from the database.");
+      } else {
+        log.error("Failed to send FCM message", e);
+      }
+      throw new RuntimeException("Failed to deliver notification to patient device.");
+    } catch (IllegalStateException e) {
+      log.error("Firebase is not initialized properly! Check your firebase-service-account.json file.", e);
+      throw new RuntimeException("Server configuration error: Push notifications are currently offline.");
+    }
   }
 
   @Transactional
@@ -134,7 +188,7 @@ public class LinkingService {
     log.info("Link has been Established");
   }
 
-  public void sendMessage(PermissionRequestDTO permissionRequestDTO, String token) {
+  public void sendMessage1(PermissionRequestDTO permissionRequestDTO, String token) {
     log.info("token:{}", token);
     Message message = Message.builder()
         .setToken(token)
