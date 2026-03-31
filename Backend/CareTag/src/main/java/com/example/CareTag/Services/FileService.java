@@ -22,6 +22,9 @@ public class FileService {
   @Value("${azure.storage.container-name}")
   private String containerName;
 
+  @Value("${azure.storage.hospital.container-name:hospitalprofile}")
+  private String hospitalContainerName;
+
   public String uploadProfilePhoto(MultipartFile file) throws IOException {
     BlobContainerClient blobContainerClient = blobServiceClient.getBlobContainerClient(containerName);
 
@@ -79,5 +82,21 @@ public class FileService {
     } catch (Exception e) {
       System.out.println("Failed to delete old image: " + e.getMessage());
     }
+  }
+
+  public String uploadToHospitalProfile(String base64Data, String fileNamePrefix) {
+    return uploadBase64Image(base64Data, fileNamePrefix, hospitalContainerName);
+  }
+
+  public String uploadHospitalLogo(String base64Data) {
+    return uploadToHospitalProfile(base64Data, "logo");
+  }
+
+  public String uploadHospitalRegistrationCertificate(String base64Data) {
+    return uploadToHospitalProfile(base64Data, "registration_cert");
+  }
+
+  public String uploadHospitalClinicalLicense(String base64Data) {
+    return uploadToHospitalProfile(base64Data, "clinical_license");
   }
 }

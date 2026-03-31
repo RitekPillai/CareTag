@@ -80,6 +80,7 @@ dependencies:
   dotted_border: ^3.1.0
   cached_network_image: ^3.3.1
   printing: ^5.14.3
+  url_launcher: ^6.3.2
 
 uses-material-design: true
 dev_dependencies:

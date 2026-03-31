@@ -5,11 +5,14 @@ import com.example.CareTag.DTOs.DoctorDTOs.PrescriptionRequestDTO;
 import com.example.CareTag.DTOs.DoctorDTOs.PrescriptionListDTO;
 import com.example.CareTag.DTOs.DoctorDTOs.SignUpRequest;
 import com.example.CareTag.DTOs.authDTOs.LoginRequestDTO;
+import com.example.CareTag.DTOs.authDTOs.RefreshTokenResponseDTO;
 import com.example.CareTag.Models.common.EncounterModel;
 import com.example.CareTag.Services.doctorService.DoctorAuthService;
 import com.example.CareTag.Services.doctorService.DoctorService;
+import com.example.CareTag.Services.AuthServices.RefereshTokenService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -31,6 +34,9 @@ public class DoctorController {
   @Autowired
   DoctorService doctorService;
 
+  @Autowired
+  RefereshTokenService refereshTokenService;
+
   @GetMapping
   @PreAuthorize("hasRole('DOCTOR')")
   public String testingController() {
@@ -50,6 +56,17 @@ public class DoctorController {
 
     return doctorAuthService.login(loginRequestDTO);
 
+  }
+
+  @PostMapping("/refresh")
+  public ResponseEntity<RefreshTokenResponseDTO> refreshToken(@RequestBody String token) {
+    try {
+      log.info("Doctor refresh token request");
+      return refereshTokenService.refreshToken(token);
+    } catch (Exception e) {
+      log.error("Doctor refresh token error: {}", e.getMessage());
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
   }
   //
   // @GetMapping("/paitents")

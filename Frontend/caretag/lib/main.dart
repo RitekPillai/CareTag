@@ -3,6 +3,8 @@ import 'dart:developer';
 import 'package:caretag/Modules/%20Diagonostic/model_view/bloc/diagonostic_bloc.dart';
 import 'package:caretag/Modules/%20Diagonostic/model_view/repo/diagonostic_repo.dart';
 import 'package:caretag/Modules/%20Diagonostic/view/pages/diagonostic_Detail_page.dart';
+import 'package:caretag/Modules/Hospital/model_view/bloc/bloc.dart';
+import 'package:caretag/Modules/Hospital/model_view/repo/Hospital_repo.dart';
 import 'package:caretag/Modules/Invoice/model_view/bloc/invoice_bloc.dart';
 import 'package:caretag/Modules/Invoice/model_view/repo/invoice_repo.dart';
 import 'package:caretag/Modules/auth/model_view/service/AuthenticationService.dart';
@@ -73,6 +75,7 @@ class MyApp extends StatelessWidget {
     final diagonosticRepo = DiagonosticRepo();
     final cartRepo = CartRepo();
     final pharmacyRepo = PharmacyRepo();
+    final hospitalRepo= HospitalRepo();
     return MultiBlocProvider(
       providers: [
         BlocProvider(
@@ -103,6 +106,9 @@ class MyApp extends StatelessWidget {
           create: (context) =>
               SearchBloc(doctorDetailRepo, authenticationService),
         ),
+        BlocProvider(
+        create: (context)=>HospitalBloc(hospitalRepo, authenticationService),
+        )
       ],
       child: ScreenUtilInit(
         designSize: const Size(393, 852),

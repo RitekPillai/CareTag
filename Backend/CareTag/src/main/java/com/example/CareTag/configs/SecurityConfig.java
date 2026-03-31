@@ -51,8 +51,9 @@ public class SecurityConfig {
 
         .authorizeHttpRequests(req -> req
             .requestMatchers("/ws/**", "/ws", "/websocket/**,/wss/**").permitAll()
-            .requestMatchers("/doctor/signup", "/doctor/login").permitAll()
-            .requestMatchers("diagnostic/signUp", "diagnostic/login").permitAll()
+            .requestMatchers("/doctor/signup", "/doctor/login", "/doctor/refresh").permitAll()
+            .requestMatchers("diagnostic/signUp", "diagnostic/login", "diagnostic/refresh").permitAll()
+            .requestMatchers("/hospital/signup", "/hospital/login", "/hospital/refresh").permitAll()
 
             .requestMatchers("/websocket/**", "/websocket", "/websocket/*").permitAll()
             .requestMatchers("/webscoket/**").permitAll()
@@ -61,6 +62,8 @@ public class SecurityConfig {
             .requestMatchers("/blockchain/validate", "/blockchain/chain").hasAnyRole("DOCTOR", "PATIENT")
             .requestMatchers("/doctor/**").hasRole("DOCTOR")
             .requestMatchers("/paitent/**").hasRole("PATIENT")
+            .requestMatchers("/hospital/**").hasRole("HOSPITAL")
+
             .requestMatchers("/diagnostic/**").hasRole("DIAGNOSTIC")
             .requestMatchers("/auth/me").authenticated()
             .anyRequest().authenticated())
