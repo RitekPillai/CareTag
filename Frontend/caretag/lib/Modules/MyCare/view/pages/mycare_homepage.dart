@@ -4,6 +4,7 @@ import 'package:caretag/Modules/MyCare/view/pages/caretag_page.dart';
 import 'package:caretag/Modules/MyCare/view/pages/insurance_page.dart';
 import 'package:caretag/Modules/MyCare/view/pages/my_care_home.dart';
 import 'package:caretag/Modules/MyCare/view/pages/timeline.dart';
+import 'package:caretag/Modules/card_registration/model_view/bloc/patient_bloc_bloc.dart';
 import 'package:caretag/Modules/doctor_details/model_view/bloc/doctor_detail_bloc.dart';
 import 'package:caretag/Modules/doctor_details/view/pages/doctors_page.dart';
 import 'package:caretag/constants/app_color.dart';
@@ -104,6 +105,7 @@ class _MyCarePagState extends State<MycarePage> {
       case "Home":
         return MyCareHomePage();
       case "caretag":
+        context.read<PatientBloc>().add(GetProfileData());
         return CaretagPage();
       case "Doctors":
         context.read<DoctorDetailBloc>().add(GetMyDoctor());

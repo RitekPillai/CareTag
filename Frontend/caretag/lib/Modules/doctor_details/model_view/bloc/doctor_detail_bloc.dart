@@ -22,6 +22,7 @@ class DoctorDetailBloc extends Bloc<DoctorDetailEvent, DoctorDetailState> {
 
     try {
       final myDoctors = await _repo.getMyDoctor(authenticationservice);
+      debugPrint("mydoctods--------------------- $myDoctors");
       emit(MyDoctorSuccess(myDoctors: myDoctors));
     } catch (e) {
       debugPrint("Error:${e.toString()}");

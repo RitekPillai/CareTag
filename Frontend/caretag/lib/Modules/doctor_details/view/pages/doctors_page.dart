@@ -18,33 +18,6 @@ class DoctorsPage extends StatelessWidget {
     const Color searchBarHintText = Color(0xff617589);
     return Column(
       children: [
-        SizedBox(
-          width: 358.w,
-          height: 48.h,
-          child: SearchBar(
-            leading: Icon(
-              Icons.search_rounded,
-              color: searchBarHintText,
-              size: 25,
-            ),
-            hintText: "Search doctors, specialties...",
-            hintStyle: WidgetStatePropertyAll(
-              GoogleFonts.inter(
-                fontWeight: FontWeight.w400,
-                fontSize: 16.sp,
-                color: searchBarHintText,
-              ),
-            ),
-            backgroundColor: WidgetStatePropertyAll(searchBarBackgroundColor),
-            elevation: WidgetStatePropertyAll(0),
-            shape: WidgetStatePropertyAll(
-              RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(48.r),
-                side: BorderSide(color: Colors.transparent, width: 1),
-              ),
-            ),
-          ),
-        ),
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 16.w),
           child: Row(
@@ -82,6 +55,9 @@ class DoctorsPage extends StatelessWidget {
             }
             if (state is MyDoctorSuccess) {
               final mydoctors = state.myDoctors;
+              if (state.myDoctors.isEmpty) {
+                return Center(child: Text("No linked Doctors "));
+              }
               return SizedBox(
                 height: 208.h,
                 child: ListView.builder(

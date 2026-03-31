@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.CareTag.DTOs.PatientDTOs.MyDoctorDetailsDTO;
 import com.example.CareTag.DTOs.PatientDTOs.MydoctorDetails;
+import com.example.CareTag.DTOs.PatientDTOs.NearByDoctorDTO;
 import com.example.CareTag.Services.PaitentServices.DoctorDetailService;
 
 @RestController
@@ -30,6 +31,11 @@ public class DoctorDetailController {
   public MyDoctorDetailsDTO getMyDoctorDetails(
       @RequestParam long docId) throws Exception {
     return doctorDetailService.getMyDoctorDetails(docId);
+  }
+
+  @GetMapping("/nearby-doctor")
+  public List<NearByDoctorDTO> getNearByTopRatedDoctor() {
+    return doctorDetailService.getNearTopRatedDoctor();
   }
 
 }

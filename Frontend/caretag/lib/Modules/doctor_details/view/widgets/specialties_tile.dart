@@ -54,7 +54,7 @@ class SpecialtiesTile extends StatelessWidget {
       ),
     ];
     return Container(
-      color: Color(0xffF6F7F8),
+      color: Colors.white,
       child: Column(
         children: [
           Padding(
