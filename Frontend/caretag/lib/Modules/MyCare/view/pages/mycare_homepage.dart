@@ -108,7 +108,7 @@ class _MyCarePagState extends State<MycarePage> {
         context.read<PatientBloc>().add(GetProfileData());
         return CaretagPage();
       case "Doctors":
-        context.read<DoctorDetailBloc>().add(GetMyDoctor());
+        context.read<DoctorDetailBloc>().add(FetchDoctorDashboard());
         return DoctorsPage();
       case "Insurance":
         return InsurancePage();

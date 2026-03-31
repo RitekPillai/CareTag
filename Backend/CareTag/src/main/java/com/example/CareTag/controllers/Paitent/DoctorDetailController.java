@@ -5,13 +5,17 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.CareTag.DTOs.PatientDTOs.DoctorDashboardDTO;
+import com.example.CareTag.DTOs.PatientDTOs.DoctorFilterDTO;
 import com.example.CareTag.DTOs.PatientDTOs.MyDoctorDetailsDTO;
 import com.example.CareTag.DTOs.PatientDTOs.MydoctorDetails;
 import com.example.CareTag.DTOs.PatientDTOs.NearByDoctorDTO;
+import com.example.CareTag.Models.doctor.Doctor;
 import com.example.CareTag.Services.PaitentServices.DoctorDetailService;
 
 @RestController
@@ -32,10 +36,20 @@ public class DoctorDetailController {
       @RequestParam long docId) throws Exception {
     return doctorDetailService.getMyDoctorDetails(docId);
   }
+  //
+  // @GetMapping("/nearby-doctor")
+  // public List<NearByDoctorDTO> getNearByTopRatedDoctor() {
+  // return doctorDetailService.getNearTopRatedDoctor();
+  // }
 
-  @GetMapping("/nearby-doctor")
-  public List<NearByDoctorDTO> getNearByTopRatedDoctor() {
-    return doctorDetailService.getNearTopRatedDoctor();
+  @GetMapping("/doctor-dashboard")
+  public DoctorDashboardDTO getDoctorDashboard() {
+    return doctorDetailService.getDoctorDashboard();
+  }
+
+  @PostMapping("/search")
+  public List<Doctor> searchDoctors(@RequestBody DoctorFilterDTO filter) {
+    return doctorDetailService.searchDoctors(filter);
   }
 
 }

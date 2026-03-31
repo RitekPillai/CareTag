@@ -1,7 +1,10 @@
 import 'package:bloc/bloc.dart';
 import 'package:caretag/Modules/auth/model_view/service/AuthenticationService.dart';
+import 'package:caretag/Modules/doctor_details/model/doctor_filer_model.dart';
 import 'package:caretag/Modules/doctor_details/model/get_doctor_detail_model.dart';
 import 'package:caretag/Modules/doctor_details/model/get_doctor_model.dart';
+import 'package:caretag/Modules/doctor_details/model/near_by_doctor_model.dart';
+import 'package:caretag/Modules/doctor_details/model/search_doctor_model.dart';
 import 'package:caretag/Modules/doctor_details/model_view/repo/doctor_detail_repo.dart';
 import 'package:flutter/material.dart';
 
@@ -11,21 +14,35 @@ part 'doctor_detail_event.dart';
 class DoctorDetailBloc extends Bloc<DoctorDetailEvent, DoctorDetailState> {
   final Authenticationservice authenticationservice;
   final DoctorDetailRepo _repo;
+
   DoctorDetailBloc(this.authenticationservice, this._repo)
     : super(InitinalState()) {
-    on<GetMyDoctor>(onGetDoctor);
+    on<FetchDoctorDashboard>(_onFetchDoctorDashboard); // Combined fetch
     on<GetMyDoctorDetails>(onGetMyDoctorDetails);
+
+    on<PerformSearch>(_onPerformSearch);
   }
 
-  Future<void> onGetDoctor(DoctorDetailEvent event, Emitter emit) async {
+  Future<void> _onFetchDoctorDashboard(
+    FetchDoctorDashboard event,
+    Emitter emit,
+  ) async {
     emit(DoctorDetailLoadingState());
 
     try {
-      final myDoctors = await _repo.getMyDoctor(authenticationservice);
-      debugPrint("mydoctods--------------------- $myDoctors");
-      emit(MyDoctorSuccess(myDoctors: myDoctors));
+      // Call your new Repo method that hits the combined endpoint
+      final dashboardData = await _repo.getDoctorDashboard(
+        authenticationservice,
+      );
+
+      emit(
+        DoctorDashboardLoaded(
+          myDoctors: dashboardData.myDoctors,
+          nearbyDoctors: dashboardData.nearbyTopRatedDoctors,
+        ),
+      );
     } catch (e) {
-      debugPrint("Error:${e.toString()}");
+      debugPrint("Error fetching dashboard: ${e.toString()}");
       emit(ErrorState());
     }
   }
@@ -38,7 +55,7 @@ class DoctorDetailBloc extends Bloc<DoctorDetailEvent, DoctorDetailState> {
     try {
       final myDoctorDetails = await _repo.getMyDoctorDetails(
         authenticationservice,
-        event.id,
+        event.id!,
       );
       emit(MyDoctorDetailSuccess(doctorDetails: myDoctorDetails));
     } catch (e) {
@@ -47,12 +64,17 @@ class DoctorDetailBloc extends Bloc<DoctorDetailEvent, DoctorDetailState> {
     }
   }
 
-  @override
-  void onTransition(
-    Transition<DoctorDetailEvent, DoctorDetailState> transition,
-  ) {
-    debugPrint("Current State:${transition.currentState}");
-    debugPrint("next State:${transition.nextState}");
-    super.onTransition(transition);
+  Future<void> _onPerformSearch(PerformSearch event, Emitter emit) async {
+    emit(DoctorDetailLoadingState());
+
+    try {
+      final doctors = await _repo.searchDoctors(
+        authenticationservice,
+        event.filter,
+      );
+      emit(SearchLoaded(doctors: doctors));
+    } catch (e) {
+      emit(ErrorState());
+    }
   }
 }

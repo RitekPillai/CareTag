@@ -6,10 +6,11 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.geo.Circle;
 import org.springframework.data.geo.Distance;
-import org.springframework.data.geo.Metric;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.data.geo.Metrics;
+
+import com.example.CareTag.DTOs.PatientDTOs.DoctorDashboardDTO;
 import com.example.CareTag.DTOs.PatientDTOs.MyDoctorDetailsDTO;
 import com.example.CareTag.DTOs.PatientDTOs.MydoctorDetails;
 import com.example.CareTag.DTOs.PatientDTOs.NearByDoctorDTO;
@@ -21,6 +22,13 @@ import com.example.CareTag.Repos.Paitent.PaitentRepo;
 import com.example.CareTag.Repos.common.LinkRepo;
 import com.example.CareTag.Repos.doctor.DoctorRepo;
 import org.springframework.data.geo.Point;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import com.example.CareTag.DTOs.PatientDTOs.DoctorFilterDTO;
 
 @Service
 public class DoctorDetailService {
@@ -33,6 +41,9 @@ public class DoctorDetailService {
 
   @Autowired
   private PaitentRepo paitentRepo;
+
+  @Autowired
+  private MongoTemplate mongoTemplate;
 
   public List<MydoctorDetails> getMyDoctors() {
 
@@ -71,9 +82,9 @@ public class DoctorDetailService {
     double patientLat = patient.getLocation().getY();
 
     final Point point = new Point(patientLon, patientLat);
-    Distance searchRadius = new Distance(10, Metrics.KILOMETERS);
-    Circle searchArea = new Circle(point, searchRadius);
+    Distance searchRadius = new Distance(50, Metrics.KILOMETERS);
 
+    Circle searchArea = new Circle(point, searchRadius);
     List<Doctor> doctors = doctorRepo.findByLocationWithinOrderByNumOfLinksDesc(searchArea);
 
     return doctors.stream().map(doc -> {
@@ -109,6 +120,52 @@ public class DoctorDetailService {
     double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
     return EARTH_RADIUS_KM * c;
+  }
+
+  // --- ADD THIS NEW METHOD ---
+  public DoctorDashboardDTO getDoctorDashboard() {
+    // 1. Fetch My Doctors
+    List<MydoctorDetails> myDoctors = getMyDoctors();
+
+    // 2. Fetch Nearby Doctors
+    List<NearByDoctorDTO> nearbyDoctors = getNearTopRatedDoctor();
+
+    // 3. Combine and return
+    return DoctorDashboardDTO.builder()
+        .myDoctors(myDoctors)
+        .nearbyTopRatedDoctors(nearbyDoctors)
+        .build();
+  }
+
+  public List<Doctor> searchDoctors(DoctorFilterDTO filter) {
+    Query query = new Query();
+
+    if (filter.getSpecialization() != null && !filter.getSpecialization().isEmpty()) {
+      query.addCriteria(Criteria.where("specialization").regex(filter.getSpecialization(), "i"));
+    }
+
+    if (filter.getCity() != null && !filter.getCity().isEmpty()) {
+      query.addCriteria(Criteria.where("city").regex(filter.getCity(), "i"));
+    }
+
+    if (filter.getMinExperience() != null) {
+      query.addCriteria(Criteria.where("yearsOfExperience").gte(filter.getMinExperience()));
+    }
+
+    // 4. Filter by Max Consultation Fee
+    if (filter.getMaxConsultationFee() != null) {
+      query.addCriteria(Criteria.where("consulationFees").lte(filter.getMaxConsultationFee()));
+    }
+
+    // 5. Global Keyword Search (Searches Doctor Name OR Clinic Name)
+    if (filter.getSearchKeyword() != null && !filter.getSearchKeyword().isEmpty()) {
+      Criteria nameCriteria = Criteria.where("fullName").regex(filter.getSearchKeyword(), "i");
+      Criteria clinicCriteria = Criteria.where("clinicName").regex(filter.getSearchKeyword(), "i");
+      query.addCriteria(new Criteria().orOperator(nameCriteria, clinicCriteria));
+    }
+
+    // Execute the dynamic query
+    return mongoTemplate.find(query, Doctor.class);
   }
 
 }

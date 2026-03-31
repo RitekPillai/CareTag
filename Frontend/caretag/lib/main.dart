@@ -8,6 +8,7 @@ import 'package:caretag/Modules/Invoice/model_view/repo/invoice_repo.dart';
 import 'package:caretag/Modules/auth/model_view/service/AuthenticationService.dart';
 import 'package:caretag/Modules/doctor_details/model_view/bloc/doctor_detail_bloc.dart';
 import 'package:caretag/Modules/doctor_details/model_view/repo/doctor_detail_repo.dart';
+import 'package:caretag/Modules/doctor_details/model_view/searchbloc/search_bloc.dart';
 import 'package:caretag/Modules/pharmacy/model_view/bloc/cart_bloc.dart';
 import 'package:caretag/Modules/pharmacy/model_view/bloc/pharmacy/parmacy_bloc.dart';
 import 'package:caretag/Modules/pharmacy/model_view/repo/cart_repo.dart';
@@ -97,6 +98,10 @@ class MyApp extends StatelessWidget {
         BlocProvider<PharmacyBloc>(
           create: (context) =>
               PharmacyBloc(authenticationService, pharmacyRepo),
+        ),
+        BlocProvider(
+          create: (context) =>
+              SearchBloc(doctorDetailRepo, authenticationService),
         ),
       ],
       child: ScreenUtilInit(
